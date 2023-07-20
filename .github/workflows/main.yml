@@ -23,6 +23,9 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v1
 
+      - run: git remote -v
+      - run: git remote set-url origin https://github.com/Current-Namaz/mnm-user-beta-web.git
+      - run: git remote -v
       - run: flutter config --enable-web
       - run: flutter pub get
       - run: flutter build web --release --web-renderer=auto --base-href / 
