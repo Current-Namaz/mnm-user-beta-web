@@ -23,5 +23,11 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v1
 
-      - name: Build Flutter Web
-        uses: bluefireteam/flutter-gh-pages@v7
+      - run: flutter config --enable-web
+      - run: flutter pub get
+      - run: flutter build web --release --web-renderer=auto --base-href / 
+      - run: git config user.name github-actions
+      - run: git config user.email github-actions@github.com
+      - run: git --work-tree build/web add --all
+      - run: git commit -m "Automatic deployment by github-actions"
+      - run: git push origin gh-pages --force
