@@ -18,4 +18,4 @@ jobs:
         source_repo: Current-Namaz/mnm-user
         source_branch: gh-pages
         destination_branch: gh-pages
-        github_token: ${{ secrets.PRIVATE_REPO_ACCESS_TOKEN }}
+        github_token: ${{ secrets.PAT }}
