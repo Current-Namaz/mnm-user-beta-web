@@ -6,9 +6,10 @@ on:
       - hello-world
 
 jobs:
-  print-hello-world:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Print Hello World
-        run: echo "Hello, World!"
+      - uses: actions/checkout@v2 # Only works with v2
+      - uses: subosito/flutter-action@v1
+      - uses: bluefireteam/flutter-gh-pages@v7
