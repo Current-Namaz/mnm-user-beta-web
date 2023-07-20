@@ -25,6 +25,9 @@ jobs:
 
       - name: Build Flutter Web
         uses: bluefireteam/flutter-gh-pages@v7
+        with:
+          baseHref: /mnm-user-beta-web/
+        
       
       - name: Trigger Hello World Workflow
         env:
