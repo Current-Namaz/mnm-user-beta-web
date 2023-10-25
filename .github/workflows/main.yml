@@ -55,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: windows-artifact
-          path: build/windows/
+          path: build/windows/runner/
 
   trigger-workflow:
     needs: [build-web, build-windows]
