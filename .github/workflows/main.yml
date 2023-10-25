@@ -1,4 +1,4 @@
-name: Hello World and Flutter Web Build
+name: Build Flutter Web and Windows
 
 on:
   repository_dispatch:
@@ -6,7 +6,7 @@ on:
       - hello-world
 
 jobs:
-  build-flutter-web:
+  build-flutter:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,22 +17,38 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: Current-Namaz/mnm-user
-          ref: master  
+          ref: master
           token: ${{ secrets.PRIVATE_REPO_ACCESS_TOKEN }}
 
-      - name: Setup Flutter
+      - name: Setup Flutter for Web
         uses: subosito/flutter-action@v1
 
       - name: Build Flutter Web
         uses: bluefireteam/flutter-gh-pages@v7
         with:
           baseHref: /mnm-user-beta-web/
-        
-      
+
+      - name: Setup Flutter for Windows
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Build Flutter Windows
+        run: |
+          flutter pub get
+          flutter test
+          flutter build windows
+
+      - name: Archive Windows Build
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-artifact
+          path: build/windows/
+
       - name: Trigger Hello World Workflow
         env:
-          TARGET_REPO_OWNER: Current-Namaz  # Replace with the owner of the target repository
-          TARGET_REPO_NAME: mnm-user-beta-web   # Replace with the name of the target repository
+          TARGET_REPO_OWNER: Current-Namaz
+          TARGET_REPO_NAME: mnm-user-beta-web
           GITHUB_TOKEN: ${{ secrets.PRIVATE_REPO_ACCESS_TOKEN }}
         run: |
           curl -X POST \
