@@ -29,33 +29,33 @@ jobs:
         with:
           baseHref: /mnm-user-beta-web/
 
-  build-windows:
-    runs-on: windows-latest
+  # build-windows:
+  #   runs-on: windows-latest
 
-    steps:
-      - name: Checkout Code from Another Repository
-        uses: actions/checkout@v2
-        with:
-          repository: Current-Namaz/mnm-user
-          ref: master
-          token: ${{ secrets.PRIVATE_REPO_ACCESS_TOKEN }}
+  #   steps:
+  #     - name: Checkout Code from Another Repository
+  #       uses: actions/checkout@v2
+  #       with:
+  #         repository: Current-Namaz/mnm-user
+  #         ref: master
+  #         token: ${{ secrets.PRIVATE_REPO_ACCESS_TOKEN }}
 
-      - name: Setup Flutter for Windows
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
+  #     - name: Setup Flutter for Windows
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: 'stable'
 
-      - name: Build Flutter Windows
-        run: |
-          flutter pub get
-          flutter test
-          flutter build windows
+  #     - name: Build Flutter Windows
+  #       run: |
+  #         flutter pub get
+  #         flutter test
+  #         flutter build windows
 
-      - name: Archive Windows Build
-        uses: actions/upload-artifact@v2
-        with:
-          name: windows-artifact
-          path: build/windows/runner/
+  #     - name: Archive Windows Build
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: windows-artifact
+  #         path: build/windows/runner/
 
   trigger-workflow:
     needs: [build-web, build-windows]
