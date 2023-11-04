@@ -1,9 +1,9 @@
 name: Build Flutter Web and Windows
 
 on:
-  repository_dispatch:
-    types:
-      - hello-world
+  # repository_dispatch:
+  #   types:
+  #     - hello-world
   workflow_dispatch:    
 
 jobs:
