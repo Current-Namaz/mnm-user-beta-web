@@ -21,8 +21,9 @@ class LoginBody extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
+
             margin: const EdgeInsets.only(right: 25),
-            height: 220,
+            height: 220.0,
             width: 220,
             color: AppColors.greenColor,
             alignment: Alignment.center,
