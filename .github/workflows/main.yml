@@ -1,9 +1,9 @@
 name: Build Flutter Web and Windows
 
 on:
-  # repository_dispatch:
-  #   types:
-  #     - hello-world
+  repository_dispatch:
+    types:
+      - hello-world
   workflow_dispatch:    
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Code from Another Repository
         uses: actions/checkout@v2
         with:
-          repository: Current-Namaz/mnm-user
+          repository: Current-Namaz/mnm-internal-admin
           ref: master
           token: ${{ secrets.PRIVATE_REPO_ACCESS_TOKEN }}
 
@@ -58,7 +58,7 @@ jobs:
   #         path: build/windows/runner/
 
   trigger-workflow:
-    needs: [build-web, build-windows]
+    needs: [build-web]
     runs-on: ubuntu-latest
 
     steps:
