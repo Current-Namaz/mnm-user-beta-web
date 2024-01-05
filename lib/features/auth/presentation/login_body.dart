@@ -21,16 +21,12 @@ class LoginBody extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-
             margin: const EdgeInsets.only(right: 25),
             height: 220.0,
             width: 220,
             color: AppColors.greenColor,
             alignment: Alignment.center,
-            child: const Text(
-              'Logo',
-              style: TextStyle(color: Colors.white),
-            ),
+            child: Icon(Icons.admin_panel_settings),
           ),
           Container(
             width: 450,
