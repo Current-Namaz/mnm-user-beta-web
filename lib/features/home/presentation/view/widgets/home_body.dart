@@ -24,18 +24,19 @@ class HomeBody extends StatelessWidget {
 
         /// <<<<<<<<<<<<<<<<<<<< home main body >>>>>>>>>>>>>>>>>>>>>>>>>>>
         Expanded(
-          flex: 9,
           child: Container(
             color: AppColors.primaryColor,
-            child:  ListView(
-              children: const [
-                HomeAppBar(title: AppStrings.dashboard),
-                Row(
-                  children: [
-                    HomeContentView(),
-                  ],
-                )
-              ],
+            child:  SingleChildScrollView(
+              child: const Column(
+                children: [
+                  HomeAppBar(title: AppStrings.dashboard),
+                  Row(
+                    children: [
+                      Expanded(child: HomeContentView()),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         )
