@@ -8,6 +8,7 @@ class GlobalLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      height: 0,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
