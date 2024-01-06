@@ -10,16 +10,30 @@ class HomeContentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      child: Container(
-        height: 600,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(r20),
-          color: AppColors.secondaryColor,
-        ),
-        margin: const EdgeInsets.only(top: 20,left: 20,right: 20),
-        child: Text('main content',style: AppStyles.mediumStyle,),
+    return Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(r20),
+        color: AppColors.secondaryColor,
+      ),
+      margin: const EdgeInsets.only(top: 20,left: 20,right: 20),
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        children: [
+          Container(
+            height: 100,
+          ),
+          Container(
+            height: 200,
+            color: Colors.red,
+          ),
+          Container(
+            height: 300,
+          ),
+          Container(
+            height: 400,
+          ),
+        ],
       ),
     );
   }

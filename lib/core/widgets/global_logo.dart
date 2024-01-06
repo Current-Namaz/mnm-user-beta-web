@@ -9,8 +9,9 @@ class GlobalLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       child: Row(
+
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
          CommonImage.asset(AppImages.appForGroundLogo,height: 45,width: 40,),
          const SizedBox(width: 3,),

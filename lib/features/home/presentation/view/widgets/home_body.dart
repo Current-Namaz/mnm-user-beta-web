@@ -29,11 +29,12 @@ class HomeBody extends StatelessWidget {
             child:  const Column(
               children: [
                 HomeAppBar(title: AppStrings.dashboard),
-                Row(
-                  children: [
-                    Expanded(child: SingleChildScrollView(child: HomeContentView())),
-                  ],
-                )
+                Expanded(child: HomeContentView())
+                // Row(
+                //   children: [
+                //     Expanded(child: HomeContentView()),
+                //   ],
+                // )
               ],
             ),
           ),
