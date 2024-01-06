@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 
-import '../../../core/values/app_colors.dart';
+import '../../../../core/values/app_colors.dart';
 import 'login_body.dart';
 
 class AuthScreen extends StatelessWidget {
