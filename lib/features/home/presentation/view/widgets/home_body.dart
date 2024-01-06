@@ -27,8 +27,8 @@ class HomeBody extends StatelessWidget {
           flex: 9,
           child: Container(
             color: AppColors.primaryColor,
-            child:  const Column(
-              children: [
+            child:  ListView(
+              children: const [
                 HomeAppBar(title: AppStrings.dashboard),
                 Row(
                   children: [

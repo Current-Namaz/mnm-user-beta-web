@@ -17,6 +17,7 @@ class HomeContentView extends StatelessWidget {
         color: AppColors.secondaryColor,
       ),
       margin: const EdgeInsets.only(top: 20,left: 20,right: 20),
+      child: Text('data'),
     );
   }
 }
