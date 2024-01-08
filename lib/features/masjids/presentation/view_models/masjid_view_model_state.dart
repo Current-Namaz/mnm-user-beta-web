@@ -1,9 +1,7 @@
 part of 'masjid_view_model_cubit.dart';
 
 abstract class MasjidViewModelState extends Equatable {
-
   const MasjidViewModelState();
-
 }
 
 class MasjidViewModelInitial extends MasjidViewModelState {
@@ -11,7 +9,6 @@ class MasjidViewModelInitial extends MasjidViewModelState {
 
   @override
   List<Object> get props => [];
-
 }
 
 class MasjidViewModelCountryListLoading extends MasjidViewModelState {
@@ -34,15 +31,16 @@ class MasjidViewModelCountryErrorState extends MasjidViewModelState {
   final String message;
   final Function? onTryAgain;
 
-  const MasjidViewModelCountryErrorState({required this.message, this.onTryAgain});
+  const MasjidViewModelCountryErrorState(
+      {required this.message, this.onTryAgain});
 
   @override
   List<Object?> get props => [message, onTryAgain];
 }
 
 class MasjidViewModelStateListLoading extends MasjidViewModelState {
-
   final CountryEntity selectedCountry;
+
   const MasjidViewModelStateListLoading({required this.selectedCountry});
 
   @override
@@ -53,22 +51,54 @@ class MasjidViewModelStateListLoaded extends MasjidViewModelState {
   final List<StateEntity> stateList;
   final CountryEntity selectedCountry;
 
-  const MasjidViewModelStateListLoaded({required this.stateList,required this.selectedCountry});
+  const MasjidViewModelStateListLoaded(
+      {required this.stateList, required this.selectedCountry});
 
   @override
-  List<Object?> get props => [stateList,selectedCountry];
+  List<Object?> get props => [stateList, selectedCountry];
 }
 
-class MasjidViewModelStateListErrorState extends Equatable {
+class MasjidViewModelStateListErrorState extends MasjidViewModelState {
   final String message;
   final Function? onTryAgain;
 
-  const MasjidViewModelStateListErrorState({required this.message, this.onTryAgain});
+  const MasjidViewModelStateListErrorState(
+      {required this.message, this.onTryAgain});
 
   @override
   List<Object?> get props => [message, onTryAgain];
 }
 
+class MasjidViewModelCityListLoading extends MasjidViewModelState {
+  final StateEntity selectedState;
+
+  const MasjidViewModelCityListLoading({required this.selectedState});
+
+  @override
+  List<Object?> get props => [selectedState];
+}
+
+class MasjidViewModelCityListLoaded extends MasjidViewModelState {
+  final List<CityEntity> cityList;
+  final StateEntity selectedState;
+
+  const MasjidViewModelCityListLoaded(
+      {required this.cityList, required this.selectedState});
+
+  @override
+  List<Object?> get props => [cityList, selectedState];
+}
+
+class MasjidViewModelCityListErrorState extends MasjidViewModelState {
+  final String message;
+  final Function? onTryAgain;
+
+  const MasjidViewModelCityListErrorState(
+      {required this.message, this.onTryAgain});
+
+  @override
+  List<Object?> get props => [message, onTryAgain];
+}
 
 // class MasjidErrorState extends Equatable {
 //   final String message;

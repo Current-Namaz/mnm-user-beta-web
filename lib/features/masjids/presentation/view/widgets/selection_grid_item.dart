@@ -5,16 +5,16 @@ import 'package:mnm_internal_admin/core/widgets/text_with_tool_tip_widget.dart';
 
 import '../../../../../core/values/constants.dart';
 
-class SelectionGridItem extends StatefulWidget {
+class SelectionGridItem<T> extends StatefulWidget {
   const SelectionGridItem(
       {super.key,
       required this.isSelected,
-      required this.text,
-      required this.onTap});
+      required this.entity,
+      required this.onDoubleTap});
 
   final bool isSelected;
-  final String text;
-  final VoidCallback onTap;
+  final T entity;
+  final VoidCallback onDoubleTap;
 
   @override
   State<SelectionGridItem> createState() => _SelectionGridItemState();
@@ -26,7 +26,8 @@ class _SelectionGridItemState extends State<SelectionGridItem> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap: (){},
+      onDoubleTap: widget.onDoubleTap,
       child: MouseRegion(
         onHover: (_) {
           setState(() {
@@ -50,10 +51,10 @@ class _SelectionGridItemState extends State<SelectionGridItem> {
                     : AppColors.darkBlackColor,
           ),
           child: TextAutoTooltip(
-            text:widget.text,
+            text:widget.entity.name,
             toolTipBackColor: AppColors.textPrimary2Color,
             maxLines: 2,
-            tooltipText: widget.text,
+            tooltipText: widget.entity.name,
             textAlign: TextAlign.center,
             style: AppStyles.mediumStyle,
           ),

@@ -45,7 +45,7 @@ class MasjidsRemoteDataSourceImp implements MasjidsRemoteDataSource {
         type: RequestType.get,
         onSuccess: (response) {
           try {
-            final List<CityModel> cityList = response.data
+            final List<CityModel> cityList = response.data['Cities']
                 .map<CityModel>((city) => CityModel.fromJson(city))
                 .toList();
             dataSourceResult = DataSuccess(cityList);
@@ -97,11 +97,12 @@ class MasjidsRemoteDataSourceImp implements MasjidsRemoteDataSource {
         type: RequestType.get,
         onSuccess: (response) {
           try {
-            final List<StateModel> stateList = response.data
+            final List<StateModel> stateList = response.data['States']
                 .map<StateModel>((state) => StateModel.fromJson(state))
                 .toList();
             dataSourceResult = DataSuccess(stateList);
           } catch (e) {
+            networkClientSideError(response, response.realUri.path, e);
             dataSourceResult = DataFailed(DataSourceError());
           }
         },

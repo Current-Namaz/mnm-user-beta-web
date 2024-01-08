@@ -39,6 +39,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
   AreaEntity? selectedArea;
 
   Future<void> getCountryData() async {
+    _countryList.clear();
     emit(const MasjidViewModelCountryListLoading());
     final result = await getCountryListUseCase(NoParams());
     if (result is DataSuccess) {
@@ -49,20 +50,46 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     }
   }
 
-  Future<void> onCountryTap(CountryEntity countryEntity) async {
+  Future<void> onCountryDoubleTap(CountryEntity countryEntity) async {
     selectedCountry = countryEntity;
     _getStateData();
   }
 
   Future<void> _getStateData() async {
-    emit(const MasjidViewModelCountryListLoading());
+    _stateList.clear();
+    emit(MasjidViewModelStateListLoading(selectedCountry: selectedCountry!));
     final result =
         await getStateUseCase(StateParams(countryId: selectedCountry!.id));
     if (result is DataSuccess) {
       _stateList.addAll(result.data!.toList());
-      emit(MasjidViewModelStateListLoaded(stateList: _stateList,selectedCountry: selectedCountry!));
+      emit(MasjidViewModelStateListLoaded(
+          stateList: _stateList, selectedCountry: selectedCountry!));
     } else {
       emit(MasjidViewModelCountryErrorState(message: result.error!.message));
     }
   }
+
+  Future<void> onStateDoubleTap(StateEntity stateEntity) async {
+    selectedState = stateEntity;
+    _getCityData();
+  }
+
+  Future<void> _getCityData() async {
+    _cityList.clear();
+    emit(MasjidViewModelCityListLoading(selectedState: selectedState!));
+    final result =
+        await getCityListUseCase(CityParams(countryId: selectedCountry!.id,stateId: selectedState!.id));
+    if (result is DataSuccess) {
+      _cityList.addAll(result.data!.toList());
+      emit(MasjidViewModelCityListLoaded(
+          cityList: _cityList, selectedState: selectedState!));
+    } else {
+      emit(MasjidViewModelCityListErrorState(message: result.error!.message));
+    }
+  }
+  Future<void> onCityDoubleTap(CityEntity cityEntity) async {
+    selectedCity = cityEntity;
+    // _getCityData();
+  }
+
 }
