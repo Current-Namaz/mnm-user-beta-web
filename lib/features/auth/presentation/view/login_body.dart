@@ -5,7 +5,7 @@ import 'package:mnm_internal_admin/core/values/app_strings.dart';
 import 'package:mnm_internal_admin/core/values/app_styles.dart';
 import 'package:mnm_internal_admin/features/auth/presentation/view_model/auth_cubit.dart';
 
-import '../../../../core/common_domain/base_components/responsive_widget.dart';
+import '../../../../core/base_components/responsive_widget.dart';
 import '../../../../core/values/app_colors.dart';
 import '../../../../core/values/constants.dart';
 import '../../../../core/widgets/app_text_field.dart';

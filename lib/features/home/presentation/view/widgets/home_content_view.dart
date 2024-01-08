@@ -6,35 +6,26 @@ import '../../../../../core/values/constants.dart';
 
 
 class HomeContentView extends StatelessWidget {
-  const HomeContentView({super.key});
+  const HomeContentView({super.key, required this.child});
+
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(r20),
-        color: AppColors.secondaryColor,
-      ),
-      margin: const EdgeInsets.only(top: 20,left: 20,right: 20),
-      child: ListView(
-        scrollDirection: Axis.vertical,
-        children: [
-          Container(
-            height: 100,
+    return LayoutBuilder(
+      builder: (context,constraints) {
+        return Container(
+          // height: 100,
+          // alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(r20),
+            color: AppColors.secondaryColor,
           ),
-          Container(
-            height: 200,
-            color: Colors.red,
-          ),
-          Container(
-            height: 300,
-          ),
-          Container(
-            height: 400,
-          ),
-        ],
-      ),
+          margin: const EdgeInsets.only(top: 20,left: 20,right: 20),
+          child: child,
+          // child: GridView.builder(gridDelegate: gridDelegate, itemBuilder: itemBuilder)
+        );
+      }
     );
   }
 }
