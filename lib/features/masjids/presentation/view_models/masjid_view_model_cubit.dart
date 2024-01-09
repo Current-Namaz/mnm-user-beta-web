@@ -44,15 +44,18 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     final result = await getCountryListUseCase(NoParams());
     if (result is DataSuccess) {
       _countryList.addAll(result.data!.toList());
-      emit(MasjidViewModelCountryListLoaded(countryList: _countryList));
+      emit(MasjidViewModelCountryListLoaded(countryList: _countryList,selectedCountry: selectedCountry));
     } else {
       emit(MasjidViewModelCountryErrorState(message: result.error!.message));
     }
   }
 
   Future<void> onCountryDoubleTap(CountryEntity countryEntity) async {
+    print(countryEntity.name);
     selectedCountry = countryEntity;
-    _getStateData();
+    emit(const MasjidViewModelCountryListLoading());
+    emit(MasjidViewModelCountryListLoaded(countryList: _countryList, selectedCountry: selectedCountry));
+    // _getStateData();
   }
 
   Future<void> _getStateData() async {

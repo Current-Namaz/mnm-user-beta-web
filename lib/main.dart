@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mnm_internal_admin/core/base_components/drag_with_mouse_scroll_behavior.dart';
 import 'package:mnm_internal_admin/core/values/app_colors.dart';
 import 'package:mnm_internal_admin/di.dart';
 import 'package:mnm_internal_admin/features/auth/presentation/view_model/auth_cubit.dart';
@@ -33,6 +34,7 @@ class SalesManagingApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        scrollBehavior: DragWithMouseScrollBehavior(),
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
         initialRoute: AuthScreen.authScreenRoute,

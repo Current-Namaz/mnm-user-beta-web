@@ -38,7 +38,7 @@ class HomeBody extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // HomeAppBar(title: state.appBarTitle),
+                    HomeAppBar(title: state.appBarTitle),
                     Expanded(
                         child: HomeContentView(
                       child: (() {

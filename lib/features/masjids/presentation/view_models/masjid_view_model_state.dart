@@ -20,8 +20,9 @@ class MasjidViewModelCountryListLoading extends MasjidViewModelState {
 
 class MasjidViewModelCountryListLoaded extends MasjidViewModelState {
   final List<CountryEntity> countryList;
+  final CountryEntity? selectedCountry;
 
-  const MasjidViewModelCountryListLoaded({required this.countryList});
+  const MasjidViewModelCountryListLoaded({required this.countryList,required this.selectedCountry});
 
   @override
   List<Object?> get props => [countryList];
