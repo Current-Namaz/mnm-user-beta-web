@@ -6,8 +6,11 @@ import 'package:mnm_internal_admin/core/values/app_styles.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/city.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/country.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/state.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/city_listing_view.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/country_listing_view.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/masjid_location_item_Loading_view.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/masjid_location_item_view.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/state_listing_view.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view_models/masjid_view_model_cubit.dart';
 
 import '../../../../core/values/constants.dart';
@@ -43,50 +46,12 @@ class MasjidMainView extends StatelessWidget {
           Expanded(
             child: ListView(
               scrollDirection: Axis.horizontal,
-              children: [
-                BlocBuilder<MasjidViewModelCubit, MasjidViewModelState>(
-                  builder: (context, state) {
-                    kDebugPrint(state.toString());
-                    if (state is MasjidViewModelCountryListLoaded) {
-                      return Container(
-                        padding: const EdgeInsets.all(20),
-                        width: 300,
-                        child: ListView.builder(
-                          itemCount: state.countryList.length,
-                          itemBuilder: (context, index) {
-                            return MasjidLocationItemView(isSelected: state.selectedCountry == state.countryList[index],
-                              entity: state.countryList[index],
-                              onDoubleTap: () => BlocProvider.of<MasjidViewModelCubit>(context).onCountryDoubleTap(state.countryList[index]),);
-                          },
-                        ),
-                      );
-                    }
-                    return const SizedBox(width: 10,);
-                  },
-                ),
-                const SizedBox(width: 10,),
-                Container(
-                  color: AppColors.greenColor,
-                  height: 100,
-                  width: 300,
-                ),
-                const SizedBox(width: 10,),
-                Container(
-                  color: AppColors.textFieldBgColor,
-                  height: 70,
-                  width: 300,
-                ),
-                Container(
-                  color: AppColors.greenColor,
-                  height: 100,
-                  width: 300,
-                ),
-                const SizedBox(width: 10,),
-                Container(
-                  color: AppColors.textFieldBgColor,
-                  height: 100,
-                  width: 300,
-                ),
+              children: const [
+                CountryListingView(),
+                StateListingView(),
+                CityListingView(),
+                // CountryListingView(),
+                // CountryListingView(),
                 // Expanded(
                 //   child:
                 //       BlocBuilder<MasjidViewModelCubit, MasjidViewModelState>(

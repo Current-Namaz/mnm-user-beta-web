@@ -77,6 +77,12 @@ class _MasjidLocationItemViewState extends State<MasjidLocationItemView> {
                   style: AppStyles.mediumStyle,
                 ),
               ),
+               Align(
+                  alignment: Alignment.centerRight,
+                  child: AnimatedSwitcher(duration: const Duration(milliseconds: 500),
+                  child: widget.isSelected ? const Icon(Icons.navigate_next,color: AppColors.white,size: 20,):SizedBox.shrink(),
+
+                  ),)
             ],
           ),
         ),

@@ -25,7 +25,7 @@ class MasjidViewModelCountryListLoaded extends MasjidViewModelState {
   const MasjidViewModelCountryListLoaded({required this.countryList,required this.selectedCountry});
 
   @override
-  List<Object?> get props => [countryList];
+  List<Object?> get props => [countryList,selectedCountry];
 }
 
 class MasjidViewModelCountryErrorState extends MasjidViewModelState {
@@ -50,13 +50,14 @@ class MasjidViewModelStateListLoading extends MasjidViewModelState {
 
 class MasjidViewModelStateListLoaded extends MasjidViewModelState {
   final List<StateEntity> stateList;
-  final CountryEntity selectedCountry;
+  final StateEntity? selectedState;
+  final CountryEntity? selectedCountry;
 
   const MasjidViewModelStateListLoaded(
-      {required this.stateList, required this.selectedCountry});
+      {required this.stateList, required this.selectedCountry,this.selectedState});
 
   @override
-  List<Object?> get props => [stateList, selectedCountry];
+  List<Object?> get props => [stateList, selectedState,selectedCountry];
 }
 
 class MasjidViewModelStateListErrorState extends MasjidViewModelState {
@@ -82,12 +83,14 @@ class MasjidViewModelCityListLoading extends MasjidViewModelState {
 class MasjidViewModelCityListLoaded extends MasjidViewModelState {
   final List<CityEntity> cityList;
   final StateEntity selectedState;
+  final CountryEntity selectedCountry;
+  final CityEntity? selectedCity;
 
   const MasjidViewModelCityListLoaded(
-      {required this.cityList, required this.selectedState});
+      {required this.cityList, required this.selectedState,this.selectedCity,required this.selectedCountry});
 
   @override
-  List<Object?> get props => [cityList, selectedState];
+  List<Object?> get props => [cityList, selectedState,selectedCity];
 }
 
 class MasjidViewModelCityListErrorState extends MasjidViewModelState {

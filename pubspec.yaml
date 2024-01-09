@@ -44,6 +44,7 @@ dependencies:
   flutter_svg: ^2.0.9
   get_it: ^7.6.6
   connectivity_plus: ^5.0.2
+  shimmer: ^3.0.0
 
 
 

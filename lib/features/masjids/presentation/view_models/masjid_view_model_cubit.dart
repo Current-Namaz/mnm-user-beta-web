@@ -40,59 +40,82 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
 
   Future<void> getCountryData() async {
     _countryList.clear();
+    _stateList.clear();
+    _cityList.clear();
+    selectedCity = null;
+    selectedCountry = null;
+    selectedState = null;
     emit(const MasjidViewModelCountryListLoading());
     final result = await getCountryListUseCase(NoParams());
     if (result is DataSuccess) {
       _countryList.addAll(result.data!.toList());
-      emit(MasjidViewModelCountryListLoaded(countryList: _countryList,selectedCountry: selectedCountry));
+      emit(MasjidViewModelCountryListLoaded(
+          countryList: _countryList, selectedCountry: selectedCountry));
     } else {
       emit(MasjidViewModelCountryErrorState(message: result.error!.message));
     }
   }
 
   Future<void> onCountryDoubleTap(CountryEntity countryEntity) async {
-    print(countryEntity.name);
     selectedCountry = countryEntity;
-    emit(const MasjidViewModelCountryListLoading());
-    emit(MasjidViewModelCountryListLoaded(countryList: _countryList, selectedCountry: selectedCountry));
-    // _getStateData();
+    emit(MasjidViewModelCountryListLoaded(
+        countryList: _countryList, selectedCountry: selectedCountry));
+    _getStateData();
   }
 
   Future<void> _getStateData() async {
     _stateList.clear();
+    _cityList.clear();
+    selectedState = null;
     emit(MasjidViewModelStateListLoading(selectedCountry: selectedCountry!));
     final result =
         await getStateUseCase(StateParams(countryId: selectedCountry!.id));
     if (result is DataSuccess) {
       _stateList.addAll(result.data!.toList());
       emit(MasjidViewModelStateListLoaded(
-          stateList: _stateList, selectedCountry: selectedCountry!));
+          stateList: _stateList,
+          selectedCountry: selectedCountry!,
+          selectedState: selectedState));
     } else {
-      emit(MasjidViewModelCountryErrorState(message: result.error!.message));
+      emit(MasjidViewModelStateListErrorState(message: result.error!.message));
     }
   }
 
   Future<void> onStateDoubleTap(StateEntity stateEntity) async {
     selectedState = stateEntity;
+    emit(MasjidViewModelStateListLoaded(
+        stateList: _stateList,
+        selectedCountry: selectedCountry!,
+        selectedState: selectedState));
     _getCityData();
   }
 
   Future<void> _getCityData() async {
     _cityList.clear();
     emit(MasjidViewModelCityListLoading(selectedState: selectedState!));
-    final result =
-        await getCityListUseCase(CityParams(countryId: selectedCountry!.id,stateId: selectedState!.id));
+    final result = await getCityListUseCase(
+        CityParams(countryId: selectedCountry!.id, stateId: selectedState!.id));
     if (result is DataSuccess) {
       _cityList.addAll(result.data!.toList());
       emit(MasjidViewModelCityListLoaded(
-          cityList: _cityList, selectedState: selectedState!));
+        cityList: _cityList,
+        selectedState: selectedState!,
+        selectedCity: selectedCity,
+        selectedCountry: selectedCountry!,
+      ));
     } else {
       emit(MasjidViewModelCityListErrorState(message: result.error!.message));
     }
   }
+
   Future<void> onCityDoubleTap(CityEntity cityEntity) async {
     selectedCity = cityEntity;
+    emit(MasjidViewModelCityListLoaded(
+      cityList: _cityList,
+      selectedState: selectedState!,
+      selectedCity: selectedCity,
+      selectedCountry: selectedCountry!,
+    ));
     // _getCityData();
   }
-
 }

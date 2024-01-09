@@ -41,6 +41,8 @@ class SalesManagingApp extends StatelessWidget {
         onGenerateRoute: AppRoutes.onGeneratedRoutes,
         theme: ThemeData(
           fontFamily: 'Manrope',
+          scrollbarTheme: ScrollbarThemeData().copyWith(
+              thumbColor: MaterialStateProperty.all(AppColors.white)),
           scaffoldBackgroundColor: AppColors.primaryColor,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
