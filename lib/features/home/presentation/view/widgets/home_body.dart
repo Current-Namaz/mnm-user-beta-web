@@ -18,7 +18,7 @@ class HomeBody extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 280,
+          width: 200,
           padding: const EdgeInsets.only(top: 20, left: 12, right: 12),
           decoration: const BoxDecoration(
             color: AppColors.darkBlackColor,
@@ -38,7 +38,7 @@ class HomeBody extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    HomeAppBar(title: state.appBarTitle),
+                    // HomeAppBar(title: state.appBarTitle),
                     Expanded(
                         child: HomeContentView(
                       child: (() {

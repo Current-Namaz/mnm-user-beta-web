@@ -15,11 +15,11 @@ class MasjidsRemoteDataSourceImp implements MasjidsRemoteDataSource {
       String countryId, String stateId, String cityId) async {
     DataSourceResult<List<AreaModel>>? dataSourceResult;
     await ApiHandler.sendRequest(
-        endPoint: '${ApiUrls.getCities}$countryId/$stateId',
+        endPoint: '${ApiUrls.getAreas}$countryId/$stateId/$cityId',
         type: RequestType.get,
         onSuccess: (response) {
           try {
-            final List<AreaModel> areaList = response.data
+            final List<AreaModel> areaList = response.data['Areas']
                 .map<AreaModel>((area) => AreaModel.fromJson(area))
                 .toList();
             dataSourceResult = DataSuccess(areaList);

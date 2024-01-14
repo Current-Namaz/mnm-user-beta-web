@@ -4,7 +4,9 @@ import 'package:mnm_internal_admin/core/values/app_colors.dart';
 import 'package:mnm_internal_admin/core/values/app_styles.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/masjid_location_item_Loading_view.dart';
 
+import '../../../../../core/values/app_strings.dart';
 import '../../../../../core/values/constants.dart';
+import '../../../../../core/widgets/common_button.dart';
 import '../../view_models/masjid_view_model_cubit.dart';
 import 'masjid_location_item_view.dart';
 
@@ -23,35 +25,25 @@ class StateListingView extends StatelessWidget {
       width: 300,
       height: double.infinity,
       child: Column(
-
         children: [
           Container(
-              alignment: Alignment.center,
-              width: double.infinity,
-              padding: const EdgeInsets.all(8),
-              margin: const EdgeInsets.only(bottom: 5),
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(topRight: Radius.circular(r12),topLeft: Radius.circular(r12)),
-                  color: AppColors.greenColor
-              ),
-              child: const Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Spacer(),
-                      Text('States',style: TextStyle(fontSize: 16,color: AppColors.textPrimary2Color,fontWeight: FontWeight.w500),),
-                      Spacer(),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: AnimatedSwitcher(duration: const Duration(milliseconds: 500),
-                          child: const Icon(Icons.add_box_rounded,color: AppColors.white,size: 20,),
-
-                        ),)
-                    ],
-                  ),
-                ],
-              )),
+            alignment: Alignment.center,
+            width: double.infinity,
+            padding: const EdgeInsets.all(8),
+            margin: const EdgeInsets.only(bottom: 5),
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(r12),
+                    topLeft: Radius.circular(r12)),
+                color: AppColors.greenColor),
+            child: const Text(
+              'States',
+              style: TextStyle(
+                  fontSize: 16,
+                  color: AppColors.textPrimary2Color,
+                  fontWeight: FontWeight.w500),
+            ),
+          ),
           Expanded(
             child: BlocBuilder<MasjidViewModelCubit, MasjidViewModelState>(
               buildWhen: (oldState, newState) =>
@@ -67,8 +59,12 @@ class StateListingView extends StatelessWidget {
                       });
                 }
 
-                if(state is MasjidViewModelStateListErrorState){
-                  return Center(child: Text(state.message,style: AppStyles.mediumStyle,));
+                if (state is MasjidViewModelStateListErrorState) {
+                  return Center(
+                      child: Text(
+                    state.message,
+                    style: AppStyles.mediumStyle,
+                  ));
                 }
 
                 if (state is MasjidViewModelStateListLoaded) {
@@ -76,21 +72,34 @@ class StateListingView extends StatelessWidget {
                     itemCount: state.stateList.length,
                     itemBuilder: (context, index) {
                       return MasjidLocationItemView(
-                        isSelected: state.selectedState == state.stateList[index],
+                        isSelected:
+                            state.selectedState == state.stateList[index],
                         entity: state.stateList[index],
-                        onDoubleTap: () =>
+                          onDoubleTap:(){},
+                        onTap: () =>
                             BlocProvider.of<MasjidViewModelCubit>(context)
-                                .onStateDoubleTap(state.stateList[index]),
+                                .onStateTap(state.stateList[index]),
                       );
                     },
                   );
                 }
                 return const Center(
-                  child: Text('Select country',style: AppStyles.mediumStyle,),
+                  child: Text(
+                    'Select country',
+                    style: AppStyles.mediumStyle,
+                  ),
                 );
               },
             ),
           ),
+          CommonButton(
+            height: 35,
+            radius: const BorderRadius.only(
+                bottomRight: Radius.circular(r12),
+                bottomLeft: Radius.circular(r12)),
+            onTap: () {},
+            text: AppStrings.addState,
+          )
         ],
       ),
     );

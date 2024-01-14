@@ -4,7 +4,9 @@ import 'package:mnm_internal_admin/core/values/app_colors.dart';
 import 'package:mnm_internal_admin/core/values/app_styles.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/masjid_location_item_Loading_view.dart';
 
+import '../../../../../core/values/app_strings.dart';
 import '../../../../../core/values/constants.dart';
+import '../../../../../core/widgets/common_button.dart';
 import '../../view_models/masjid_view_model_cubit.dart';
 import 'masjid_location_item_view.dart';
 
@@ -26,23 +28,32 @@ class CityListingView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            alignment: Alignment.center,
-            width: double.infinity,
+              alignment: Alignment.center,
+              width: double.infinity,
               padding: const EdgeInsets.all(8),
               margin: const EdgeInsets.only(bottom: 5),
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(topRight: Radius.circular(r12),topLeft: Radius.circular(r12)),
-                color: AppColors.greenColor
-              ),
-              child: const Text('Cities',style: TextStyle(fontSize: 16,color: AppColors.textPrimary2Color,fontWeight: FontWeight.w500),)),
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(r12),
+                      topLeft: Radius.circular(r12)),
+                  color: AppColors.greenColor),
+              child: const Text(
+                'Cities',
+                style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.textPrimary2Color,
+                    fontWeight: FontWeight.w500),
+              )),
           Expanded(
             child: BlocBuilder<MasjidViewModelCubit, MasjidViewModelState>(
-              buildWhen: (oldState, newState) =>
-              newState is MasjidViewModelCityListLoaded ||
-                  newState is MasjidViewModelCityListLoading ||
-                  newState is MasjidViewModelCityListErrorState,
+              buildWhen: (oldState, newState) {
+                return newState is MasjidViewModelCityListLoaded ||
+                    newState is MasjidViewModelCityListLoading ||
+                    newState is MasjidViewModelCityListErrorState ||
+                    newState is MasjidViewModelCountryListLoading ||
+                    newState is MasjidViewModelCountryListLoaded;
+              },
               builder: (context, state) {
-                print('build');
                 if (state is MasjidViewModelCityListLoading) {
                   return ListView.builder(
                       itemCount: 20,
@@ -50,27 +61,56 @@ class CityListingView extends StatelessWidget {
                         return const MasjidLocationLoadingView();
                       });
                 }
+
+                if (state is MasjidViewModelCityListErrorState) {
+                  return Center(
+                      child: Text(
+                    state.message,
+                    style: AppStyles.mediumStyle,
+                  ));
+                }
+
                 if (state is MasjidViewModelCityListLoaded) {
-                  print(state.selectedCity);
                   return ListView.builder(
                     itemCount: state.cityList.length,
                     itemBuilder: (context, index) {
                       return MasjidLocationItemView(
+                        onDoubleTap: (){},
                         isSelected: state.selectedCity == state.cityList[index],
                         entity: state.cityList[index],
-                        onDoubleTap: () =>
+                        onTap: () =>
                             BlocProvider.of<MasjidViewModelCubit>(context)
-                                .onCityDoubleTap(state.cityList[index]),
+                                .onCityTap(state.cityList[index]),
                       );
                     },
                   );
                 }
+                if (state is MasjidViewModelCountryListLoaded ||
+                    state is MasjidViewModelCountryListLoading) {
+                  return const Center(
+                    child: Text(
+                      'Select State',
+                      style: AppStyles.mediumStyle,
+                    ),
+                  );
+                }
                 return const Center(
-                  child: Text('Select State',style: AppStyles.mediumStyle,),
+                  child: Text(
+                    'Select State',
+                    style: AppStyles.mediumStyle,
+                  ),
                 );
               },
             ),
           ),
+          CommonButton(
+            height: 35,
+            radius: const BorderRadius.only(
+                bottomRight: Radius.circular(r12),
+                bottomLeft: Radius.circular(r12)),
+            onTap: () {},
+            text: AppStrings.addCity,
+          )
         ],
       ),
     );

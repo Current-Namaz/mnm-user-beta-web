@@ -5,7 +5,7 @@ import '../values/app_styles.dart';
 import '../values/constants.dart';
 
 class CommonButton extends StatelessWidget {
-  const CommonButton({super.key, required this.onTap, this.lableText, required this.text, this.height, this.leftMargin, this.rightMargin, this.topMargin, this.bottomMargin, this.backgroundColor, this.radius});
+  const CommonButton({super.key, required this.onTap, this.lableText, required this.text, this.height, this.leftMargin, this.rightMargin, this.topMargin, this.bottomMargin, this.backgroundColor, this.radius, this.splashColor});
   
   final VoidCallback onTap;
   final String? lableText;
@@ -16,17 +16,18 @@ class CommonButton extends StatelessWidget {
   final double? topMargin;
   final double? bottomMargin;
   final Color? backgroundColor;
-  final double? radius;
+  final Color? splashColor;
+  final BorderRadius? radius;
 
   @override
   Widget build(BuildContext context) {
     return  ClipRRect(
-      borderRadius: BorderRadius.circular(radius ?? r8),
+      borderRadius: radius ?? BorderRadius.circular(r8),
       child: Material(
-        borderRadius: BorderRadius.circular(radius ?? r8),
-        color: backgroundColor ?? AppColors.greenColor,
+        borderRadius: radius ?? BorderRadius.circular(r8),
+        color: backgroundColor ?? AppColors.lightGreen,
         child: InkWell(
-          splashColor: Colors.red,
+          splashColor: splashColor ?? AppColors.lightGreen,
           onTap: onTap,
           child: Container(
             height: height ?? 48,
