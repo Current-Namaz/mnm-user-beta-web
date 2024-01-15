@@ -44,8 +44,9 @@ class _MasjidLocationItemViewState extends State<MasjidLocationItemView> {
         GestureDetector(
           onTap: widget.onTap,
           onDoubleTap: () {
-            isExpaned = !isExpaned;
-            setState(() {});
+            widget.onDoubleTap();
+            // isExpaned = !isExpaned;
+            // setState(() {});
           },
           child: MouseRegion(
             onHover: (_) {

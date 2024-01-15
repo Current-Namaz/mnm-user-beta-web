@@ -21,7 +21,7 @@ class AreaModel extends DataMapper<AreaEntity> {
   });
 
   AreaModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['_id'];
     name = json['name'];
     countryId = json['country_id'];
     stateId = json['state_id'];

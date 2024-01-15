@@ -7,9 +7,11 @@ class CountryEntity extends Equatable {
   final String iso2;
   final String latitude;
   final String longitude;
+  final int numOfTimezones;
 
   const CountryEntity({
     required this.id,
+    required this.numOfTimezones,
     required this.name,
     required this.iso3,
     required this.iso2,

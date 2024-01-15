@@ -16,17 +16,15 @@ class CityListingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(r16),
-        color: AppColors.darkBlackColor2,
-      ),
-      width: 300,
-      height: double.infinity,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(r16),
+          color: AppColors.darkBlackColor2,
+        ),
+        width: 300,
+        height: double.infinity,
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(
               alignment: Alignment.center,
               width: double.infinity,
@@ -51,7 +49,8 @@ class CityListingView extends StatelessWidget {
                     newState is MasjidViewModelCityListLoading ||
                     newState is MasjidViewModelCityListErrorState ||
                     newState is MasjidViewModelCountryListLoading ||
-                    newState is MasjidViewModelCountryListLoaded;
+                    newState is MasjidViewModelCountryListLoaded ||
+                    newState is MasjidViewModelCityDataUpdateState;
               },
               builder: (context, state) {
                 if (state is MasjidViewModelCityListLoading) {
@@ -70,12 +69,45 @@ class CityListingView extends StatelessWidget {
                   ));
                 }
 
-                if (state is MasjidViewModelCityListLoaded) {
+                if (state is MasjidViewModelCityDataUpdateState) {
+                  if (state.cityList.isEmpty) {
+                    return Center(
+                        child: Text(
+                      AppStrings.emptyDataMessage(AppStrings.cities),
+                      style: AppStyles.mediumStyle,
+                    ));
+                  }
+
                   return ListView.builder(
                     itemCount: state.cityList.length,
                     itemBuilder: (context, index) {
                       return MasjidLocationItemView(
-                        onDoubleTap: (){},
+                        onDoubleTap: () =>   BlocProvider.of<MasjidViewModelCubit>(context)
+                            .onCityDoubleTap(state.cityList[index],context),
+                        isSelected: state.selectedCity == state.cityList[index],
+                        entity: state.cityList[index],
+                        onTap: () =>
+                            BlocProvider.of<MasjidViewModelCubit>(context)
+                                .onCityTap(state.cityList[index]),
+                      );
+                    },
+                  );
+                }
+                if (state is MasjidViewModelCityListLoaded) {
+                  if (state.cityList.isEmpty) {
+                    return Center(
+                        child: Text(
+                      AppStrings.emptyDataMessage(AppStrings.cities),
+                      style: AppStyles.mediumStyle,
+                    ));
+                  }
+
+                  return ListView.builder(
+                    itemCount: state.cityList.length,
+                    itemBuilder: (context, index) {
+                      return MasjidLocationItemView(
+                        onDoubleTap: () =>   BlocProvider.of<MasjidViewModelCubit>(context)
+                            .onCityDoubleTap(state.cityList[index],context),
                         isSelected: state.selectedCity == state.cityList[index],
                         entity: state.cityList[index],
                         onTap: () =>
@@ -103,16 +135,37 @@ class CityListingView extends StatelessWidget {
               },
             ),
           ),
-          CommonButton(
-            height: 35,
-            radius: const BorderRadius.only(
-                bottomRight: Radius.circular(r12),
-                bottomLeft: Radius.circular(r12)),
-            onTap: () {},
-            text: AppStrings.addCity,
+          BlocBuilder<MasjidViewModelCubit, MasjidViewModelState>(
+            buildWhen: (oldState, newState) =>
+                newState is MasjidViewModelCityListLoaded ||
+                newState is MasjidViewModelCountryListLoading ||
+                newState is MasjidViewModelCountryListLoaded ||
+                newState is MasjidViewModelStateListLoading ||
+                newState is MasjidViewModelStateListLoaded,
+            builder: (context, state) {
+              if (state is MasjidViewModelCityListLoaded) {
+                return CommonButton(
+                  height: 35,
+                  radius: const BorderRadius.only(
+                      bottomRight: Radius.circular(r12),
+                      bottomLeft: Radius.circular(r12)),
+                  onTap: () => BlocProvider.of<MasjidViewModelCubit>(context)
+                      .onAddNewCityButtonTap(context),
+                  text: AppStrings.addCity,
+                );
+              }
+
+              return CommonButton(
+                height: 35,
+                isDisabled: true,
+                radius: const BorderRadius.only(
+                    bottomRight: Radius.circular(r12),
+                    bottomLeft: Radius.circular(r12)),
+                onTap: () {},
+                text: AppStrings.addCity,
+              );
+            },
           )
-        ],
-      ),
-    );
+        ]));
   }
 }

@@ -49,7 +49,8 @@ class StateListingView extends StatelessWidget {
               buildWhen: (oldState, newState) =>
                   newState is MasjidViewModelStateListLoaded ||
                   newState is MasjidViewModelStateListLoading ||
-                  newState is MasjidViewModelStateListErrorState,
+                  newState is MasjidViewModelStateListErrorState ||
+                  newState is MasjidViewModelStateDataUpdateState,
               builder: (context, state) {
                 if (state is MasjidViewModelStateListLoading) {
                   return ListView.builder(
@@ -67,7 +68,41 @@ class StateListingView extends StatelessWidget {
                   ));
                 }
 
+                if (state is MasjidViewModelStateDataUpdateState) {
+                  if (state.stateList.isEmpty) {
+                    return Center(
+                        child: Text(
+                          AppStrings.emptyDataMessage(AppStrings.states),
+                          style: AppStyles.mediumStyle,
+                        ));
+                  }
+                  return ListView.builder(
+                    itemCount: state.stateList.length,
+                    itemBuilder: (context, index) {
+                      return MasjidLocationItemView(
+                        isSelected:
+                        state.selectedState == state.stateList[index],
+                        entity: state.stateList[index],
+                        onDoubleTap: () =>
+                            BlocProvider.of<MasjidViewModelCubit>(context)
+                                .onStateDoubleTap(
+                                state.stateList[index], context),
+                        onTap: () =>
+                            BlocProvider.of<MasjidViewModelCubit>(context)
+                                .onStateTap(state.stateList[index]),
+                      );
+                    },
+                  );
+                }
+
                 if (state is MasjidViewModelStateListLoaded) {
+                  if (state.stateList.isEmpty) {
+                    return Center(
+                        child: Text(
+                      AppStrings.emptyDataMessage(AppStrings.states),
+                      style: AppStyles.mediumStyle,
+                    ));
+                  }
                   return ListView.builder(
                     itemCount: state.stateList.length,
                     itemBuilder: (context, index) {
@@ -75,7 +110,10 @@ class StateListingView extends StatelessWidget {
                         isSelected:
                             state.selectedState == state.stateList[index],
                         entity: state.stateList[index],
-                          onDoubleTap:(){},
+                        onDoubleTap: () =>
+                            BlocProvider.of<MasjidViewModelCubit>(context)
+                                .onStateDoubleTap(
+                                    state.stateList[index], context),
                         onTap: () =>
                             BlocProvider.of<MasjidViewModelCubit>(context)
                                 .onStateTap(state.stateList[index]),
@@ -92,13 +130,34 @@ class StateListingView extends StatelessWidget {
               },
             ),
           ),
-          CommonButton(
-            height: 35,
-            radius: const BorderRadius.only(
-                bottomRight: Radius.circular(r12),
-                bottomLeft: Radius.circular(r12)),
-            onTap: () {},
-            text: AppStrings.addState,
+          BlocBuilder<MasjidViewModelCubit, MasjidViewModelState>(
+            buildWhen: (oldState, newState) =>
+                newState is MasjidViewModelStateListLoaded ||
+                newState is MasjidViewModelCountryListLoading ||
+                newState is MasjidViewModelCountryListLoaded,
+            builder: (context, state) {
+              if (state is MasjidViewModelStateListLoaded) {
+                return CommonButton(
+                  height: 35,
+                  radius: const BorderRadius.only(
+                      bottomRight: Radius.circular(r12),
+                      bottomLeft: Radius.circular(r12)),
+                  onTap: () => BlocProvider.of<MasjidViewModelCubit>(context)
+                      .onAddNewStateButtonTap(context),
+                  text: AppStrings.addState,
+                );
+              }
+
+              return CommonButton(
+                height: 35,
+                isDisabled: true,
+                radius: const BorderRadius.only(
+                    bottomRight: Radius.circular(r12),
+                    bottomLeft: Radius.circular(r12)),
+                onTap: () {},
+                text: AppStrings.addState,
+              );
+            },
           )
         ],
       ),

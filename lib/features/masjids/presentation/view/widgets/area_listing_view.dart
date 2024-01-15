@@ -53,7 +53,8 @@ class AreaListingView extends StatelessWidget {
                   newState is MasjidViewModelCountryListLoading ||
                   newState is MasjidViewModelCountryListLoaded ||
                   newState is MasjidViewModelStateListLoading ||
-                  newState is MasjidViewModelStateListLoaded,
+                  newState is MasjidViewModelStateListLoaded ||
+                  newState is MasjidViewModelAreaDataUpdateState,
               builder: (context, state) {
                 if (state is MasjidViewModelAreaListLoading) {
                   return ListView.builder(
@@ -70,14 +71,46 @@ class AreaListingView extends StatelessWidget {
                     style: AppStyles.mediumStyle,
                   ));
                 }
-                if (state is MasjidViewModelAreaListLoaded) {
+
+                if (state is MasjidViewModelAreaDataUpdateState) {
+                  if (state.areaList.isEmpty) {
+                    return Center(
+                        child: Text(
+                          AppStrings.emptyDataMessage(AppStrings.areas),
+                          style: AppStyles.mediumStyle,
+                        ));
+                  }
                   return ListView.builder(
                     itemCount: state.areaList.length,
                     itemBuilder: (context, index) {
                       return MasjidLocationItemView(
                         isSelected: state.selectedArea == state.areaList[index],
                         entity: state.areaList[index],
-                        onDoubleTap: (){},
+                        onDoubleTap: () =>   BlocProvider.of<MasjidViewModelCubit>(context)
+                            .onAreaDoubleTap(state.areaList[index],context),
+                        onTap: () =>
+                            BlocProvider.of<MasjidViewModelCubit>(context)
+                                .onAreaTap(state.areaList[index]),
+                      );
+                    },
+                  );
+                }
+                if (state is MasjidViewModelAreaListLoaded) {
+                  if (state.areaList.isEmpty) {
+                    return Center(
+                        child: Text(
+                      AppStrings.emptyDataMessage(AppStrings.areas),
+                      style: AppStyles.mediumStyle,
+                    ));
+                  }
+                  return ListView.builder(
+                    itemCount: state.areaList.length,
+                    itemBuilder: (context, index) {
+                      return MasjidLocationItemView(
+                        isSelected: state.selectedArea == state.areaList[index],
+                        entity: state.areaList[index],
+                        onDoubleTap: () =>   BlocProvider.of<MasjidViewModelCubit>(context)
+                            .onAreaDoubleTap(state.areaList[index],context),
                         onTap: () =>
                             BlocProvider.of<MasjidViewModelCubit>(context)
                                 .onAreaTap(state.areaList[index]),
@@ -94,13 +127,38 @@ class AreaListingView extends StatelessWidget {
               },
             ),
           ),
-          CommonButton(
-            height: 35,
-            radius: const BorderRadius.only(
-                bottomRight: Radius.circular(r12),
-                bottomLeft: Radius.circular(r12)),
-            onTap: () {},
-            text: AppStrings.addArea,
+          BlocBuilder<MasjidViewModelCubit, MasjidViewModelState>(
+            buildWhen: (oldState, newState) =>
+                newState is MasjidViewModelAreaListLoaded ||
+                newState is MasjidViewModelCityListLoaded ||
+                newState is MasjidViewModelCityListLoading ||
+                newState is MasjidViewModelCountryListLoading ||
+                newState is MasjidViewModelCountryListLoaded ||
+                newState is MasjidViewModelStateListLoading ||
+                newState is MasjidViewModelStateListLoaded,
+            builder: (context, state) {
+              if (state is MasjidViewModelAreaListLoaded) {
+                return CommonButton(
+                  height: 35,
+                  radius: const BorderRadius.only(
+                      bottomRight: Radius.circular(r12),
+                      bottomLeft: Radius.circular(r12)),
+                  onTap: () => BlocProvider.of<MasjidViewModelCubit>(context)
+                      .onAddNewAreaButtonTap(context),
+                  text: AppStrings.addArea,
+                );
+              }
+
+              return CommonButton(
+                height: 35,
+                isDisabled: true,
+                radius: const BorderRadius.only(
+                    bottomRight: Radius.circular(r12),
+                    bottomLeft: Radius.circular(r12)),
+                onTap: () {},
+                text: AppStrings.addArea,
+              );
+            },
           )
         ],
       ),

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-void kDebugPrint(String data) {
+void kDebugPrint(data) {
   if (kDebugMode) {
     print(data);
   }

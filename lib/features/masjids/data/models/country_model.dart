@@ -8,6 +8,7 @@ class CountryModel extends DataMapper<CountryEntity> {
   String? iso2;
   String? latitude;
   String? longitude;
+  int? numOfTimezones;
 
   CountryModel({
     this.id,
@@ -16,25 +17,28 @@ class CountryModel extends DataMapper<CountryEntity> {
     this.iso2,
     this.latitude,
     this.longitude,
+    this.numOfTimezones
   });
 
   CountryModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['_id'];
     name = json['name'];
     iso3 = json['iso3'];
     iso2 = json['iso2'];
     latitude = json['latitude'];
     longitude = json['longitude'];
+    numOfTimezones = json['num_of_timezones'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
+    data['_id'] = id;
     data['name'] = name;
     data['iso3'] = iso3;
     data['iso2'] = iso2;
     data['latitude'] = latitude;
     data['longitude'] = longitude;
+    data['num_of_timezones'] = numOfTimezones;
     return data;
   }
 
@@ -47,6 +51,7 @@ class CountryModel extends DataMapper<CountryEntity> {
       iso2: iso2 ?? 'empty',
       latitude: latitude ?? 'empty',
       longitude: longitude ?? 'empty',
+      numOfTimezones: numOfTimezones ?? 0,
     );
   }
 }

@@ -33,7 +33,7 @@ class MasjidsRepositoryImp extends MasjidsRepository {
       String countryId, String stateId) async {
     try {
       final result =
-      await masjidsRemoteDataSource.getCities(countryId, stateId);
+          await masjidsRemoteDataSource.getCities(countryId, stateId);
       if (result is DataSuccess && result.data != null) {
         return DataSuccess(result.data!.map((e) => e.mapToEntity()).toList());
       } else {
@@ -47,8 +47,7 @@ class MasjidsRepositoryImp extends MasjidsRepository {
   @override
   Future<DataSourceResult<List<CountryEntity>>> getCountries() async {
     try {
-      final result =
-      await masjidsRemoteDataSource.getCountries();
+      final result = await masjidsRemoteDataSource.getCountries();
       if (result is DataSuccess && result.data != null) {
         return DataSuccess(result.data!.map((e) => e.mapToEntity()).toList());
       } else {
@@ -60,14 +59,319 @@ class MasjidsRepositoryImp extends MasjidsRepository {
   }
 
   @override
-  Future<DataSourceResult<List<StateEntity>>> getStates(String countryId) async {
+  Future<DataSourceResult<List<StateEntity>>> getStates(
+      String countryId) async {
     try {
-      final result =
-      await masjidsRemoteDataSource.getStates(countryId);
+      final result = await masjidsRemoteDataSource.getStates(countryId);
       if (result is DataSuccess && result.data != null) {
         return DataSuccess(result.data!.map((e) => e.mapToEntity()).toList());
       } else {
-        return DataFailed(DataSourceError(message: 'Data not found'));
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<CountryEntity>> addCountry(
+      {required String name,
+      required String iso3,
+      required String iso2,
+      required String latitude,
+      required String longitude,
+      required int noOfTimeZones}) async {
+    try {
+      final result = await masjidsRemoteDataSource.addCountry(
+          name: name,
+          iso3: iso3,
+          iso2: iso2,
+          latitude: latitude,
+          longitude: longitude,
+          noOfTimeZones: noOfTimeZones);
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!.mapToEntity());
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<String>> deleteCountry({required String id}) async {
+    try {
+      final result = await masjidsRemoteDataSource.deleteCountry(id);
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!);
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<CountryEntity>> updateCountry(
+      {required String id,
+      required String name,
+      required String iso3,
+      required String iso2,
+      required String latitude,
+      required String longitude}) async {
+    try {
+      final result = await masjidsRemoteDataSource.updateCountry(
+        id: id,
+        name: name,
+        iso3: iso3,
+        iso2: iso2,
+        latitude: latitude,
+        longitude: longitude,
+      );
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!.mapToEntity());
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<StateEntity>> createNewState(
+      {required String name,
+      required String countryId,
+      required String stateCode,
+      required String latitude,
+      required String longitude}) async {
+    try {
+      final result = await masjidsRemoteDataSource.createNewState(
+        name: name,
+        countryId: countryId,
+        stateCode: stateCode,
+        latitude: latitude,
+        longitude: longitude,
+      );
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!.mapToEntity());
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<String>> deleteState(
+      {required String countryId, required String id}) async {
+    try {
+      final result = await masjidsRemoteDataSource.deleteState(countryId, id);
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!);
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<StateEntity>> updateState(
+      {required String stateId,
+      required String countryId,
+      required String name,
+      required String stateCode,
+      required String latitude,
+      required String longitude}) async {
+    try {
+      final result = await masjidsRemoteDataSource.updateState(
+        stateId: stateId,
+        countryId: countryId,
+        stateCode: stateCode,
+        name: name,
+        latitude: latitude,
+        longitude: longitude,
+      );
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!.mapToEntity());
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<AreaEntity>> createNewArea(
+      {required String name,
+      required String countryId,
+      required String stateId,
+      required String cityId,
+      required String latitude,
+      required String longitude}) async {
+    try {
+      final result = await masjidsRemoteDataSource.createNewArea(
+        name: name,
+        countryId: countryId,
+        stateId: stateId,
+        latitude: latitude,
+        longitude: longitude,
+        cityId: cityId,
+      );
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!.mapToEntity());
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<CityEntity>> createNewCity(
+      {required String name,
+      required String countryId,
+      required String stateId,
+      required String latitude,
+      required String longitude,
+      required String timeZone}) async {
+    try {
+      final result = await masjidsRemoteDataSource.createNewCity(
+        name: name,
+        countryId: countryId,
+        stateId: stateId,
+        latitude: latitude,
+        longitude: longitude,
+        timeZone: timeZone,
+      );
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!.mapToEntity());
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<String>> deleteArea(
+      {required String countryId,
+      required String stateId,
+      required String cityId,
+      required String areaId}) async {
+    try {
+      final result = await masjidsRemoteDataSource.deleteArea(countryId: countryId, stateId: stateId, cityId: cityId, areaId: areaId);
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!);
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<String>> deleteCity(
+      {required String countryId,
+        required String stateId,
+        required String cityId}) async {
+    try {
+      final result = await masjidsRemoteDataSource.deleteCity(countryId, stateId,cityId);
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!);
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<AreaEntity>> updateArea(
+      {required String id,
+      required String name,
+      required String countryId,
+      required String stateId,
+      required String cityId,
+      required String latitude,
+      required String longitude}) async {
+    try {
+      final result = await masjidsRemoteDataSource.updateArea(
+        stateId: stateId,
+        countryId: countryId,
+        cityId: cityId,
+        id: id,
+        name: name,
+        latitude: latitude,
+        longitude: longitude,
+      );
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!.mapToEntity());
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<CityEntity>> updateCity(
+      {required String id,
+      required String name,
+      required String countryId,
+      required String stateId,
+      required String latitude,
+      required String longitude,
+      required String timeZone}) async {
+    try {
+      final result = await masjidsRemoteDataSource.updateCity(
+        stateId: stateId,
+        countryId: countryId,
+        id: id,
+        name: name,
+        timeZone: timeZone,
+        latitude: latitude,
+        longitude: longitude,
+      );
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!.mapToEntity());
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
       }
     } catch (e) {
       return DataFailed(DataSourceError());

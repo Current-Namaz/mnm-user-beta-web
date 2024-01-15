@@ -5,7 +5,7 @@ import '../values/app_styles.dart';
 import '../values/constants.dart';
 
 class CommonButton extends StatelessWidget {
-  const CommonButton({super.key, required this.onTap, this.lableText, required this.text, this.height, this.leftMargin, this.rightMargin, this.topMargin, this.bottomMargin, this.backgroundColor, this.radius, this.splashColor});
+  const CommonButton({super.key, required this.onTap, this.lableText, required this.text, this.height, this.leftMargin, this.rightMargin, this.topMargin, this.bottomMargin, this.backgroundColor, this.radius, this.splashColor,  this.isDisabled= false});
   
   final VoidCallback onTap;
   final String? lableText;
@@ -18,23 +18,26 @@ class CommonButton extends StatelessWidget {
   final Color? backgroundColor;
   final Color? splashColor;
   final BorderRadius? radius;
-
+  final bool isDisabled;
   @override
   Widget build(BuildContext context) {
-    return  ClipRRect(
-      borderRadius: radius ?? BorderRadius.circular(r8),
-      child: Material(
+    return  Padding(
+      padding:  EdgeInsets.only(left: leftMargin ?? 0,right: rightMargin ?? 0,top: topMargin ??0,bottom: bottomMargin ?? 0),
+      child: ClipRRect(
         borderRadius: radius ?? BorderRadius.circular(r8),
-        color: backgroundColor ?? AppColors.lightGreen,
-        child: InkWell(
-          splashColor: splashColor ?? AppColors.lightGreen,
-          onTap: onTap,
-          child: Container(
-            height: height ?? 48,
-            decoration: const BoxDecoration(
+        child: Material(
+          borderRadius: radius ?? BorderRadius.circular(r8),
+          color: backgroundColor ?? AppColors.lightGreen.withOpacity(isDisabled ? 0.3 : 1),
+          child: InkWell(
+            splashColor: splashColor ?? AppColors.lightGreen,
+            onTap: isDisabled ?  null : onTap,
+            child: Container(
+              height: height ?? 48,
+              decoration: const BoxDecoration(
+              ),
+              alignment: Alignment.center,
+              child: Text(text,style: AppStyles.mediumStyle,),
             ),
-            alignment: Alignment.center,
-            child: Text(text,style: AppStyles.mediumStyle,),
           ),
         ),
       ),

@@ -1,5 +1,4 @@
 class DataSourceError{
-
   late final String message;
   late int statusCode;
   late Map<String,dynamic> extraInfo;
@@ -9,6 +8,5 @@ class DataSourceError{
     this.statusCode = statusCode ?? 500;
     this.extraInfo = extraInfo ?? {};
   }
-
 
 }

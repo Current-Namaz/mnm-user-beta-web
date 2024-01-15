@@ -28,15 +28,17 @@ class MasjidMainView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: ListView(
+            child: SingleChildScrollView(
               controller: BlocProvider.of<MasjidViewModelCubit>(context).scrollController,
               scrollDirection: Axis.horizontal,
-              children: const [
-                CountryListingView(),
-                StateListingView(),
-                CityListingView(),
-                AreaListingView(),
-              ],
+              child: const Row(
+                children: [
+                  CountryListingView(),
+                  StateListingView(),
+                  CityListingView(),
+                  AreaListingView(),
+                ],
+              ),
             ),
           )
         ],

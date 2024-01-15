@@ -17,9 +17,9 @@ enum RequestType {
 class ApiHandler {
   ApiHandler({required this.baseUrl});
 
-  static final Dio dio = Dio();
-  final String? baseUrl;
+  static final Dio dio = Dio()..options.headers['X-API-Key'] = '646b76b7d2ede97902a4231f';
 
+  final String? baseUrl;
   static Future<void> sendRequest({
     String baseUrl = ApiUrls.baseUrl,
     required String endPoint,
@@ -35,15 +35,17 @@ class ApiHandler {
     try {
       switch (type) {
         case RequestType.get:
-          response = await dio.get('$baseUrl$endPoint', queryParameters: params);
+          response =
+              await dio.get('$baseUrl$endPoint', queryParameters: params,);
 
         case RequestType.post:
           response = await dio.post('$baseUrl$endPoint',
               queryParameters: params, data: useFormData ? formData : body);
         case RequestType.delete:
-          response = await dio.delete('$baseUrl$endPoint', queryParameters: params);
+          response =
+              await dio.delete('$baseUrl$endPoint', queryParameters: params);
         case RequestType.put:
-          response = await dio.put(baseUrl,
+          response = await dio.put('$baseUrl$endPoint',
               queryParameters: params, data: useFormData ? formData : body);
         default:
       }
@@ -57,11 +59,14 @@ class ApiHandler {
     } on DioException catch (e) {
       networkErrorLog(response, response.realUri.path);
       onError(e.response!);
-    }on IOException catch(e){
-      networkClientSideError(response, response.realUri.path,e);
-      onError(Response(requestOptions: RequestOptions(),statusCode: 408,statusMessage: 'Connection time out'));
-    }catch(e){
-      networkClientSideError(response, response.realUri.path,e);
+    } on IOException catch (e) {
+      networkClientSideError(response, response.realUri.path, e);
+      onError(Response(
+          requestOptions: RequestOptions(),
+          statusCode: 408,
+          statusMessage: 'Connection time out'));
+    } catch (e) {
+      networkClientSideError(response, response.realUri.path, e);
       kDebugPrint('error found');
     }
   }

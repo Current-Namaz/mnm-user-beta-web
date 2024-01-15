@@ -23,7 +23,6 @@ class CountryListingView extends StatelessWidget {
         color: AppColors.darkBlackColor2,
       ),
       width: 300,
-      height: double.infinity,
       child: Column(
         children: [
           Container(
@@ -48,7 +47,8 @@ class CountryListingView extends StatelessWidget {
               buildWhen: (oldState, newState) =>
                   newState is MasjidViewModelCountryListLoaded ||
                   newState is MasjidViewModelCountryListLoading ||
-                  newState is MasjidViewModelCountryErrorState,
+                  newState is MasjidViewModelCountryErrorState ||
+                  newState is MasjidViewModelNewCountryAddedState,
               builder: (context, state) {
                 if (state is MasjidViewModelCountryListLoading) {
                   return ListView.builder(
@@ -82,6 +82,25 @@ class CountryListingView extends StatelessWidget {
                     },
                   );
                 }
+
+                if (state is MasjidViewModelNewCountryAddedState) {
+                  return ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    itemCount: state.countryList.length,
+                    itemBuilder: (context, index) {
+                      return MasjidLocationItemView(
+                        isSelected:
+                        state.selectedCountry == state.countryList[index],
+                        entity: state.countryList[index],
+                        onDoubleTap: () =>   BlocProvider.of<MasjidViewModelCubit>(context)
+                            .onCountryDoubleTap(state.countryList[index],context),
+                        onTap: () =>
+                            BlocProvider.of<MasjidViewModelCubit>(context)
+                                .onCountryTap(state.countryList[index]),
+                      );
+                    },
+                  );
+                }
                 return const SizedBox.shrink();
               },
             ),
@@ -90,7 +109,7 @@ class CountryListingView extends StatelessWidget {
             height: 35,
             radius: const BorderRadius.only(
                 bottomRight: Radius.circular(r12), bottomLeft: Radius.circular(r12)),
-            onTap: () {},
+            onTap: () => BlocProvider.of<MasjidViewModelCubit>(context).onAddNewCountryButtonTap(context),
             text: AppStrings.addCountry,
           )
         ],

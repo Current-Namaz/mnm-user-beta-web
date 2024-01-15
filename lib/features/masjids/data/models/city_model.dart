@@ -21,7 +21,7 @@ class CityModel extends DataMapper<CityEntity> {
       this.timeZone});
 
   CityModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['_id'];
     name = json['name'];
     countryId = json['country_id'];
     stateId = json['state_id'];

@@ -21,7 +21,7 @@ class StateModel extends DataMapper<StateEntity> {
   });
 
   StateModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['_id'];
     name = json['name'];
     countryId = json['country_id'];
     stateCode = json['state_code'];
@@ -31,7 +31,7 @@ class StateModel extends DataMapper<StateEntity> {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
+    data['_id'] = id;
     data['name'] = name;
     data['country_id'] = countryId;
     data['state_code'] = stateCode;

@@ -18,7 +18,7 @@ class HomeBody extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 200,
+          width: 280,
           padding: const EdgeInsets.only(top: 20, left: 12, right: 12),
           decoration: const BoxDecoration(
             color: AppColors.darkBlackColor,
