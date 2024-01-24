@@ -30,6 +30,19 @@ class MasjidViewModelCountryListLoaded extends MasjidViewModelState {
 }
 
 
+class MasjidViewModelCountryListSearchLoaded extends MasjidViewModelState {
+  final List<CountryEntity> countryList;
+  final CountryEntity? selectedCountry;
+
+  const MasjidViewModelCountryListSearchLoaded(
+      {required this.countryList, required this.selectedCountry});
+
+  @override
+  List<Object?> get props => [countryList, selectedCountry];
+}
+
+
+
 class MasjidViewModelNewCountryAddedState extends MasjidViewModelState {
   final List<CountryEntity> countryList;
   final CountryEntity? selectedCountry;
@@ -49,7 +62,7 @@ class MasjidViewModelStateDataUpdateState extends MasjidViewModelState {
       {required this.stateList, required this.selectedState});
 
   @override
-  List<Object?> get props => [selectedState, selectedState];
+  List<Object?> get props => [stateList, selectedState];
 }
 
 class MasjidViewModelCityDataUpdateState extends MasjidViewModelState {
@@ -141,7 +154,7 @@ class MasjidViewModelCityListLoaded extends MasjidViewModelState {
       required this.selectedCountry});
 
   @override
-  List<Object?> get props => [cityList, selectedState, selectedCity,selectedCity];
+  List<Object?> get props => [cityList, selectedState, selectedCountry,selectedCity];
 }
 
 class MasjidViewModelCityListErrorState extends MasjidViewModelState {
@@ -177,7 +190,7 @@ class MasjidViewModelAreaListLoaded extends MasjidViewModelState {
         required this.selectedCountry,this.selectedArea});
 
   @override
-  List<Object?> get props => [areaList, selectedState, selectedCity,selectedArea];
+  List<Object?> get props => [areaList,selectedCountry, selectedState, selectedCity,selectedArea];
 }
 
 class MasjidViewModelAreaListErrorState extends MasjidViewModelState {

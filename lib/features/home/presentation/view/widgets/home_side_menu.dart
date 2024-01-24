@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mnm_internal_admin/core/utils/helpers/helper_functions.dart';
 import 'package:mnm_internal_admin/core/values/app_colors.dart';
 import 'package:mnm_internal_admin/core/values/app_images.dart';
 import 'package:mnm_internal_admin/core/values/app_strings.dart';
@@ -31,7 +32,8 @@ class HomeSideMenu extends StatelessWidget {
                       icon: AppImages.dashboard,
                       title: AppStrings.dashboard,
                       isSelected: state.selectedIndex == 0,
-                      onTap: context.read<SideMenuDrawerViewModelCubit>().onDashBoardTap),
+                      onTap: context.read<SideMenuDrawerViewModelCubit>().onDashBoardTap
+                  ),
                   SideMenuWidget(
                       icon: AppImages.masjid,
                       title: AppStrings.masjids,

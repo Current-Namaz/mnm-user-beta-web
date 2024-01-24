@@ -91,37 +91,46 @@ class _AreaFormState extends State<AreaForm> {
                   height: 40,
                   controller: txtnameController,
                 ),
-                 AppTextField(hintText: AppStrings.hLatitude, height: 40,controller: txtLatitudeController,),
-                 AppTextField(hintText: AppStrings.hLongitude, height: 40,controller: txtLongitudeController,),
+                AppTextField(
+                  hintText: AppStrings.hLatitude,
+                  height: 40,
+                  controller: txtLatitudeController,
+                ),
+                AppTextField(
+                  hintText: AppStrings.hLongitude,
+                  height: 40,
+                  controller: txtLongitudeController,
+                ),
                 if (widget.entity != null)
                   Row(
                     children: [
-                      Expanded(
-                          child: CommonButton(
-                        height: 40,
-                        onTap: () {
-                          BlocProvider.of<MasjidViewModelCubit>(context).onDeleteArea(widget.entity!);
-                        },
-                        text: AppStrings.delete,
-                        backgroundColor: Colors.redAccent,
-                        splashColor: Colors.red,
-                      )),
-                      const SizedBox(
-                        width: 10,
-                      ),
                       Expanded(
                           child: CommonButton(
                               height: 40,
                               onTap: () {
                                 BlocProvider.of<MasjidViewModelCubit>(context)
                                     .onUpdateArea(
-                                  txtnameController.text.trim(),
-                                  txtLatitudeController.text.trim(),
-                                  txtLongitudeController.text.trim(),
-                                  widget.entity!,
-                                );
+                                        txtnameController.text.trim(),
+                                        txtLatitudeController.text.trim(),
+                                        txtLongitudeController.text.trim(),
+                                        widget.entity!,
+                                        context);
                               },
                               text: AppStrings.update)),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                          child: CommonButton(
+                        height: 40,
+                        onTap: () {
+                          BlocProvider.of<MasjidViewModelCubit>(context)
+                              .onDeleteArea(widget.entity!, context);
+                        },
+                        text: AppStrings.delete,
+                        backgroundColor: Colors.redAccent,
+                        splashColor: Colors.red,
+                      )),
                     ],
                   ),
                 if (widget.entity == null)
@@ -131,10 +140,10 @@ class _AreaFormState extends State<AreaForm> {
                       onTap: () {
                         BlocProvider.of<MasjidViewModelCubit>(context)
                             .onCreateNewArea(
-                          txtnameController.text.trim(),
-                          txtLatitudeController.text.trim(),
-                          txtLongitudeController.text.trim(),
-                        );
+                                txtnameController.text.trim(),
+                                txtLatitudeController.text.trim(),
+                                txtLongitudeController.text.trim(),
+                                context);
                       },
                       text: AppStrings.create),
               ],

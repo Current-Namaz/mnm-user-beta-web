@@ -6,6 +6,7 @@ import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/ma
 
 import '../../../../../core/values/app_strings.dart';
 import '../../../../../core/values/constants.dart';
+import '../../../../../core/widgets/app_text_field.dart';
 import '../../../../../core/widgets/common_button.dart';
 import '../../view_models/masjid_view_model_cubit.dart';
 import 'masjid_location_item_view.dart';
@@ -42,6 +43,13 @@ class CityListingView extends StatelessWidget {
                     color: AppColors.textPrimary2Color,
                     fontWeight: FontWeight.w500),
               )),
+          AppTextField(
+            topMargin: 5,
+            hideLable: true,
+            onChange:  context.read<MasjidViewModelCubit>().onCitySearchChange,
+            hintText: AppStrings.hSearch,
+            height: 40,
+          ),
           Expanded(
             child: BlocBuilder<MasjidViewModelCubit, MasjidViewModelState>(
               buildWhen: (oldState, newState) {

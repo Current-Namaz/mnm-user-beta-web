@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mnm_internal_admin/core/values/app_colors.dart';
 import 'package:mnm_internal_admin/core/values/app_styles.dart';
+import 'package:mnm_internal_admin/core/widgets/app_text_field.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/masjid_location_item_Loading_view.dart';
 
 import '../../../../../core/values/app_strings.dart';
@@ -44,6 +45,13 @@ class AreaListingView extends StatelessWidget {
                     color: AppColors.textPrimary2Color,
                     fontWeight: FontWeight.w500),
               )),
+          AppTextField(
+            topMargin: 5,
+            hideLable: true,
+            onChange: context.read<MasjidViewModelCubit>().onAreaSearchChange,
+            hintText: AppStrings.hSearch,
+            height: 40,
+          ),
           Expanded(
             child: BlocBuilder<MasjidViewModelCubit, MasjidViewModelState>(
               buildWhen: (oldState, newState) =>
@@ -76,9 +84,9 @@ class AreaListingView extends StatelessWidget {
                   if (state.areaList.isEmpty) {
                     return Center(
                         child: Text(
-                          AppStrings.emptyDataMessage(AppStrings.areas),
-                          style: AppStyles.mediumStyle,
-                        ));
+                      AppStrings.emptyDataMessage(AppStrings.areas),
+                      style: AppStyles.mediumStyle,
+                    ));
                   }
                   return ListView.builder(
                     itemCount: state.areaList.length,
@@ -86,8 +94,10 @@ class AreaListingView extends StatelessWidget {
                       return MasjidLocationItemView(
                         isSelected: state.selectedArea == state.areaList[index],
                         entity: state.areaList[index],
-                        onDoubleTap: () =>   BlocProvider.of<MasjidViewModelCubit>(context)
-                            .onAreaDoubleTap(state.areaList[index],context),
+                        onDoubleTap: () =>
+                            BlocProvider.of<MasjidViewModelCubit>(context)
+                                .onAreaDoubleTap(
+                                    state.areaList[index], context),
                         onTap: () =>
                             BlocProvider.of<MasjidViewModelCubit>(context)
                                 .onAreaTap(state.areaList[index]),
@@ -109,8 +119,10 @@ class AreaListingView extends StatelessWidget {
                       return MasjidLocationItemView(
                         isSelected: state.selectedArea == state.areaList[index],
                         entity: state.areaList[index],
-                        onDoubleTap: () =>   BlocProvider.of<MasjidViewModelCubit>(context)
-                            .onAreaDoubleTap(state.areaList[index],context),
+                        onDoubleTap: () =>
+                            BlocProvider.of<MasjidViewModelCubit>(context)
+                                .onAreaDoubleTap(
+                                    state.areaList[index], context),
                         onTap: () =>
                             BlocProvider.of<MasjidViewModelCubit>(context)
                                 .onAreaTap(state.areaList[index]),

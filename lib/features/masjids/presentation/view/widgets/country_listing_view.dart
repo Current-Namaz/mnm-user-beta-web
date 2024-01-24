@@ -7,11 +7,13 @@ import 'package:mnm_internal_admin/core/widgets/common_button.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/masjid_location_item_Loading_view.dart';
 
 import '../../../../../core/values/constants.dart';
+import '../../../../../core/widgets/app_text_field.dart';
 import '../../view_models/masjid_view_model_cubit.dart';
 import 'masjid_location_item_view.dart';
 
 class CountryListingView extends StatelessWidget {
-  const CountryListingView({super.key});
+   CountryListingView({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +44,14 @@ class CountryListingView extends StatelessWidget {
                     color: AppColors.textPrimary2Color,
                     fontWeight: FontWeight.w500),
               )),
+
+          AppTextField(
+            topMargin: 5,
+            hideLable: true,
+            onChange:  context.read<MasjidViewModelCubit>().onCountrySearchChange,
+            hintText: AppStrings.hSearch,
+            height: 40,
+          ),
           Expanded(
             child: BlocBuilder<MasjidViewModelCubit, MasjidViewModelState>(
               buildWhen: (oldState, newState) =>
@@ -92,7 +102,7 @@ class CountryListingView extends StatelessWidget {
                         isSelected:
                         state.selectedCountry == state.countryList[index],
                         entity: state.countryList[index],
-                        onDoubleTap: () =>   BlocProvider.of<MasjidViewModelCubit>(context)
+                        onDoubleTap: () => BlocProvider.of<MasjidViewModelCubit>(context)
                             .onCountryDoubleTap(state.countryList[index],context),
                         onTap: () =>
                             BlocProvider.of<MasjidViewModelCubit>(context)

@@ -31,7 +31,7 @@ class MasjidMainView extends StatelessWidget {
             child: SingleChildScrollView(
               controller: BlocProvider.of<MasjidViewModelCubit>(context).scrollController,
               scrollDirection: Axis.horizontal,
-              child: const Row(
+              child:  Row(
                 children: [
                   CountryListingView(),
                   StateListingView(),

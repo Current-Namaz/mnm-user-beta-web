@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+  import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mnm_internal_admin/core/values/app_colors.dart';
 import 'package:mnm_internal_admin/core/values/app_styles.dart';
@@ -6,6 +6,7 @@ import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/ma
 
 import '../../../../../core/values/app_strings.dart';
 import '../../../../../core/values/constants.dart';
+import '../../../../../core/widgets/app_text_field.dart';
 import '../../../../../core/widgets/common_button.dart';
 import '../../view_models/masjid_view_model_cubit.dart';
 import 'masjid_location_item_view.dart';
@@ -44,13 +45,21 @@ class StateListingView extends StatelessWidget {
                   fontWeight: FontWeight.w500),
             ),
           ),
+          AppTextField(
+            topMargin: 5,
+            hideLable: true,
+            onChange:  context.read<MasjidViewModelCubit>().onStateSearchChange,
+            hintText: AppStrings.hSearch,
+            height: 40,
+          ),
           Expanded(
             child: BlocBuilder<MasjidViewModelCubit, MasjidViewModelState>(
               buildWhen: (oldState, newState) =>
                   newState is MasjidViewModelStateListLoaded ||
                   newState is MasjidViewModelStateListLoading ||
                   newState is MasjidViewModelStateListErrorState ||
-                  newState is MasjidViewModelStateDataUpdateState,
+                  newState is MasjidViewModelStateDataUpdateState ||
+              newState is MasjidViewModelNewCountryAddedState,
               builder: (context, state) {
                 if (state is MasjidViewModelStateListLoading) {
                   return ListView.builder(
@@ -134,7 +143,8 @@ class StateListingView extends StatelessWidget {
             buildWhen: (oldState, newState) =>
                 newState is MasjidViewModelStateListLoaded ||
                 newState is MasjidViewModelCountryListLoading ||
-                newState is MasjidViewModelCountryListLoaded,
+                newState is MasjidViewModelCountryListLoaded ||
+                    newState is MasjidViewModelNewCountryAddedState && newState.selectedCountry == null,
             builder: (context, state) {
               if (state is MasjidViewModelStateListLoaded) {
                 return CommonButton(
