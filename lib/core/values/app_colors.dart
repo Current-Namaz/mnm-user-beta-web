@@ -18,5 +18,8 @@ class AppColors {
   static const textPrimary2ColorWithLowOpacity = Color(0x33a4acb6);
   static const textFieldBgColor = Color(0xff3B4654);
   static const white = Color(0xffffffff);
+  static const successGreen = Color(0xff58c34d);
+  static const warningYellow = Color(0xfffec203);
+  static const errorRed = Color(0xffea5756);
 
 }

@@ -17,7 +17,7 @@ enum RequestType {
 class ApiHandler {
   ApiHandler({required this.baseUrl});
 
-  static final Dio dio = Dio()..options.headers['X-API-Key'] = '646b76b7d2ede97902a4231f';
+  static final Dio dio = Dio()..options.headers['X-API-Key'] = '65ae7fc9ec8c648adc87e13d';
 
   final String? baseUrl;
   static Future<void> sendRequest({

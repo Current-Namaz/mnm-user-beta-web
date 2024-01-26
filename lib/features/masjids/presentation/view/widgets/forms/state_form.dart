@@ -125,7 +125,7 @@ class _StateFormState extends State<StateForm> {
                                         txtStateCodeController.text.trim(),
                                         txtLatitudeController.text.trim(),
                                         txtLongitudeController.text.trim(),
-                                        widget.entity!);
+                                        widget.entity!,context);
                               },
                               text: AppStrings.update)),
                       const SizedBox(
@@ -137,7 +137,7 @@ class _StateFormState extends State<StateForm> {
                         topMargin: 20,
                         onTap: () {
                           BlocProvider.of<MasjidViewModelCubit>(context)
-                              .onDeleteState(widget.entity!);
+                              .onDeleteState(widget.entity!,context);
                           // .onDeleteCountry(widget.entity!);
                         },
                         text: AppStrings.delete,
@@ -157,6 +157,7 @@ class _StateFormState extends State<StateForm> {
                           txtStateCodeController.text.trim(),
                           txtLatitudeController.text.trim(),
                           txtLongitudeController.text.trim(),
+                          context
                         );
                       },
                       text: AppStrings.create),

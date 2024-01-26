@@ -4,12 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mnm_internal_admin/core/common_domain/data_source_result/data_source_result.dart';
 import 'package:mnm_internal_admin/core/common_domain/usecase/base_usecase.dart';
+import 'package:mnm_internal_admin/core/utils/app_extensions/string_extensions.dart';
 import 'package:mnm_internal_admin/core/utils/app_extensions/update_extension.dart';
 import 'package:mnm_internal_admin/core/utils/helpers/helper_functions.dart';
-import 'package:mnm_internal_admin/core/values/app_colors.dart';
-import 'package:mnm_internal_admin/core/widgets/app_text_field.dart';
-import 'package:mnm_internal_admin/core/widgets/common_button.dart';
-import 'package:mnm_internal_admin/features/masjids/data/models/country_model.dart';
+import 'package:mnm_internal_admin/core/values/app_images.dart';
+import 'package:mnm_internal_admin/core/values/app_strings.dart';
+import 'package:mnm_internal_admin/core/widgets/custom_toast.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/city.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/country.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/create_new_area.dart';
@@ -23,9 +23,6 @@ import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_country_
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_state_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_area.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_country.dart';
-import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/forms/country_form.dart';
-
-import '../../../../core/values/constants.dart';
 import '../../domain/entities/area.dart';
 import '../../domain/entities/state.dart';
 import '../../domain/usecases/create_new_city.dart';
@@ -120,8 +117,6 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
   Future<void> onCountryDoubleTap(
       CountryEntity countryEntity, BuildContext context) async {
     selectedCountry = countryEntity;
-    // emit(MasjidViewModelCountryListLoaded(
-    //     countryList: _countryList, selectedCountry: selectedCountry));
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -140,6 +135,8 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           return const AddUpdateDialog<CountryEntity>();
         });
   }
+
+  void onCountrySearchValueChanged(String val) {}
 
   void clearCurrentDataForCountry() {
     _stateList.clear();
@@ -165,29 +162,52 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     return true;
   }
 
-  void onCreateNewCountry(String name, String iso3, String iso2,
-      String numOfTimezones, String latitude, String longitude) async {
+  void onCreateNewCountry(
+      String name,
+      String iso3,
+      String iso2,
+      String numOfTimezones,
+      String latitude,
+      String longitude,
+      BuildContext context) async {
     if (_validateCountryForm(
         name, iso3, iso2, numOfTimezones, latitude, longitude)) {
-      final result = await createNewCountryUseCase(CreateNewCountryParams(
-          numOfTimezones: int.parse(numOfTimezones),
-          name: name,
-          iso3: iso3,
-          iso2: iso2,
-          latitude: latitude,
-          longitude: longitude));
+      showLoadingDialog(context);
+      final result = await createNewCountryUseCase(
+        CreateNewCountryParams(
+            numOfTimezones: int.parse(numOfTimezones),
+            name: name,
+            iso3: iso3,
+            iso2: iso2,
+            latitude: latitude,
+            longitude: longitude),
+      );
 
       if (result is DataSuccess) {
         _countryList.add(result.data!);
         emit(MasjidViewModelNewCountryAddedState(
-          countryList: _countryList,
+          countryList: List.of(_countryList),
           selectedCountry: selectedCountry,
         ));
+        closeDialog(context);
+        CustomToast.success(
+          title: AppStrings.mTSuccess,
+          description: AppStrings.mDAddedSuccessFully,
+        ).show(context);
+        Navigator.pop(context);
       } else {
+        CustomToast.error(
+          title: AppStrings.mTError,
+          description: result.error!.message,
+        ).show(context);
+        closeDialog(context);
         kDebugPrint(result.error!.message);
       }
     } else {
-      kDebugPrint('Country validation failed');
+      CustomToast.warning(
+        title: AppStrings.mTValidationFailed,
+        description: AppStrings.mDValidationFailed,
+      ).show(context);
     }
   }
 
@@ -199,9 +219,11 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
       String numOfTimezones,
       String latitude,
       String longitude,
-      CountryEntity countryEntity) async {
+      CountryEntity countryEntity,
+      BuildContext context) async {
     if (_validateCountryForm(
         name, iso3, iso2, numOfTimezones, latitude, longitude)) {
+      showLoadingDialog(context);
       final result = await updateCountryUseCase(UpdateCountryParams(
           id: id,
           numOfTimezones: int.parse(numOfTimezones),
@@ -214,28 +236,88 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
       if (result is DataSuccess) {
         final updatedList = _countryList.update(countryEntity, result.data!);
         _countryList.replaceRange(0, _countryList.length, updatedList);
+        selectedCountry = _countryList
+            .singleWhere((element) => element.id == selectedCountry?.id);
+
         emit(MasjidViewModelNewCountryAddedState(
-          countryList: updatedList,
-          selectedCountry: selectedCountry!,
+          countryList: _countryList,
+          selectedCountry: selectedCountry,
         ));
+
+        closeDialog(context);
+        Navigator.pop(context);
+        CustomToast.success(
+          title: AppStrings.mTSuccess,
+          description: AppStrings.mDUpdateSuccessFully,
+        ).show(context);
       } else {
+        closeDialog(context);
+        CustomToast.error(
+          title: AppStrings.mTError,
+          description: result.error!.message,
+        ).show(context);
         kDebugPrint(result.error!.message);
       }
     } else {
+      CustomToast.warning(
+        title: AppStrings.mTValidationFailed,
+        description: AppStrings.mDValidationFailed,
+      ).show(context);
       kDebugPrint('validation failed');
     }
   }
 
-  void onDeleteCountry(CountryEntity countryEntity) async {
+  void onDeleteCountry(
+      CountryEntity countryEntity, BuildContext context) async {
+    showLoadingDialog(context);
     final result = await deleteCountryUseCase(countryEntity.id);
     if (result is DataSuccess) {
+        if(selectedCountry == countryEntity){
+          selectedCountry = null;
+        }
       _countryList.remove(countryEntity);
       emit(MasjidViewModelNewCountryAddedState(
-        countryList: _countryList,
-        selectedCountry: selectedCountry!,
+        countryList: List.of(_countryList),
+        selectedCountry: selectedCountry,
       ));
+      closeDialog(context);
+      Navigator.pop(context);
+      CustomToast.success(
+        title: AppStrings.mTSuccess,
+        description: result.data ?? AppStrings.mDeleteSuccessFully,
+      ).show(context);
     } else {
+      closeDialog(context);
+      CustomToast.error(
+        title: AppStrings.mTError,
+        description: result.error!.message,
+      ).show(context);
       kDebugPrint(result.error!.message);
+    }
+  }
+
+  void onCountrySearchChange(String val) {
+    if (val.trim().isEmpty) {
+      emit(MasjidViewModelCountryListLoaded(
+          countryList: _countryList, selectedCountry: selectedCountry));
+      return;
+    }
+    final _filteredList = _countryList
+        .where((element) =>
+            element.name.contains(val) ||
+            element.name.startsWith(val.capitalizeFirst()) ||
+            element.name == val)
+        .toList();
+    if (state is MasjidViewModelCountryListLoaded) {
+      emit(MasjidViewModelCountryListLoaded(
+        countryList: _filteredList,
+        selectedCountry: selectedCountry,
+      ));
+    } else if (state is MasjidViewModelNewCountryAddedState) {
+      emit(MasjidViewModelNewCountryAddedState(
+        countryList: _filteredList,
+        selectedCountry: selectedCountry,
+      ));
     }
   }
 
@@ -276,10 +358,6 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
   Future<void> onStateDoubleTap(
       StateEntity stateEntity, BuildContext context) async {
     selectedState = selectedState;
-    // emit(MasjidViewModelStateListLoaded(
-    //     stateList: _stateList,
-    //     selectedCountry: selectedCountry,
-    //     selectedState: selectedState));
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -319,9 +397,10 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     return true;
   }
 
-  void onCreateNewState(
-      String name, String stateCode, String latitude, String longitude) async {
+  void onCreateNewState(String name, String stateCode, String latitude,
+      String longitude, BuildContext context) async {
     if (_validateStateForm(name, stateCode, latitude, longitude)) {
+      showLoadingDialog(context);
       final result = await createNewStateUseCase(CreateNewStateParams(
           countryId: selectedCountry!.id,
           name: name,
@@ -332,19 +411,34 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
       if (result is DataSuccess) {
         _stateList.add(result.data!);
         emit(MasjidViewModelStateDataUpdateState(
-          stateList: _stateList,
+          stateList: List.of(_stateList),
           selectedState: selectedState,
         ));
+        closeDialog(context);
+        Navigator.pop(context);
+        CustomToast.success(
+          title: AppStrings.mTSuccess,
+          description: AppStrings.mDAddedSuccessFully,
+        ).show(context);
       } else {
+        CustomToast.error(
+          title: AppStrings.mTError,
+          description: result.error!.message,
+        ).show(context);
+        closeDialog(context);
         kDebugPrint(result.error!.message);
       }
     } else {
-      kDebugPrint('State validation failed');
+      CustomToast.warning(
+        title: AppStrings.mTValidationFailed,
+        description: AppStrings.mDValidationFailed,
+      ).show(context);
     }
   }
 
   void onUpdateState(String name, String stateCode, String latitude,
-      String longitude, StateEntity stateEntity) async {
+      String longitude, StateEntity stateEntity, BuildContext context) async {
+    showLoadingDialog(context);
     if (_validateStateForm(name, stateCode, latitude, longitude)) {
       final result = await updateStateUseCase(UpdateStateParams(
           id: stateEntity.id,
@@ -361,28 +455,84 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           selectedState: selectedState,
           stateList: _stateList,
         ));
+        closeDialog(context);
+        Navigator.pop(context);
+        CustomToast.success(
+          title: AppStrings.mTSuccess,
+          description: AppStrings.mDUpdateSuccessFully,
+        ).show(context);
       } else {
+        closeDialog(context);
+        CustomToast.error(
+          title: AppStrings.mTError,
+          description: result.error!.message,
+        ).show(context);
         kDebugPrint(result.error!.message);
       }
     } else {
+      CustomToast.warning(
+        title: AppStrings.mTValidationFailed,
+        description: AppStrings.mDValidationFailed,
+      ).show(context);
       kDebugPrint('validation failed');
     }
   }
 
-  void onDeleteState(StateEntity stateEntity) async {
+  void onDeleteState(StateEntity stateEntity, BuildContext context) async {
+    showLoadingDialog(context);
+
     final result = await deleteStateUseCase(DeleteStateParams(
         countryId: selectedCountry!.id.toString(), id: stateEntity.id));
+
     if (result is DataSuccess) {
       if (selectedState == stateEntity) {
         selectedState = null;
       }
       _stateList.remove(stateEntity);
       emit(MasjidViewModelStateDataUpdateState(
-        stateList: _stateList,
+        stateList: List.of(_stateList),
         selectedState: selectedState,
       ));
+      closeDialog(context);
+      Navigator.pop(context);
+      CustomToast.success(
+        title: AppStrings.mTSuccess,
+        description: result.data ?? AppStrings.mDeleteSuccessFully,
+      ).show(context);
     } else {
+      closeDialog(context);
+      CustomToast.error(
+        title: AppStrings.mTError,
+        description: result.error!.message,
+      ).show(context);
       kDebugPrint(result.error!.message);
+    }
+  }
+
+  void onStateSearchChange(String val) {
+    if (val.trim().isEmpty) {
+      emit(MasjidViewModelStateListLoaded(
+          stateList: _stateList,
+          selectedCountry: selectedCountry,
+          selectedState: selectedState));
+      return;
+    }
+    final _filteredList = _stateList
+        .where((element) =>
+            element.name.contains(val) ||
+            element.name.startsWith(val.capitalizeFirst()) ||
+            element.name == val)
+        .toList();
+    if (state is MasjidViewModelStateListLoaded) {
+      emit(MasjidViewModelStateListLoaded(
+          stateList: _filteredList,
+          selectedCountry: selectedCountry,
+          selectedState: selectedState));
+    } else if (state is MasjidViewModelStateDataUpdateState ) {
+      emit(MasjidViewModelStateDataUpdateState(
+        stateList: _filteredList,
+        selectedState: selectedState,
+      ));
     }
   }
 
@@ -420,7 +570,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
   }
 
   Future<void> onCityDoubleTap(
-      CityEntity cityEntity , BuildContext context) async {
+      CityEntity cityEntity, BuildContext context) async {
     selectedCity = selectedCity;
     // emit(MasjidViewModelCountryListLoaded(
     //     countryList: _countryList, selectedCountry: selectedCountry));
@@ -433,7 +583,6 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           );
         });
   }
-
 
   void onAddNewCityButtonTap(context) {
     showDialog(
@@ -462,9 +611,10 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     return true;
   }
 
-  void onCreateNewCity(
-      String name, String latitude, String longitude, String timeZone) async {
+  void onCreateNewCity(String name, String latitude, String longitude,
+      String timeZone, BuildContext context) async {
     if (_validateCityForm(name, latitude, longitude, timeZone)) {
+      showLoadingDialog(context);
       final result = await createNewCityUseCase(CreateNewCityParams(
         countryId: selectedCountry!.id,
         stateId: selectedState!.id,
@@ -480,17 +630,32 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           cityList: _cityList,
           selectedCity: selectedCity,
         ));
+        closeDialog(context);
+        Navigator.pop(context);
+        CustomToast.success(
+          title: AppStrings.mTSuccess,
+          description: AppStrings.mDAddedSuccessFully,
+        ).show(context);
       } else {
+        CustomToast.error(
+          title: AppStrings.mTError,
+          description: result.error!.message,
+        ).show(context);
+        closeDialog(context);
         kDebugPrint(result.error!.message);
       }
     } else {
-      kDebugPrint('City validation failed');
+      CustomToast.warning(
+        title: AppStrings.mTValidationFailed,
+        description: AppStrings.mDValidationFailed,
+      ).show(context);
     }
   }
 
   void onUpdateCity(String name, String latitude, String longitude,
-      String timeZone, CityEntity cityEntity) async {
+      String timeZone, CityEntity cityEntity, BuildContext context) async {
     if (_validateCityForm(name, latitude, longitude, timeZone)) {
+      showLoadingDialog(context);
       final result = await updateCityUseCase(UpdateCityParams(
         id: cityEntity.id,
         countryId: selectedCountry!.id,
@@ -508,15 +673,31 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           selectedCity: selectedCity,
           cityList: _cityList,
         ));
+        closeDialog(context);
+        Navigator.pop(context);
+        CustomToast.success(
+          title: AppStrings.mTSuccess,
+          description: AppStrings.mDUpdateSuccessFully,
+        ).show(context);
       } else {
+        closeDialog(context);
+        CustomToast.error(
+          title: AppStrings.mTError,
+          description: result.error!.message,
+        ).show(context);
         kDebugPrint(result.error!.message);
       }
     } else {
-      kDebugPrint('City validation failed');
+      CustomToast.warning(
+        title: AppStrings.mTValidationFailed,
+        description: AppStrings.mDValidationFailed,
+      ).show(context);
+      kDebugPrint('validation failed');
     }
   }
 
-  void onDeleteCity(CityEntity cityEntity) async {
+  void onDeleteCity(CityEntity cityEntity, BuildContext context) async {
+    showLoadingDialog(context);
     final result = await deleteCityUseCase(DeleteCityParams(
         countryId: selectedCountry!.id,
         stateId: selectedState!.id,
@@ -530,10 +711,51 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
         cityList: _cityList,
         selectedCity: selectedCity,
       ));
+      closeDialog(context);
+      Navigator.pop(context);
+      CustomToast.success(
+        title: AppStrings.mTSuccess,
+        description: result.data ?? AppStrings.mDeleteSuccessFully,
+      ).show(context);
     } else {
+      closeDialog(context);
+      CustomToast.error(
+        title: AppStrings.mTError,
+        description: result.error!.message,
+      ).show(context);
       kDebugPrint(result.error!.message);
     }
   }
+
+  void onCitySearchChange(String val) {
+    if (val.trim().isEmpty) {
+      emit(MasjidViewModelCityListLoaded(
+          cityList: _cityList,
+          selectedCity: selectedCity,
+          selectedCountry: selectedCountry!,
+          selectedState: selectedState!));
+      return;
+    }
+    final _filteredList = _cityList
+        .where((element) =>
+    element.name.contains(val) ||
+        element.name.startsWith(val.capitalizeFirst()) ||
+        element.name == val)
+        .toList();
+    if (state is MasjidViewModelCityListLoaded) {
+      emit(MasjidViewModelCityListLoaded(
+          cityList: _filteredList,
+          selectedCity: selectedCity,
+          selectedCountry: selectedCountry!,
+          selectedState: selectedState!));
+    } else if (state is MasjidViewModelCityDataUpdateState ) {
+      emit(MasjidViewModelCityDataUpdateState(
+          cityList: _filteredList,
+          selectedCity: selectedCity,
+      ));
+    }
+  }
+
 
   //=========================== City End ===============================
 
@@ -571,7 +793,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
   }
 
   Future<void> onAreaDoubleTap(
-      AreaEntity areaEntity , BuildContext context) async {
+      AreaEntity areaEntity, BuildContext context) async {
     selectedArea = areaEntity;
     // emit(MasjidViewModelCountryListLoaded(
     //     countryList: _countryList, selectedCountry: selectedCountry));
@@ -584,7 +806,6 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           );
         });
   }
-
 
   void onAddNewAreaButtonTap(context) {
     showDialog(
@@ -601,14 +822,20 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
   }
 
   bool _validateAreaForm(String name, String latitude, String longitude) {
-    if (name.isEmpty || latitude.isEmpty || double.tryParse(latitude) ==  null || longitude.isEmpty || double.tryParse(longitude) ==  null ) {
+    if (name.isEmpty ||
+        latitude.isEmpty ||
+        double.tryParse(latitude) == null ||
+        longitude.isEmpty ||
+        double.tryParse(longitude) == null) {
       return false;
     }
     return true;
   }
 
-  void onCreateNewArea(String name, String latitude, String longitude) async {
+  void onCreateNewArea(String name, String latitude, String longitude,
+      BuildContext context) async {
     if (_validateAreaForm(name, latitude, longitude)) {
+      showLoadingDialog(context);
       final result = await createNewAreaUseCase(CreateNewAreaParams(
         countryId: selectedCountry!.id,
         stateId: selectedState!.id,
@@ -624,17 +851,32 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           areaList: _areaList,
           selectedArea: selectedArea,
         ));
+        closeDialog(context);
+        Navigator.pop(context);
+        CustomToast.success(
+          title: AppStrings.mTSuccess,
+          description: AppStrings.mDAddedSuccessFully,
+        ).show(context);
       } else {
+        CustomToast.error(
+          title: AppStrings.mTError,
+          description: result.error!.message,
+        ).show(context);
+        closeDialog(context);
         kDebugPrint(result.error!.message);
       }
     } else {
-      kDebugPrint('Area validation failed');
+      CustomToast.warning(
+        title: AppStrings.mTValidationFailed,
+        description: AppStrings.mDValidationFailed,
+      ).show(context);
     }
   }
 
   void onUpdateArea(String name, String latitude, String longitude,
-      AreaEntity areaEntity) async {
+      AreaEntity areaEntity, BuildContext context) async {
     if (_validateAreaForm(name, latitude, longitude)) {
+      showLoadingDialog(context);
       final result = await updateAreaUseCase(UpdateAreaParams(
         id: areaEntity.id,
         cityId: selectedCity!.id,
@@ -652,15 +894,31 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           selectedArea: selectedArea,
           areaList: _areaList,
         ));
+        closeDialog(context);
+        Navigator.pop(context);
+        CustomToast.success(
+          title: AppStrings.mTSuccess,
+          description: AppStrings.mDUpdateSuccessFully,
+        ).show(context);
       } else {
+        closeDialog(context);
+        CustomToast.error(
+          title: AppStrings.mTError,
+          description: result.error!.message,
+        ).show(context);
         kDebugPrint(result.error!.message);
       }
     } else {
-      kDebugPrint('Area validation failed');
+      CustomToast.warning(
+        title: AppStrings.mTValidationFailed,
+        description: AppStrings.mDValidationFailed,
+      ).show(context);
+      kDebugPrint('validation failed');
     }
   }
 
-  void onDeleteArea(AreaEntity areaEntity) async {
+  void onDeleteArea(AreaEntity areaEntity, BuildContext context) async {
+    showLoadingDialog(context);
     final result = await deleteAreaUseCase(DeleteAreaParams(
         countryId: selectedCountry!.id,
         stateId: selectedState!.id,
@@ -675,10 +933,53 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
         selectedArea: selectedArea,
         areaList: _areaList,
       ));
+      closeDialog(context);
+      Navigator.pop(context);
+      CustomToast.success(
+        title: AppStrings.mTSuccess,
+        description: result.data ?? AppStrings.mDeleteSuccessFully,
+      ).show(context);
     } else {
+      closeDialog(context);
+      CustomToast.error(
+        title: AppStrings.mTError,
+        description: result.error!.message,
+      ).show(context);
       kDebugPrint(result.error!.message);
     }
   }
+
+  void onAreaSearchChange(String val) {
+    if (val.trim().isEmpty) {
+      emit(MasjidViewModelAreaListLoaded(
+          areaList: _areaList,
+          selectedCity: selectedCity!,
+          selectedArea: selectedArea,
+          selectedCountry: selectedCountry!,
+          selectedState: selectedState!));
+      return;
+    }
+    final _filteredList = _areaList
+        .where((element) =>
+    element.name.contains(val) ||
+        element.name.startsWith(val.capitalizeFirst()) ||
+        element.name == val)
+        .toList();
+    if (state is MasjidViewModelAreaListLoaded) {
+      emit(MasjidViewModelAreaListLoaded(
+          areaList: _filteredList,
+          selectedCity: selectedCity!,
+          selectedArea: selectedArea,
+          selectedCountry: selectedCountry!,
+          selectedState: selectedState!));
+    } else if (state is MasjidViewModelAreaDataUpdateState ) {
+      emit(MasjidViewModelAreaDataUpdateState(
+          areaList: _filteredList,
+          selectedArea: selectedArea,
+      ));
+    }
+  }
+
 
   @override
   Future<void> close() {

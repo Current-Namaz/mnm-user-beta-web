@@ -142,6 +142,7 @@ class _CountryFormState extends State<CountryForm> {
                               txtLatitudeController.text,
                               txtLongitudeController.text,
                               widget.entity!,
+                              context
                             );
                           },
                           text: AppStrings.update)),
@@ -154,7 +155,7 @@ class _CountryFormState extends State<CountryForm> {
                     topMargin: 20,
                     onTap: () {
                       BlocProvider.of<MasjidViewModelCubit>(context)
-                          .onDeleteCountry(widget.entity!);
+                          .onDeleteCountry(widget.entity!,context);
                     },
                     text: AppStrings.delete,
                     backgroundColor: Colors.redAccent,
@@ -174,7 +175,9 @@ class _CountryFormState extends State<CountryForm> {
                             txtIso2Controller.text,
                             txtNumberOfTimezonesController.text,
                             txtLatitudeController.text,
-                            txtLongitudeController.text);
+                            txtLongitudeController.text,
+                          context
+                    );
                   },
                   text: AppStrings.create),
           ],

@@ -19,12 +19,13 @@ class AppTextField extends StatelessWidget {
       this.backgroundColor,
       this.enabledRadius,
       this.focusedRadius,
-      this.isForPassword = false});
+      this.isForPassword = false, this.hideLable = false});
 
   final TextEditingController? controller;
   final ValueChanged<String>? onChange;
   final String? lableText;
   final String? hintText;
+  final bool hideLable;
   final double? height;
   final double? leftMargin;
   final double? rightMargin;
@@ -40,13 +41,13 @@ class AppTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (hintText != null)
+        if (hintText != null && !hideLable)
           Text(
             hintText!,
             style: AppStyles.mediumStyle
                 .copyWith(color: AppColors.textDarkGreyColor, fontSize: 12),
           ),
-        if (hintText != null)
+        if (hintText != null && !hideLable)
           const SizedBox(
             height: 6,
           ),

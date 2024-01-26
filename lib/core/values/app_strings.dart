@@ -22,6 +22,14 @@ class AppStrings{
   static const String hState = 'State';
   static const String hCity = 'City';
   static const String hStateCode = 'State code';
+  static const String hSearch = 'Search';
+  static const String mTValidationFailed = 'Invalid data';
+  static const String mDValidationFailed = 'Please enter valid data';
+  static const String mTError = 'Error';
+  static const String mTSuccess = 'Success';
+  static const String mDAddedSuccessFully = 'Added Successfully';
+  static const String mDUpdateSuccessFully = 'Update Successfully';
+  static const String mDeleteSuccessFully = 'Delete Successfully';
 
   /// <<<<<<<<<<<<< masjids >>>>>>>>>>>>
 

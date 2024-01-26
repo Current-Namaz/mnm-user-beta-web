@@ -115,20 +115,6 @@ class _CityFormState extends State<CityForm> {
                     children: [
                       Expanded(
                           child: CommonButton(
-                        height: 40,
-                        onTap: () {
-                          BlocProvider.of<MasjidViewModelCubit>(context)
-                              .onDeleteCity(widget.entity!);
-                        },
-                        text: AppStrings.delete,
-                        backgroundColor: Colors.redAccent,
-                        splashColor: Colors.red,
-                      )),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                          child: CommonButton(
                               height: 40,
                               onTap: () {
                                 BlocProvider.of<MasjidViewModelCubit>(context)
@@ -137,10 +123,26 @@ class _CityFormState extends State<CityForm> {
                                   txtLatitudeController.text.trim(),
                                   txtLongitudeController.text.trim(),
                                   txtTimeZoneController.text.trim(),
-                                  widget.entity!
+                                  widget.entity!,
+                                  context,
                                 );
                               },
                               text: AppStrings.update)),
+                      const SizedBox(
+                        width: 10,
+                      ),   Expanded(
+                          child: CommonButton(
+                            height: 40,
+                            onTap: () {
+                              BlocProvider.of<MasjidViewModelCubit>(context)
+                                  .onDeleteCity(widget.entity!, context);
+                            },
+                            text: AppStrings.delete,
+                            backgroundColor: Colors.redAccent,
+                            splashColor: Colors.red,
+                          )),
+
+
                     ],
                   ),
                 if (widget.entity == null)
@@ -154,7 +156,7 @@ class _CityFormState extends State<CityForm> {
                                 txtLatitudeController.text.trim(),
                                 txtLongitudeController.text.trim(),
                                 txtTimeZoneController.text.trim(),
-                        );
+                                context);
                       },
                       text: AppStrings.create),
               ],
