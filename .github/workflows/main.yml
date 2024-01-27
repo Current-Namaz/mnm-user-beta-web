@@ -36,7 +36,7 @@ jobs:
       - name: Checkout Code from Another Repository
         uses: actions/checkout@v2
         with:
-          repository: Current-Namaz/mnm-user
+          repository: Current-Namaz/mnm-internal-admin
           ref: master
           token: ${{ secrets.PRIVATE_REPO_ACCESS_TOKEN }}
 
