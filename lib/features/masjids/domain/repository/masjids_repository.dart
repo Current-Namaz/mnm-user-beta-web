@@ -1,6 +1,7 @@
 import 'package:mnm_internal_admin/features/masjids/domain/entities/area.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/city.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/country.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/entities/masjid.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/state.dart';
 
 import '../../../../core/common_domain/data_source_result/data_source_result.dart';
@@ -102,4 +103,10 @@ abstract class MasjidsRepository {
     required String latitude,
     required String longitude,
   });
+
+  Future<DataSourceResult<List<MasjidEntity>>> getMasjids(
+      {required String countryId,
+      required String stateId,
+      required String cityId,
+      required String areaId});
 }

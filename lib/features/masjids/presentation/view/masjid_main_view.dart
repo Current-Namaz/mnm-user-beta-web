@@ -11,6 +11,7 @@ import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/ci
 import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/country_listing_view.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/masjid_location_item_Loading_view.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/masjid_location_item_view.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/masjids_listing_view.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/state_listing_view.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view_models/masjid_view_model_cubit.dart';
 
@@ -37,6 +38,7 @@ class MasjidMainView extends StatelessWidget {
                   StateListingView(),
                   CityListingView(),
                   AreaListingView(),
+                  MasjidsListingView(),
                 ],
               ),
             ),

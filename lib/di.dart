@@ -15,6 +15,7 @@ import 'package:mnm_internal_admin/features/masjids/domain/usecases/delete_state
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_area_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_city_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_country_list.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_masjids_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_state_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_area.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_city.dart';
@@ -62,30 +63,34 @@ void initializeInstances() {
   sl.registerLazySingleton<UpdateCity>(
       () => UpdateCity(masjidsRepository: sl<MasjidsRepository>()));
   sl.registerLazySingleton<CreateNewArea>(
-          () => CreateNewArea(masjidsRepository: sl<MasjidsRepository>()));
+      () => CreateNewArea(masjidsRepository: sl<MasjidsRepository>()));
   sl.registerLazySingleton<DeleteArea>(
-          () => DeleteArea(masjidsRepository: sl<MasjidsRepository>()));
+      () => DeleteArea(masjidsRepository: sl<MasjidsRepository>()));
   sl.registerLazySingleton<UpdateArea>(
-          () => UpdateArea(masjidsRepository: sl<MasjidsRepository>()));
+      () => UpdateArea(masjidsRepository: sl<MasjidsRepository>()));
+  sl.registerLazySingleton<GetMasjidsList>(
+          () => GetMasjidsList(masjidsRepository: sl<MasjidsRepository>()));
 
   // bloc
   sl.registerLazySingleton<MasjidViewModelCubit>(
     () => MasjidViewModelCubit(
-        getCountryListUseCase: sl<GetCountryList>(),
-        deleteCountryUseCase: sl<DeleteCountry>(),
-        getStateUseCase: sl<GetStateList>(),
-        getCityListUseCase: sl<GetCityList>(),
-        getAreaListUseCase: sl<GetAreaList>(),
-        createNewCountryUseCase: sl<CreateNewCountry>(),
-        updateCountryUseCase: sl<UpdateCountry>(),
-        createNewStateUseCase: sl<CreateNewState>(),
-        deleteStateUseCase: sl<DeleteState>(),
-        updateStateUseCase: sl<UpdateState>(),
-        createNewCityUseCase: sl<CreateNewCity>(),
-        updateCityUseCase: sl<UpdateCity>(),
-        deleteCityUseCase: sl<DeleteCity>(),
-        createNewAreaUseCase: sl<CreateNewArea>(),
-        updateAreaUseCase: sl<UpdateArea>(),
-        deleteAreaUseCase: sl<DeleteArea>()),
+      getCountryListUseCase: sl<GetCountryList>(),
+      deleteCountryUseCase: sl<DeleteCountry>(),
+      getStateUseCase: sl<GetStateList>(),
+      getCityListUseCase: sl<GetCityList>(),
+      getAreaListUseCase: sl<GetAreaList>(),
+      createNewCountryUseCase: sl<CreateNewCountry>(),
+      updateCountryUseCase: sl<UpdateCountry>(),
+      createNewStateUseCase: sl<CreateNewState>(),
+      deleteStateUseCase: sl<DeleteState>(),
+      updateStateUseCase: sl<UpdateState>(),
+      createNewCityUseCase: sl<CreateNewCity>(),
+      updateCityUseCase: sl<UpdateCity>(),
+      deleteCityUseCase: sl<DeleteCity>(),
+      createNewAreaUseCase: sl<CreateNewArea>(),
+      updateAreaUseCase: sl<UpdateArea>(),
+      deleteAreaUseCase: sl<DeleteArea>(),
+      getMasjidsListUseCase: sl<GetMasjidsList>(),
+    ),
   );
 }

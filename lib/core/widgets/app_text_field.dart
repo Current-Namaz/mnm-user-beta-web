@@ -19,6 +19,7 @@ class AppTextField extends StatelessWidget {
       this.backgroundColor,
       this.enabledRadius,
       this.focusedRadius,
+        this.isReadyOnly = false,
       this.isForPassword = false, this.hideLable = false});
 
   final TextEditingController? controller;
@@ -35,6 +36,7 @@ class AppTextField extends StatelessWidget {
   final double? enabledRadius;
   final double? focusedRadius;
   final bool isForPassword;
+  final bool isReadyOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +67,7 @@ class AppTextField extends StatelessWidget {
           ),
           child: TextField(
             // expands: true,
+            readOnly: isReadyOnly,
             maxLines: 1,
             obscureText: isForPassword,
             onChanged: onChange,
@@ -75,6 +78,7 @@ class AppTextField extends StatelessWidget {
             decoration: InputDecoration(
               isDense: false,
               hintText: hintText,
+
               filled: true,
               fillColor: backgroundColor ?? AppColors.textFieldBgColor,
               hintStyle: AppStyles.smallStyle,
@@ -86,7 +90,7 @@ class AppTextField extends StatelessWidget {
                   borderSide: const BorderSide(color: Colors.transparent)),
               focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(focusedRadius ?? r8),
-                  borderSide: const BorderSide(color: AppColors.greenColor)),
+                  borderSide: const BorderSide(color: AppColors.darkGreen,width: 1.3)),
             ),
           ),
         ),

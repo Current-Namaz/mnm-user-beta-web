@@ -21,5 +21,7 @@ class ApiUrls{
   static String newArea = "/newArea";
   static String deleteArea(String countryId,String stateId,String cityId,String id) => "/deleteArea/$countryId/$stateId/$cityId/$id";
   static String updateArea(String countryId,String stateId,String cityId,String id) => "/updateArea/$countryId/$stateId/$cityId/$id";
+  static String getMasjids = "/getMasjids/";
+
 
 }

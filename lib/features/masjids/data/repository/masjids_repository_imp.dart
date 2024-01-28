@@ -4,6 +4,7 @@ import 'package:mnm_internal_admin/features/masjids/data/data_sources/remote/mas
 import 'package:mnm_internal_admin/features/masjids/domain/entities/area.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/city.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/country.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/entities/masjid.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/state.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/repository/masjids_repository.dart';
 
@@ -284,7 +285,11 @@ class MasjidsRepositoryImp extends MasjidsRepository {
       required String cityId,
       required String areaId}) async {
     try {
-      final result = await masjidsRemoteDataSource.deleteArea(countryId: countryId, stateId: stateId, cityId: cityId, areaId: areaId);
+      final result = await masjidsRemoteDataSource.deleteArea(
+          countryId: countryId,
+          stateId: stateId,
+          cityId: cityId,
+          areaId: areaId);
       if (result is DataSuccess && result.data != null) {
         return DataSuccess(result.data!);
       } else if (result is DataFailed && result.error != null) {
@@ -300,10 +305,11 @@ class MasjidsRepositoryImp extends MasjidsRepository {
   @override
   Future<DataSourceResult<String>> deleteCity(
       {required String countryId,
-        required String stateId,
-        required String cityId}) async {
+      required String stateId,
+      required String cityId}) async {
     try {
-      final result = await masjidsRemoteDataSource.deleteCity(countryId, stateId,cityId);
+      final result =
+          await masjidsRemoteDataSource.deleteCity(countryId, stateId, cityId);
       if (result is DataSuccess && result.data != null) {
         return DataSuccess(result.data!);
       } else if (result is DataFailed && result.error != null) {
@@ -372,6 +378,25 @@ class MasjidsRepositoryImp extends MasjidsRepository {
         return DataFailed(DataSourceError(message: result.error!.message));
       } else {
         return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<List<MasjidEntity>>> getMasjids(
+      {required String countryId,
+      required String stateId,
+      required String cityId,
+      required String areaId}) async {
+    try {
+      final result = await masjidsRemoteDataSource.getMasjids(
+          countryId, stateId, cityId, areaId);
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!.map((e) => e.mapToEntity()).toList());
+      } else {
+        return DataFailed(DataSourceError(message: 'Data not found'));
       }
     } catch (e) {
       return DataFailed(DataSourceError());

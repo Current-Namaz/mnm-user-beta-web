@@ -1,4 +1,4 @@
-  import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mnm_internal_admin/core/values/app_colors.dart';
 import 'package:mnm_internal_admin/core/values/app_styles.dart';
@@ -48,7 +48,8 @@ class StateListingView extends StatelessWidget {
           AppTextField(
             topMargin: 5,
             hideLable: true,
-            onChange:  context.read<MasjidViewModelCubit>().onStateSearchChange,
+            controller: context.read<MasjidViewModelCubit>().txtStateSearchController,
+            onChange: context.read<MasjidViewModelCubit>().onStateSearchChange,
             hintText: AppStrings.hSearch,
             height: 40,
           ),
@@ -58,8 +59,7 @@ class StateListingView extends StatelessWidget {
                   newState is MasjidViewModelStateListLoaded ||
                   newState is MasjidViewModelStateListLoading ||
                   newState is MasjidViewModelStateListErrorState ||
-                  newState is MasjidViewModelStateDataUpdateState ||
-              newState is MasjidViewModelNewCountryAddedState,
+                  newState is MasjidViewModelCityAreaMasjidsListClearState,
               builder: (context, state) {
                 if (state is MasjidViewModelStateListLoading) {
                   return ListView.builder(
@@ -75,33 +75,6 @@ class StateListingView extends StatelessWidget {
                     state.message,
                     style: AppStyles.mediumStyle,
                   ));
-                }
-
-                if (state is MasjidViewModelStateDataUpdateState) {
-                  if (state.stateList.isEmpty) {
-                    return Center(
-                        child: Text(
-                          AppStrings.emptyDataMessage(AppStrings.states),
-                          style: AppStyles.mediumStyle,
-                        ));
-                  }
-                  return ListView.builder(
-                    itemCount: state.stateList.length,
-                    itemBuilder: (context, index) {
-                      return MasjidLocationItemView(
-                        isSelected:
-                        state.selectedState == state.stateList[index],
-                        entity: state.stateList[index],
-                        onDoubleTap: () =>
-                            BlocProvider.of<MasjidViewModelCubit>(context)
-                                .onStateDoubleTap(
-                                state.stateList[index], context),
-                        onTap: () =>
-                            BlocProvider.of<MasjidViewModelCubit>(context)
-                                .onStateTap(state.stateList[index]),
-                      );
-                    },
-                  );
                 }
 
                 if (state is MasjidViewModelStateListLoaded) {
@@ -130,6 +103,7 @@ class StateListingView extends StatelessWidget {
                     },
                   );
                 }
+
                 return const Center(
                   child: Text(
                     'Select country',
@@ -142,11 +116,14 @@ class StateListingView extends StatelessWidget {
           BlocBuilder<MasjidViewModelCubit, MasjidViewModelState>(
             buildWhen: (oldState, newState) =>
                 newState is MasjidViewModelStateListLoaded ||
+                newState is MasjidViewModelStateListLoading ||
                 newState is MasjidViewModelCountryListLoading ||
                 newState is MasjidViewModelCountryListLoaded ||
-                    newState is MasjidViewModelNewCountryAddedState && newState.selectedCountry == null,
+                newState is MasjidViewModelCityAreaMasjidsListClearState,
             builder: (context, state) {
-              if (state is MasjidViewModelStateListLoaded) {
+              if (state is MasjidViewModelStateListLoaded ||
+                  (state is MasjidViewModelCountryListLoaded &&
+                      (state).selectedCountry != null)) {
                 return CommonButton(
                   height: 35,
                   radius: const BorderRadius.only(

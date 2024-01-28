@@ -35,7 +35,6 @@ class MasjidLocationItemView<T> extends StatefulWidget {
 
 class _MasjidLocationItemViewState extends State<MasjidLocationItemView> {
   bool isHovered = false;
-  bool isExpaned = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +44,6 @@ class _MasjidLocationItemViewState extends State<MasjidLocationItemView> {
           onTap: widget.onTap,
           onDoubleTap: () {
             widget.onDoubleTap();
-            // isExpaned = !isExpaned;
-            // setState(() {});
           },
           child: MouseRegion(
             onHover: (_) {
@@ -61,17 +58,13 @@ class _MasjidLocationItemViewState extends State<MasjidLocationItemView> {
             },
             child: Container(
               alignment: Alignment.topLeft,
-              margin: !isExpaned ? const EdgeInsets.only(bottom: 10) : null,
+              margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                borderRadius: isExpaned
-                    ? const BorderRadius.only(
-                        topRight: Radius.circular(r8),
-                        topLeft: Radius.circular(r8))
-                    : BorderRadius.circular(r8),
+                borderRadius : BorderRadius.circular(r8),
                 color: widget.isSelected
                     ? AppColors.lightGreen
-                    : isExpaned ? AppColors.secondaryColor:isHovered
+                    : isHovered
                         ? AppColors.lightGreen40
                         : null, //AppColors.darkBlackColor,
               ),
@@ -110,18 +103,18 @@ class _MasjidLocationItemViewState extends State<MasjidLocationItemView> {
             ),
           ),
         ),
-       if(isExpaned) ((){
-         if(widget.entity is CountryEntity){
-           return CountryForm(entity: widget.entity,);
-         }else if(widget.entity is StateEntity){
-           return StateForm(entity: widget.entity,);
-         }else if(widget.entity is CityEntity){
-           return CityForm(entity: widget.entity,);
-         }else if(widget.entity is AreaEntity){
-           return AreaForm(entity: widget.entity,);
-         }
-         return const SizedBox.shrink();
-       }())
+       // if(isExpaned) ((){
+       //   if(widget.entity is CountryEntity){
+       //     return CountryForm(entity: widget.entity,);
+       //   }else if(widget.entity is StateEntity){
+       //     return StateForm(entity: widget.entity,);
+       //   }else if(widget.entity is CityEntity){
+       //     return CityForm(entity: widget.entity,);
+       //   }else if(widget.entity is AreaEntity){
+       //     return AreaForm(entity: widget.entity,);
+       //   }
+       //   return const SizedBox.shrink();
+       // }())
       ],
     );
   }

@@ -38,6 +38,9 @@ class SalesManagingApp extends StatelessWidget {
         initialRoute: AuthScreen.authScreenRoute,
         onGenerateRoute: AppRoutes.onGeneratedRoutes,
         theme: ThemeData(
+          radioTheme: Theme.of(context).radioTheme.copyWith(
+            fillColor: MaterialStatePropertyAll<Color>(AppColors.lightGreen)
+          ),
           fontFamily: 'Manrope',
           scrollbarTheme: const ScrollbarThemeData()
               .copyWith(thumbColor: MaterialStateProperty.all(AppColors.white)),
