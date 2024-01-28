@@ -1,6 +1,7 @@
 import 'package:mnm_internal_admin/features/masjids/data/models/area_model.dart';
 import 'package:mnm_internal_admin/features/masjids/data/models/city_model.dart';
 import 'package:mnm_internal_admin/features/masjids/data/models/country_model.dart';
+import 'package:mnm_internal_admin/features/masjids/data/models/masjid_model.dart';
 import 'package:mnm_internal_admin/features/masjids/data/models/state_model.dart';
 
 import '../../../../../core/common_domain/data_source_result/data_source_result.dart';
@@ -103,4 +104,7 @@ abstract class MasjidsRemoteDataSource {
     required String latitude,
     required String longitude,
   });
+
+  Future<DataSourceResult<List<MasjidModel>>> getMasjids(
+      String countryId, String stateId, String cityId,String areaId);
 }

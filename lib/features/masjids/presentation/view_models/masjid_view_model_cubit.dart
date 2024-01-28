@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mnm_internal_admin/core/common_domain/data_source_result/data_source_result.dart';
 import 'package:mnm_internal_admin/core/common_domain/usecase/base_usecase.dart';
+import 'package:mnm_internal_admin/core/utils/app_extensions/list_first_where_extension.dart';
 import 'package:mnm_internal_admin/core/utils/app_extensions/string_extensions.dart';
 import 'package:mnm_internal_admin/core/utils/app_extensions/update_extension.dart';
 import 'package:mnm_internal_admin/core/utils/helpers/helper_functions.dart';
@@ -20,10 +21,12 @@ import 'package:mnm_internal_admin/features/masjids/domain/usecases/delete_count
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_area_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_city_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_country_list.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_masjids_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_state_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_area.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_country.dart';
 import '../../domain/entities/area.dart';
+import '../../domain/entities/masjid.dart';
 import '../../domain/entities/state.dart';
 import '../../domain/usecases/create_new_city.dart';
 import '../../domain/usecases/delete_city.dart';
@@ -35,24 +38,25 @@ import '../view/widgets/dialogs/add_update_dialog.dart';
 part 'masjid_view_model_state.dart';
 
 class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
-  MasjidViewModelCubit({
-    required this.getCountryListUseCase,
-    required this.getStateUseCase,
-    required this.getCityListUseCase,
-    required this.createNewCountryUseCase,
-    required this.updateCountryUseCase,
-    required this.getAreaListUseCase,
-    required this.deleteCountryUseCase,
-    required this.createNewStateUseCase,
-    required this.deleteStateUseCase,
-    required this.updateStateUseCase,
-    required this.createNewCityUseCase,
-    required this.deleteCityUseCase,
-    required this.updateCityUseCase,
-    required this.createNewAreaUseCase,
-    required this.deleteAreaUseCase,
-    required this.updateAreaUseCase,
-  }) : super(const MasjidViewModelInitial());
+  MasjidViewModelCubit(
+      {required this.getCountryListUseCase,
+      required this.getStateUseCase,
+      required this.getCityListUseCase,
+      required this.createNewCountryUseCase,
+      required this.updateCountryUseCase,
+      required this.getAreaListUseCase,
+      required this.deleteCountryUseCase,
+      required this.createNewStateUseCase,
+      required this.deleteStateUseCase,
+      required this.updateStateUseCase,
+      required this.createNewCityUseCase,
+      required this.deleteCityUseCase,
+      required this.updateCityUseCase,
+      required this.createNewAreaUseCase,
+      required this.deleteAreaUseCase,
+      required this.updateAreaUseCase,
+      required this.getMasjidsListUseCase})
+      : super(const MasjidViewModelInitial());
 
   // / form text Controllers
 
@@ -72,19 +76,30 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
   final CreateNewArea createNewAreaUseCase;
   final DeleteArea deleteAreaUseCase;
   final UpdateArea updateAreaUseCase;
+  final GetMasjidsList getMasjidsListUseCase;
 
   final List<CountryEntity> _countryList = [];
   final List<StateEntity> _stateList = [];
   final List<CityEntity> _cityList = [];
   final List<AreaEntity> _areaList = [];
+  final List<MasjidEntity> _masjidList = [];
 
   CountryEntity? selectedCountry;
   CountryEntity? currentSelectedCountryForEdit;
   StateEntity? selectedState;
   CityEntity? selectedCity;
   AreaEntity? selectedArea;
+  MasjidEntity? selectedMasjid;
 
   final ScrollController scrollController = ScrollController();
+  final TextEditingController txtCountrySearchController =
+      TextEditingController();
+  final TextEditingController txtStateSearchController =
+      TextEditingController();
+  final TextEditingController txtCitySearchController = TextEditingController();
+  final TextEditingController txtAreaSearchController = TextEditingController();
+  final TextEditingController txtMasjidSearchController =
+      TextEditingController();
 
   /// <<<<<<<<<<<<< Country Module >>>>>>>>>>>>>>>
 
@@ -99,8 +114,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     } else {
       emit(MasjidViewModelCountryErrorState(message: result.error!.message));
     }
-    Future.delayed(
-        Duration.zero, () => emit(MasjidViewModelCityAndAreaListClearState()));
+    emit(MasjidViewModelCityAreaMasjidsListClearState());
   }
 
   Future<void> onCountryTap(CountryEntity countryEntity) async {
@@ -109,14 +123,26 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
         scrollController.positions.toList()[0].maxScrollExtent * 0.4,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeIn);
-    emit(MasjidViewModelCountryListLoaded(
-        countryList: _countryList, selectedCountry: selectedCountry));
+    if (txtCountrySearchController.text.trim().isEmpty) {
+      emit(MasjidViewModelCountryListLoaded(
+          countryList: _countryList, selectedCountry: selectedCountry));
+    } else {
+      final _filteredList = _countryList
+          .where((element) =>
+              element.name.contains(txtCountrySearchController.text) ||
+              element.name.startsWith(
+                  txtCountrySearchController.text.capitalizeFirst()) ||
+              element.name == txtCountrySearchController.text)
+          .toList();
+
+      emit(MasjidViewModelCountryListLoaded(
+          countryList: _filteredList, selectedCountry: selectedCountry));
+    }
     _getStateData();
   }
 
   Future<void> onCountryDoubleTap(
       CountryEntity countryEntity, BuildContext context) async {
-    selectedCountry = countryEntity;
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -136,13 +162,15 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
         });
   }
 
-  void onCountrySearchValueChanged(String val) {}
-
   void clearCurrentDataForCountry() {
     _stateList.clear();
     _countryList.clear();
     _areaList.clear();
     _cityList.clear();
+    txtStateSearchController.clear();
+    txtCitySearchController.clear();
+    txtMasjidSearchController.clear();
+    txtAreaSearchController.clear();
     selectedCity = null;
     selectedState = null;
     selectedArea = null;
@@ -185,15 +213,25 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
 
       if (result is DataSuccess) {
         _countryList.add(result.data!);
-        emit(MasjidViewModelNewCountryAddedState(
-          countryList: List.of(_countryList),
-          selectedCountry: selectedCountry,
-        ));
+        if (txtCountrySearchController.text.trim().isEmpty) {
+          emit(MasjidViewModelCountryListLoaded(
+              countryList: _countryList, selectedCountry: selectedCountry));
+        } else {
+          final _filteredList = _countryList
+              .where((element) =>
+                  element.name.contains(txtCountrySearchController.text) ||
+                  element.name.startsWith(
+                      txtCountrySearchController.text.capitalizeFirst()) ||
+                  element.name == txtCountrySearchController.text)
+              .toList();
+          emit(MasjidViewModelCountryListLoaded(
+              countryList: _filteredList, selectedCountry: selectedCountry));
+        }
         closeDialog(context);
         CustomToast.success(
-          title: AppStrings.mTSuccess,
-          description: AppStrings.mDAddedSuccessFully,
-        ).show(context);
+                title: AppStrings.mTSuccess,
+                description: AppStrings.mDAddedSuccessFully)
+            .show(context);
         Navigator.pop(context);
       } else {
         CustomToast.error(
@@ -232,18 +270,28 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           iso2: iso2,
           latitude: latitude,
           longitude: longitude));
-
       if (result is DataSuccess) {
         final updatedList = _countryList.update(countryEntity, result.data!);
         _countryList.replaceRange(0, _countryList.length, updatedList);
         selectedCountry = _countryList
-            .singleWhere((element) => element.id == selectedCountry?.id);
+            .firstWhereOrNull((element) => element.id == selectedCountry?.id);
 
-        emit(MasjidViewModelNewCountryAddedState(
-          countryList: _countryList,
-          selectedCountry: selectedCountry,
-        ));
-
+        if (txtCountrySearchController.text.trim().isEmpty) {
+          emit(MasjidViewModelCountryListLoaded(
+              countryList: _countryList, selectedCountry: selectedCountry));
+        } else {
+          final _filteredList = _countryList
+              .where((element) =>
+                  element.name.contains(txtCountrySearchController.text) ||
+                  element.name.startsWith(
+                      txtCountrySearchController.text.capitalizeFirst()) ||
+                  element.name == txtCountrySearchController.text)
+              .toList();
+          emit(MasjidViewModelCountryListLoaded(
+            countryList: _filteredList,
+            selectedCountry: selectedCountry,
+          ));
+        }
         closeDialog(context);
         Navigator.pop(context);
         CustomToast.success(
@@ -272,14 +320,33 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     showLoadingDialog(context);
     final result = await deleteCountryUseCase(countryEntity.id);
     if (result is DataSuccess) {
-        if(selectedCountry == countryEntity){
-          selectedCountry = null;
-        }
+      if (selectedCountry == countryEntity) {
+        selectedCountry = null;
+        selectedState = null;
+        selectedArea = null;
+        selectedMasjid = null;
+        selectedMasjid = null;
+        emit(MasjidViewModelCityAreaMasjidsListClearState());
+      }
       _countryList.remove(countryEntity);
-      emit(MasjidViewModelNewCountryAddedState(
-        countryList: List.of(_countryList),
-        selectedCountry: selectedCountry,
-      ));
+      if (txtCountrySearchController.text.trim().isEmpty) {
+        emit(MasjidViewModelCountryListLoaded(
+          countryList: _countryList,
+          selectedCountry: selectedCountry,
+        ));
+      } else {
+        final _filteredList = _countryList
+            .where((element) =>
+                element.name.contains(txtCountrySearchController.text) ||
+                element.name.startsWith(
+                    txtCountrySearchController.text.capitalizeFirst()) ||
+                element.name == txtCountrySearchController.text)
+            .toList();
+        emit(MasjidViewModelCountryListLoaded(
+          countryList: _filteredList,
+          selectedCountry: selectedCountry,
+        ));
+      }
       closeDialog(context);
       Navigator.pop(context);
       CustomToast.success(
@@ -299,7 +366,8 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
   void onCountrySearchChange(String val) {
     if (val.trim().isEmpty) {
       emit(MasjidViewModelCountryListLoaded(
-          countryList: _countryList, selectedCountry: selectedCountry));
+          countryList: List.of(_countryList),
+          selectedCountry: selectedCountry));
       return;
     }
     final _filteredList = _countryList
@@ -308,17 +376,11 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
             element.name.startsWith(val.capitalizeFirst()) ||
             element.name == val)
         .toList();
-    if (state is MasjidViewModelCountryListLoaded) {
-      emit(MasjidViewModelCountryListLoaded(
-        countryList: _filteredList,
-        selectedCountry: selectedCountry,
-      ));
-    } else if (state is MasjidViewModelNewCountryAddedState) {
-      emit(MasjidViewModelNewCountryAddedState(
-        countryList: _filteredList,
-        selectedCountry: selectedCountry,
-      ));
-    }
+
+    emit(MasjidViewModelCountryListLoaded(
+      countryList: _filteredList,
+      selectedCountry: selectedCountry,
+    ));
   }
 
   //=========================== Country End ===============================
@@ -327,14 +389,13 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
 
   Future<void> _getStateData() async {
     clearCurrentDataForState();
-    emit(MasjidViewModelAreaListClearState());
     emit(MasjidViewModelStateListLoading(selectedCountry: selectedCountry!));
     final result =
         await getStateUseCase(StateParams(countryId: selectedCountry!.id));
     if (result is DataSuccess) {
-      _stateList.addAll(result.data!.toList());
+      _stateList.addAll(result.data!);
       emit(MasjidViewModelStateListLoaded(
-          stateList: _stateList,
+          stateList: List.of(_stateList),
           selectedCountry: selectedCountry!,
           selectedState: selectedState));
     } else {
@@ -344,46 +405,64 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
 
   Future<void> onStateTap(StateEntity stateEntity) async {
     scrollController.animateTo(
-        scrollController.positions.toList()[0].maxScrollExtent,
+        scrollController.positions.toList()[0].maxScrollExtent * 0.7,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeIn);
     selectedState = stateEntity;
-    emit(MasjidViewModelStateListLoaded(
-        stateList: _stateList,
-        selectedCountry: selectedCountry!,
-        selectedState: selectedState));
+    if (txtStateSearchController.text.trim().isEmpty) {
+      emit(MasjidViewModelStateListLoaded(
+          stateList: List.of(_stateList),
+          selectedCountry: selectedCountry!,
+          selectedState: selectedState));
+    } else {
+      final _filteredList = _stateList
+          .where((element) =>
+              element.name.contains(txtStateSearchController.text) ||
+              element.name.startsWith(
+                  txtStateSearchController.text.capitalizeFirst()) ||
+              element.name == txtStateSearchController.text)
+          .toList();
+
+      emit(MasjidViewModelStateListLoaded(
+          stateList: _filteredList,
+          selectedCountry: selectedCountry!,
+          selectedState: selectedState));
+    }
     _getCityData();
   }
 
   Future<void> onStateDoubleTap(
       StateEntity stateEntity, BuildContext context) async {
-    selectedState = selectedState;
     showDialog(
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          return AddUpdateDialog<StateEntity>(
-            entity: stateEntity,
-          );
+          return AddUpdateDialog<StateEntity>(entity: stateEntity);
         });
   }
 
   void onAddNewStateButtonTap(context) {
     showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return const AddUpdateDialog<StateEntity>();
-        });
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return const AddUpdateDialog<StateEntity>();
+      },
+    );
   }
 
   void clearCurrentDataForState() {
     _stateList.clear();
     _areaList.clear();
     _cityList.clear();
+    txtStateSearchController.clear();
+    txtCitySearchController.clear();
+    txtMasjidSearchController.clear();
+    txtAreaSearchController.clear();
     selectedCity = null;
     selectedState = null;
     selectedArea = null;
+    emit(MasjidViewModelCityAreaMasjidsListClearState());
   }
 
   bool _validateStateForm(
@@ -407,13 +486,27 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           stateCode: stateCode,
           latitude: latitude,
           longitude: longitude));
-
       if (result is DataSuccess) {
         _stateList.add(result.data!);
-        emit(MasjidViewModelStateDataUpdateState(
-          stateList: List.of(_stateList),
-          selectedState: selectedState,
-        ));
+        if (txtStateSearchController.text.trim().isEmpty) {
+          emit(MasjidViewModelStateListLoaded(
+              stateList: List.of(_stateList),
+              selectedCountry: selectedCountry!,
+              selectedState: selectedState));
+        } else {
+          final _filteredList = _stateList
+              .where((element) =>
+                  element.name.contains(txtStateSearchController.text) ||
+                  element.name.startsWith(
+                      txtStateSearchController.text.capitalizeFirst()) ||
+                  element.name == txtStateSearchController.text)
+              .toList();
+
+          emit(MasjidViewModelStateListLoaded(
+              stateList: _filteredList,
+              selectedCountry: selectedCountry!,
+              selectedState: selectedState));
+        }
         closeDialog(context);
         Navigator.pop(context);
         CustomToast.success(
@@ -447,14 +540,30 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           stateCode: stateCode,
           latitude: latitude,
           longitude: longitude));
-
       if (result is DataSuccess) {
         final updatedList = _stateList.update(stateEntity, result.data!);
-        updatedList.replaceRange(0, _stateList.length, updatedList);
-        emit(MasjidViewModelStateDataUpdateState(
-          selectedState: selectedState,
-          stateList: _stateList,
-        ));
+        _stateList.replaceRange(0, _stateList.length, updatedList);
+        selectedState = _stateList
+            .firstWhereOrNull((element) => element.id == selectedState?.id);
+        if (txtStateSearchController.text.trim().isEmpty) {
+          emit(MasjidViewModelStateListLoaded(
+              stateList: List.of(_stateList),
+              selectedCountry: selectedCountry!,
+              selectedState: selectedState));
+        } else {
+          final _filteredList = _stateList
+              .where((element) =>
+                  element.name.contains(txtStateSearchController.text) ||
+                  element.name.startsWith(
+                      txtStateSearchController.text.capitalizeFirst()) ||
+                  element.name == txtStateSearchController.text)
+              .toList();
+
+          emit(MasjidViewModelStateListLoaded(
+              stateList: _filteredList,
+              selectedCountry: selectedCountry!,
+              selectedState: selectedState));
+        }
         closeDialog(context);
         Navigator.pop(context);
         CustomToast.success(
@@ -480,19 +589,34 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
 
   void onDeleteState(StateEntity stateEntity, BuildContext context) async {
     showLoadingDialog(context);
-
     final result = await deleteStateUseCase(DeleteStateParams(
         countryId: selectedCountry!.id.toString(), id: stateEntity.id));
 
     if (result is DataSuccess) {
       if (selectedState == stateEntity) {
         selectedState = null;
+        emit(MasjidViewModelCityAreaMasjidsListClearState());
       }
       _stateList.remove(stateEntity);
-      emit(MasjidViewModelStateDataUpdateState(
-        stateList: List.of(_stateList),
-        selectedState: selectedState,
-      ));
+      if (txtStateSearchController.text.trim().isEmpty) {
+        emit(MasjidViewModelStateListLoaded(
+            stateList: List.of(_stateList),
+            selectedCountry: selectedCountry!,
+            selectedState: selectedState));
+      } else {
+        final _filteredList = _stateList
+            .where((element) =>
+                element.name.contains(txtStateSearchController.text) ||
+                element.name.startsWith(
+                    txtStateSearchController.text.capitalizeFirst()) ||
+                element.name == txtStateSearchController.text)
+            .toList();
+
+        emit(MasjidViewModelStateListLoaded(
+            stateList: _filteredList,
+            selectedCountry: selectedCountry!,
+            selectedState: selectedState));
+      }
       closeDialog(context);
       Navigator.pop(context);
       CustomToast.success(
@@ -510,29 +634,25 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
   }
 
   void onStateSearchChange(String val) {
+    print(val);
     if (val.trim().isEmpty) {
       emit(MasjidViewModelStateListLoaded(
-          stateList: _stateList,
-          selectedCountry: selectedCountry,
+          stateList: List.of(_stateList),
+          selectedCountry: selectedCountry!,
           selectedState: selectedState));
-      return;
-    }
-    final _filteredList = _stateList
-        .where((element) =>
-            element.name.contains(val) ||
-            element.name.startsWith(val.capitalizeFirst()) ||
-            element.name == val)
-        .toList();
-    if (state is MasjidViewModelStateListLoaded) {
-      emit(MasjidViewModelStateListLoaded(
-          stateList: _filteredList,
-          selectedCountry: selectedCountry,
-          selectedState: selectedState));
-    } else if (state is MasjidViewModelStateDataUpdateState ) {
-      emit(MasjidViewModelStateDataUpdateState(
-        stateList: _filteredList,
-        selectedState: selectedState,
-      ));
+    } else {
+      final _filteredList = _stateList
+          .where((element) =>
+              element.name.contains(val) ||
+              element.name.startsWith(val.capitalizeFirst()) ||
+              element.name == val)
+          .toList();
+      if (state is MasjidViewModelStateListLoaded) {
+        emit(MasjidViewModelStateListLoaded(
+            stateList: List.of(_filteredList),
+            selectedCountry: selectedCountry!,
+            selectedState: selectedState));
+      }
     }
   }
 
@@ -548,7 +668,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     if (result is DataSuccess) {
       _cityList.addAll(result.data!.toList());
       emit(MasjidViewModelCityListLoaded(
-        cityList: _cityList,
+        cityList: List.of(_cityList),
         selectedState: selectedState!,
         selectedCity: selectedCity,
         selectedCountry: selectedCountry!,
@@ -560,20 +680,38 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
 
   Future<void> onCityTap(CityEntity cityEntity) async {
     selectedCity = cityEntity;
-    emit(MasjidViewModelCityListLoaded(
-      cityList: _cityList,
-      selectedState: selectedState!,
-      selectedCity: selectedCity,
-      selectedCountry: selectedCountry!,
-    ));
+    scrollController.animateTo(
+        scrollController.positions.toList()[0].maxScrollExtent * 0.8,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeIn);
+    if (txtCitySearchController.text.trim().isEmpty) {
+      emit(MasjidViewModelCityListLoaded(
+        cityList: List.of(_cityList),
+        selectedState: selectedState!,
+        selectedCity: selectedCity,
+        selectedCountry: selectedCountry!,
+      ));
+    } else {
+      final _filteredList = _cityList
+          .where((element) =>
+              element.name.contains(txtCitySearchController.text) ||
+              element.name
+                  .startsWith(txtCitySearchController.text.capitalizeFirst()) ||
+              element.name == txtCitySearchController.text)
+          .toList();
+
+      emit(MasjidViewModelCityListLoaded(
+        cityList: _filteredList,
+        selectedState: selectedState!,
+        selectedCity: selectedCity,
+        selectedCountry: selectedCountry!,
+      ));
+    }
     _getAreaData();
   }
 
   Future<void> onCityDoubleTap(
       CityEntity cityEntity, BuildContext context) async {
-    selectedCity = selectedCity;
-    // emit(MasjidViewModelCountryListLoaded(
-    //     countryList: _countryList, selectedCountry: selectedCountry));
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -596,8 +734,14 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
   void clearCurrentDataForCity() {
     _areaList.clear();
     _cityList.clear();
+    _masjidList.clear();
+    txtCitySearchController.clear();
+    txtMasjidSearchController.clear();
+    txtAreaSearchController.clear();
     selectedCity = null;
     selectedArea = null;
+    selectedMasjid = null;
+    emit(MasjidViewModelAreaMasjidsListClearState());
   }
 
   bool _validateCityForm(
@@ -626,10 +770,29 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
 
       if (result is DataSuccess) {
         _cityList.add(result.data!);
-        emit(MasjidViewModelCityDataUpdateState(
-          cityList: _cityList,
-          selectedCity: selectedCity,
-        ));
+        if (txtCitySearchController.text.trim().isEmpty) {
+          emit(MasjidViewModelCityListLoaded(
+            cityList: List.of(_cityList),
+            selectedState: selectedState!,
+            selectedCity: selectedCity,
+            selectedCountry: selectedCountry!,
+          ));
+        } else {
+          final _filteredList = _cityList
+              .where((element) =>
+                  element.name.contains(txtCitySearchController.text) ||
+                  element.name.startsWith(
+                      txtCitySearchController.text.capitalizeFirst()) ||
+                  element.name == txtCitySearchController.text)
+              .toList();
+
+          emit(MasjidViewModelCityListLoaded(
+            cityList: _filteredList,
+            selectedState: selectedState!,
+            selectedCity: selectedCity,
+            selectedCountry: selectedCountry!,
+          ));
+        }
         closeDialog(context);
         Navigator.pop(context);
         CustomToast.success(
@@ -669,10 +832,31 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
       if (result is DataSuccess) {
         final updatedList = _cityList.update(cityEntity, result.data!);
         updatedList.replaceRange(0, _cityList.length, updatedList);
-        emit(MasjidViewModelCityDataUpdateState(
-          selectedCity: selectedCity,
-          cityList: _cityList,
-        ));
+        selectedCity = _cityList
+            .firstWhereOrNull((element) => element.id == selectedCity?.id);
+        if (txtCitySearchController.text.trim().isEmpty) {
+          emit(MasjidViewModelCityListLoaded(
+            cityList: List.of(updatedList),
+            selectedState: selectedState!,
+            selectedCity: selectedCity,
+            selectedCountry: selectedCountry!,
+          ));
+        } else {
+          final _filteredList = _cityList
+              .where((element) =>
+                  element.name.contains(txtCitySearchController.text) ||
+                  element.name.startsWith(
+                      txtCitySearchController.text.capitalizeFirst()) ||
+                  element.name == txtCitySearchController.text)
+              .toList();
+
+          emit(MasjidViewModelCityListLoaded(
+            cityList: _filteredList,
+            selectedState: selectedState!,
+            selectedCity: selectedCity,
+            selectedCountry: selectedCountry!,
+          ));
+        }
         closeDialog(context);
         Navigator.pop(context);
         CustomToast.success(
@@ -705,12 +889,33 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     if (result is DataSuccess) {
       if (selectedCity == cityEntity) {
         selectedCity = null;
+        selectedArea = null;
+        emit(MasjidViewModelAreaMasjidsListClearState());
       }
       _cityList.remove(cityEntity);
-      emit(MasjidViewModelCityDataUpdateState(
-        cityList: _cityList,
-        selectedCity: selectedCity,
-      ));
+      if (txtCitySearchController.text.trim().isEmpty) {
+        emit(MasjidViewModelCityListLoaded(
+          cityList: List.of(_cityList),
+          selectedState: selectedState!,
+          selectedCity: selectedCity,
+          selectedCountry: selectedCountry!,
+        ));
+      } else {
+        final _filteredList = _cityList
+            .where((element) =>
+                element.name.contains(txtCitySearchController.text) ||
+                element.name.startsWith(
+                    txtCitySearchController.text.capitalizeFirst()) ||
+                element.name == txtCitySearchController.text)
+            .toList();
+
+        emit(MasjidViewModelCityListLoaded(
+          cityList: _filteredList,
+          selectedState: selectedState!,
+          selectedCity: selectedCity,
+          selectedCountry: selectedCountry!,
+        ));
+      }
       closeDialog(context);
       Navigator.pop(context);
       CustomToast.success(
@@ -728,34 +933,28 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
   }
 
   void onCitySearchChange(String val) {
-    if (val.trim().isEmpty) {
+    if (selectedState != null) {
+      if (val.trim().isEmpty) {
+        emit(MasjidViewModelCityListLoaded(
+            cityList: List.of(_cityList),
+            selectedCity: selectedCity,
+            selectedCountry: selectedCountry!,
+            selectedState: selectedState!));
+        return;
+      }
+      final _filteredList = _cityList
+          .where((element) =>
+              element.name.contains(val) ||
+              element.name.startsWith(val.capitalizeFirst()) ||
+              element.name == val)
+          .toList();
       emit(MasjidViewModelCityListLoaded(
-          cityList: _cityList,
+          cityList: List.of(_filteredList),
           selectedCity: selectedCity,
           selectedCountry: selectedCountry!,
           selectedState: selectedState!));
-      return;
-    }
-    final _filteredList = _cityList
-        .where((element) =>
-    element.name.contains(val) ||
-        element.name.startsWith(val.capitalizeFirst()) ||
-        element.name == val)
-        .toList();
-    if (state is MasjidViewModelCityListLoaded) {
-      emit(MasjidViewModelCityListLoaded(
-          cityList: _filteredList,
-          selectedCity: selectedCity,
-          selectedCountry: selectedCountry!,
-          selectedState: selectedState!));
-    } else if (state is MasjidViewModelCityDataUpdateState ) {
-      emit(MasjidViewModelCityDataUpdateState(
-          cityList: _filteredList,
-          selectedCity: selectedCity,
-      ));
     }
   }
-
 
   //=========================== City End ===============================
 
@@ -771,7 +970,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     if (result is DataSuccess) {
       _areaList.addAll(result.data!.toList());
       emit(MasjidViewModelAreaListLoaded(
-        areaList: _areaList,
+        areaList: List.of(_areaList),
         selectedState: selectedState!,
         selectedCity: selectedCity!,
         selectedCountry: selectedCountry!,
@@ -782,19 +981,40 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
   }
 
   Future<void> onAreaTap(AreaEntity areaEntity) async {
+    scrollController.animateTo(
+        scrollController.positions.toList()[0].maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeIn);
     selectedArea = areaEntity;
-    emit(MasjidViewModelAreaListLoaded(
-      areaList: _areaList,
-      selectedState: selectedState!,
-      selectedCity: selectedCity!,
-      selectedArea: selectedArea!,
-      selectedCountry: selectedCountry!,
-    ));
+    if (txtAreaSearchController.text.trim().isEmpty) {
+      emit(MasjidViewModelAreaListLoaded(
+        areaList: List.of(_areaList),
+        selectedState: selectedState!,
+        selectedCity: selectedCity!,
+        selectedArea: selectedArea!,
+        selectedCountry: selectedCountry!,
+      ));
+    } else {
+      final _filteredList = _areaList
+          .where((element) =>
+              element.name.contains(txtAreaSearchController.text) ||
+              element.name
+                  .startsWith(txtAreaSearchController.text.capitalizeFirst()) ||
+              element.name == txtAreaSearchController.text)
+          .toList();
+      emit(MasjidViewModelAreaListLoaded(
+        areaList: List.of(_filteredList),
+        selectedState: selectedState!,
+        selectedCity: selectedCity!,
+        selectedArea: selectedArea,
+        selectedCountry: selectedCountry!,
+      ));
+    }
+    _getMasjidsData();
   }
 
   Future<void> onAreaDoubleTap(
       AreaEntity areaEntity, BuildContext context) async {
-    selectedArea = areaEntity;
     // emit(MasjidViewModelCountryListLoaded(
     //     countryList: _countryList, selectedCountry: selectedCountry));
     showDialog(
@@ -818,7 +1038,12 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
 
   void clearCurrentDataForArea() {
     _areaList.clear();
+    _masjidList.clear();
+    txtMasjidSearchController.clear();
+    txtAreaSearchController.clear();
     selectedArea = null;
+    selectedMasjid = null;
+    emit(MasjidViewModelAreaMasjidsListClearState());
   }
 
   bool _validateAreaForm(String name, String latitude, String longitude) {
@@ -847,10 +1072,30 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
 
       if (result is DataSuccess) {
         _areaList.add(result.data!);
-        emit(MasjidViewModelAreaDataUpdateState(
-          areaList: _areaList,
-          selectedArea: selectedArea,
-        ));
+        if (txtAreaSearchController.text.trim().isEmpty) {
+          emit(MasjidViewModelAreaListLoaded(
+            areaList: List.of(_areaList),
+            selectedState: selectedState!,
+            selectedCity: selectedCity!,
+            selectedArea: selectedArea,
+            selectedCountry: selectedCountry!,
+          ));
+        } else {
+          final _filteredList = _areaList
+              .where((element) =>
+                  element.name.contains(txtAreaSearchController.text) ||
+                  element.name.startsWith(
+                      txtAreaSearchController.text.capitalizeFirst()) ||
+                  element.name == txtAreaSearchController.text)
+              .toList();
+          emit(MasjidViewModelAreaListLoaded(
+            areaList: List.of(_filteredList),
+            selectedState: selectedState!,
+            selectedCity: selectedCity!,
+            selectedArea: selectedArea,
+            selectedCountry: selectedCountry!,
+          ));
+        }
         closeDialog(context);
         Navigator.pop(context);
         CustomToast.success(
@@ -890,10 +1135,33 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
       if (result is DataSuccess) {
         final updatedList = _areaList.update(areaEntity, result.data!);
         updatedList.replaceRange(0, _areaList.length, updatedList);
-        emit(MasjidViewModelAreaDataUpdateState(
-          selectedArea: selectedArea,
-          areaList: _areaList,
-        ));
+        selectedArea = _areaList
+            .firstWhereOrNull((element) => element.id == selectedArea?.id);
+        if (txtAreaSearchController.text.trim().isEmpty) {
+          emit(MasjidViewModelAreaListLoaded(
+            areaList: List.of(updatedList),
+            selectedState: selectedState!,
+            selectedCity: selectedCity!,
+            selectedArea: selectedArea,
+            selectedCountry: selectedCountry!,
+          ));
+        } else {
+          final _filteredList = _areaList
+              .where((element) =>
+                  element.name.contains(txtAreaSearchController.text) ||
+                  element.name.startsWith(
+                      txtAreaSearchController.text.capitalizeFirst()) ||
+                  element.name == txtAreaSearchController.text)
+              .toList();
+
+          emit(MasjidViewModelAreaListLoaded(
+            areaList: List.of(_filteredList),
+            selectedState: selectedState!,
+            selectedCity: selectedCity!,
+            selectedArea: selectedArea,
+            selectedCountry: selectedCountry!,
+          ));
+        }
         closeDialog(context);
         Navigator.pop(context);
         CustomToast.success(
@@ -927,12 +1195,34 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     if (result is DataSuccess) {
       if (selectedArea == areaEntity) {
         selectedArea = null;
+        emit(MasjidViewModelMasjidsListClearState());
       }
       _areaList.remove(areaEntity);
-      emit(MasjidViewModelAreaDataUpdateState(
-        selectedArea: selectedArea,
-        areaList: _areaList,
-      ));
+      if (txtAreaSearchController.text.trim().isEmpty) {
+        emit(MasjidViewModelAreaListLoaded(
+          areaList: List.of(_areaList),
+          selectedState: selectedState!,
+          selectedCity: selectedCity!,
+          selectedArea: selectedArea,
+          selectedCountry: selectedCountry!,
+        ));
+      } else {
+        final _filteredList = _areaList
+            .where((element) =>
+                element.name.contains(txtAreaSearchController.text) ||
+                element.name.startsWith(
+                    txtAreaSearchController.text.capitalizeFirst()) ||
+                element.name == txtAreaSearchController.text)
+            .toList();
+
+        emit(MasjidViewModelAreaListLoaded(
+          areaList: List.of(_filteredList),
+          selectedState: selectedState!,
+          selectedCity: selectedCity!,
+          selectedArea: selectedArea,
+          selectedCountry: selectedCountry!,
+        ));
+      }
       closeDialog(context);
       Navigator.pop(context);
       CustomToast.success(
@@ -961,25 +1251,71 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     }
     final _filteredList = _areaList
         .where((element) =>
-    element.name.contains(val) ||
-        element.name.startsWith(val.capitalizeFirst()) ||
-        element.name == val)
+            element.name.contains(val) ||
+            element.name.startsWith(val.capitalizeFirst()) ||
+            element.name == val)
         .toList();
     if (state is MasjidViewModelAreaListLoaded) {
       emit(MasjidViewModelAreaListLoaded(
-          areaList: _filteredList,
+          areaList: List.of(_filteredList),
           selectedCity: selectedCity!,
           selectedArea: selectedArea,
           selectedCountry: selectedCountry!,
           selectedState: selectedState!));
-    } else if (state is MasjidViewModelAreaDataUpdateState ) {
-      emit(MasjidViewModelAreaDataUpdateState(
-          areaList: _filteredList,
-          selectedArea: selectedArea,
-      ));
     }
   }
 
+  //=========================== Area End ===============================
+
+  Future<void> _getMasjidsData() async {
+    clearCurrentDataForMasjid();
+    emit(const MasjidViewModelMasjidsListLoading());
+    final result = await getMasjidsListUseCase(MasjidsParams(
+      countryId: selectedCountry!.id,
+      stateId: selectedState!.id,
+      cityId: selectedCity!.id,
+      areaId: selectedArea!.id,
+    ));
+    if (result is DataSuccess) {
+      _masjidList.addAll(result.data!.toList());
+      emit(MasjidViewModelMasjidsListLoaded(
+        masjidList: _masjidList,
+        selectedState: selectedState!,
+        selectedCity: selectedCity!,
+        selectedArea: selectedArea!,
+        selectedMasjid: selectedMasjid,
+        selectedCountry: selectedCountry!,
+      ));
+    } else {
+      emit(
+          MasjidViewModelMasjidsListErrorState(message: result.error!.message));
+    }
+  }
+
+  void clearCurrentDataForMasjid() {
+    _masjidList.clear();
+    txtMasjidSearchController.clear();
+    selectedMasjid = null;
+  }
+
+  Future<void> onMasjidTap(MasjidEntity areaEntity) async {
+
+  }
+
+  Future<void> onMasjidDoubleTap(MasjidEntity areaEntity, context) async {
+
+  }
+
+  void onAddNewMasjidButtonTap(context) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return const AddUpdateDialog<MasjidEntity>(
+            insertPadding: EdgeInsets.zero,
+          );
+        });
+  }
 
   @override
   Future<void> close() {

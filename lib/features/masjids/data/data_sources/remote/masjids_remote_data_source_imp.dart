@@ -8,6 +8,7 @@ import 'package:mnm_internal_admin/features/masjids/data/data_sources/remote/mas
 import 'package:mnm_internal_admin/features/masjids/data/models/area_model.dart';
 import 'package:mnm_internal_admin/features/masjids/data/models/city_model.dart';
 import 'package:mnm_internal_admin/features/masjids/data/models/country_model.dart';
+import 'package:mnm_internal_admin/features/masjids/data/models/masjid_model.dart';
 import 'package:mnm_internal_admin/features/masjids/data/models/state_model.dart';
 
 class MasjidsRemoteDataSourceImp implements MasjidsRemoteDataSource {
@@ -511,6 +512,32 @@ class MasjidsRemoteDataSourceImp implements MasjidsRemoteDataSource {
         onError: (error) {
           dataSourceResult = DataFailed(DataSourceError(
             message: error.data['detail'][0]['meg'] ?? error.statusMessage,
+            statusCode: error.statusCode,
+          ));
+        });
+    return dataSourceResult!;
+  }
+
+  @override
+  Future<DataSourceResult<List<MasjidModel>>> getMasjids(String countryId, String stateId, String cityId, String areaId) async {
+    DataSourceResult<List<MasjidModel>>? dataSourceResult;
+    await ApiHandler.sendRequest(
+        endPoint: '${ApiUrls.getMasjids}$countryId/$stateId/$cityId/$areaId',
+        type: RequestType.get,
+        onSuccess: (response) {
+          try {
+            final List<MasjidModel> masjidList = response.data['masjids']
+                .map<MasjidModel>((masjid) => MasjidModel.fromJson(masjid))
+                .toList();
+            dataSourceResult = DataSuccess(masjidList);
+          } catch (e) {
+            kDebugPrint(e);
+            dataSourceResult = DataFailed(DataSourceError());
+          }
+        },
+        onError: (error) {
+          dataSourceResult = DataFailed(DataSourceError(
+            message: error.statusMessage,
             statusCode: error.statusCode,
           ));
         });
