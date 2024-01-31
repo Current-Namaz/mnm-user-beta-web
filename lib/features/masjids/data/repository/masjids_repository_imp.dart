@@ -7,6 +7,8 @@ import 'package:mnm_internal_admin/features/masjids/domain/entities/country.dart
 import 'package:mnm_internal_admin/features/masjids/domain/entities/masjid.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/state.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/repository/masjids_repository.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/usecases/create_new_masjid.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_masjid.dart';
 
 class MasjidsRepositoryImp extends MasjidsRepository {
   MasjidsRepositoryImp({required this.masjidsRemoteDataSource});
@@ -397,6 +399,66 @@ class MasjidsRepositoryImp extends MasjidsRepository {
         return DataSuccess(result.data!.map((e) => e.mapToEntity()).toList());
       } else {
         return DataFailed(DataSourceError(message: 'Data not found'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<MasjidEntity>> createNewMasjid({
+    required CreateNewMasjidParams createNewMasjidParams,
+  }) async {
+    try {
+      final result =
+          await masjidsRemoteDataSource.createNewMasjid(createNewMasjidParams);
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!.mapToEntity());
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<String>> deleteMasjid(
+      {required String countryId,
+      required String stateId,
+      required String cityId,
+      required String areaId,
+      required String masjidId}) async {
+    try {
+      final result = await masjidsRemoteDataSource.deleteMasjid(
+          countryId, stateId, cityId, areaId, masjidId);
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!);
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<MasjidEntity>> updateMasjid(
+      {required UpdateMasjidParams updateMasjidParams}) async {
+    try {
+      final result = await masjidsRemoteDataSource.updateMasjid(
+        updateMasjidParams,
+      );
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!.mapToEntity());
+      } else if (result is DataFailed && result.error != null) {
+        return DataFailed(DataSourceError(message: result.error!.message));
+      } else {
+        return DataFailed(DataSourceError(message: 'Some thing went wrong'));
       }
     } catch (e) {
       return DataFailed(DataSourceError());

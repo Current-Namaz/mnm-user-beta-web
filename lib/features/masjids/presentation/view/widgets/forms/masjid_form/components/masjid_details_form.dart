@@ -10,7 +10,25 @@ import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/fo
 import '../../../../../../../../core/values/constants.dart';
 
 class MasjidDetailsForm extends StatelessWidget {
-  const MasjidDetailsForm({super.key});
+  const MasjidDetailsForm(
+      {super.key,
+      required this.txtMasjidNameController,
+      required this.txtMapUrlController,
+      required this.txtLatitudeController,
+      required this.txtLongitudeController,
+      required this.txtCountryController,
+      required this.txtStateController,
+      required this.txtCityController,
+      required this.txtAreaController});
+
+  final TextEditingController txtMasjidNameController;
+  final TextEditingController txtMapUrlController;
+  final TextEditingController txtLatitudeController;
+  final TextEditingController txtLongitudeController;
+  final TextEditingController txtCountryController;
+  final TextEditingController txtStateController;
+  final TextEditingController txtCityController;
+  final TextEditingController txtAreaController;
 
   @override
   Widget build(BuildContext context) {
@@ -55,21 +73,18 @@ class MasjidDetailsForm extends StatelessWidget {
                     SizedBox(
                       height: 10,
                     ),
-                    // AppDropDown(
-                    //   hintText: AppStrings.hMadhab,
-                    // ),
                     AppTextField(
+                      controller: txtLatitudeController,
                       hintText: AppStrings.hLatitude,
                     ),
                     AppTextField(
+                      controller: txtLongitudeController,
                       hintText: AppStrings.hLongitude,
                     ),
                   ],
                 ),
               ),
-              SizedBox(
-                width: 20,
-              ),
+              SizedBox(width: 20),
               Expanded(
                   flex: 3,
                   child: Column(
@@ -77,112 +92,45 @@ class MasjidDetailsForm extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AppTextField(
-                        hintText: AppStrings.hName,
-                      ),
+                          controller: txtMasjidNameController,
+                          hintText: AppStrings.hName),
                       AppTextField(
-                        hintText: AppStrings.hLocationUrl,
-                      ),
+                          controller: txtMapUrlController,
+                          hintText: AppStrings.hLocationUrl),
                       Row(
                         children: [
                           Expanded(
-                              child:
-                                  AppTextField(hintText: AppStrings.hCountry)),
-                          SizedBox(
-                            width: 20,
-                          ),
+                              child: AppTextField(
+                                  isReadyOnly: true,
+                                  hintText: AppStrings.hCountry,
+                                  controller: txtCountryController)),
+                          SizedBox(width: 20),
                           Expanded(
-                              child: AppTextField(hintText: AppStrings.hState)),
+                              child: AppTextField(
+                                  isReadyOnly: true,
+                                  hintText: AppStrings.hState,
+                                  controller: txtStateController)),
                         ],
                       ),
                       Row(
                         children: [
                           Expanded(
                               child: AppTextField(
-                            hintText: AppStrings.hCity,
-                          )),
-                          SizedBox(
-                            width: 20,
-                          ),
+                                  isReadyOnly: true,
+                                  controller: txtCityController,
+                                  hintText: AppStrings.hCity)),
+                          SizedBox(width: 20),
                           Expanded(
                               child: AppTextField(
-                            hintText: AppStrings.hArea,
-                          )),
+                                  isReadyOnly: true,
+                                  controller: txtAreaController,
+                                  hintText: AppStrings.hArea)),
                         ],
                       ),
                     ],
                   ))
             ],
           ),
-
-          // Row(
-          //   children: [
-          //     Expanded(
-          //       child: Column(
-          //         children: [
-          //           AspectRatio(aspectRatio: 1,child: Container(color: Colors.red,),),
-          //         ],
-          //       ),
-          //     ),
-          //   ],
-          // ),
-
-          // Row(
-          //   children: [
-          //     Expanded(
-          //         child: MasjidTimingWidget(
-          //           title: 'Fajr',
-          //           azanController: TextEditingController(),
-          //           jammatController: TextEditingController(),
-          //         )),
-          //     SizedBox(
-          //       width: 10,
-          //     ),
-          //     Expanded(
-          //         child: MasjidTimingWidget(
-          //           title: 'Dhuhr',
-          //           azanController: TextEditingController(),
-          //           jammatController: TextEditingController(),
-          //         )),
-          //   ],
-          // ),
-          // Row(
-          //   children: [
-          //     Expanded(
-          //         child: MasjidTimingWidget(
-          //           title: 'Jumma',
-          //           azanController: TextEditingController(),
-          //           jammatController: TextEditingController(),
-          //         )),
-          //     SizedBox(
-          //       width: 10,
-          //     ),
-          //     Expanded(
-          //         child: MasjidTimingWidget(
-          //           title: 'Asr',
-          //           azanController: TextEditingController(),
-          //           jammatController: TextEditingController(),
-          //         )),
-          //   ],
-          // ),
-          // Row(
-          //   children: [
-          //     Expanded(
-          //         child: MasjidTimingWidget(
-          //           title: 'Maghrib',
-          //           azanController: TextEditingController(),
-          //           jammatController: TextEditingController(),
-          //         )),
-          //     SizedBox(
-          //       width: 10,
-          //     ),
-          //     Expanded(
-          //         child: MasjidTimingWidget(
-          //           title: 'ISha',
-          //           azanController: TextEditingController(),
-          //           jammatController: TextEditingController(),
-          //         )),
-          //   ],
-          // ),
         ],
       ),
     );

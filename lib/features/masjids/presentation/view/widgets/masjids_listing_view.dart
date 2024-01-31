@@ -9,7 +9,7 @@ import '../../../../../core/values/app_strings.dart';
 import '../../../../../core/values/constants.dart';
 import '../../../../../core/widgets/app_text_field.dart';
 import '../../../../../core/widgets/common_button.dart';
-import '../../view_models/masjid_view_model_cubit.dart';
+import '../../view_models/masjid_view_model/masjid_view_model_cubit.dart';
 import 'masjid_location_item_view.dart';
 
 class MasjidsListingView extends StatefulWidget {
@@ -53,8 +53,9 @@ class _MasjidsListingViewState extends State<MasjidsListingView>
               )),
           AppTextField(
             topMargin: 5,
+            controller: context.read<MasjidViewModelCubit>().txtMasjidSearchController,
             hideLable: true,
-            onChange: context.read<MasjidViewModelCubit>().onCitySearchChange,
+            onChange: context.read<MasjidViewModelCubit>().onMasjidSearchChange,
             hintText: AppStrings.hSearch,
             height: 40,
           ),
@@ -98,14 +99,13 @@ class _MasjidsListingViewState extends State<MasjidsListingView>
                       return MasjidItemView(
                         onDoubleTap: () =>
                             BlocProvider.of<MasjidViewModelCubit>(context)
-                                .onMasjidDoubleTap(
-                                    state.masjidList[index], context),
+                                .onMasjidTap(state.masjidList[index],context),
                         isSelected:
                             state.selectedCity == state.masjidList[index],
                         entity: state.masjidList[index],
                         onTap: () =>
                             BlocProvider.of<MasjidViewModelCubit>(context)
-                                .onMasjidTap(state.masjidList[index]),
+                                .onMasjidTap(state.masjidList[index],context),
                       );
                     },
                   );
@@ -146,12 +146,13 @@ class _MasjidsListingViewState extends State<MasjidsListingView>
 
               return CommonButton(
                 height: 35,
-                // isDisabled: true,
+                isDisabled: true,
                 radius: const BorderRadius.only(
                     bottomRight: Radius.circular(r12),
                     bottomLeft: Radius.circular(r12)),
-                onTap: () => BlocProvider.of<MasjidViewModelCubit>(context)
-                    .onAddNewMasjidButtonTap(context),
+                onTap: () {
+
+                },
                 text: AppStrings.addMasjid,
               );
             },

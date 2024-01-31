@@ -22,6 +22,10 @@ class ApiUrls{
   static String deleteArea(String countryId,String stateId,String cityId,String id) => "/deleteArea/$countryId/$stateId/$cityId/$id";
   static String updateArea(String countryId,String stateId,String cityId,String id) => "/updateArea/$countryId/$stateId/$cityId/$id";
   static String getMasjids = "/getMasjids/";
+  static String newMasjid = "/newMasjid";
+  static String deleteMasjid(String countryId,String stateId,String cityId,String areaId,String id) => "/deleteMasjids/$countryId/$stateId/$cityId/$areaId/$id";
+  static String updateMasjid(String countryId,String stateId,String cityId,String areaId,String id) => "/updateMasjid/$countryId/$stateId/$cityId/$areaId/$id";
+
 
 
 }

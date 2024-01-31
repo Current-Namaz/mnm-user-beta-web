@@ -7,7 +7,33 @@ import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/fo
 import '../../../../../../../../core/values/constants.dart';
 
 class NamazTimingForm extends StatelessWidget {
-  const NamazTimingForm({super.key});
+  const NamazTimingForm(
+      {super.key,
+      required this.txtFajrAzanController,
+      required this.txtFajrJammatController,
+      required this.txtDhuhrAzanController,
+      required this.txtDhuhrJammatController,
+      required this.txtJummaAzanController,
+      required this.txtJummaJammatController,
+      required this.txtAsrAzanController,
+      required this.txtAsrJammatController,
+      required this.txtMaghribAzanController,
+      required this.txtMaghribJammatController,
+      required this.txtIshaAzanController,
+      required this.txtIshaJammatController});
+
+  final TextEditingController txtFajrAzanController;
+  final TextEditingController txtFajrJammatController;
+  final TextEditingController txtDhuhrAzanController;
+  final TextEditingController txtDhuhrJammatController;
+  final TextEditingController txtJummaAzanController;
+  final TextEditingController txtJummaJammatController;
+  final TextEditingController txtAsrAzanController;
+  final TextEditingController txtAsrJammatController;
+  final TextEditingController txtMaghribAzanController;
+  final TextEditingController txtMaghribJammatController;
+  final TextEditingController txtIshaAzanController;
+  final TextEditingController txtIshaJammatController;
 
   @override
   Widget build(BuildContext context) {
@@ -31,17 +57,15 @@ class NamazTimingForm extends StatelessWidget {
               Expanded(
                   child: MasjidTimingWidget(
                 title: 'Fajr',
-                azanController: TextEditingController(),
-                jammatController: TextEditingController(),
+                azanController: txtFajrAzanController,
+                jammatController: txtFajrJammatController,
               )),
-              SizedBox(
-                width: 10,
-              ),
+              SizedBox(width: 10),
               Expanded(
                   child: MasjidTimingWidget(
                 title: 'Dhuhr',
-                azanController: TextEditingController(),
-                jammatController: TextEditingController(),
+                azanController: txtDhuhrAzanController,
+                jammatController: txtDhuhrJammatController,
               )),
             ],
           ),
@@ -50,8 +74,8 @@ class NamazTimingForm extends StatelessWidget {
               Expanded(
                   child: MasjidTimingWidget(
                 title: 'Jumma',
-                azanController: TextEditingController(),
-                jammatController: TextEditingController(),
+                azanController: txtJummaAzanController,
+                jammatController: txtJummaJammatController,
               )),
               SizedBox(
                 width: 10,
@@ -59,8 +83,8 @@ class NamazTimingForm extends StatelessWidget {
               Expanded(
                   child: MasjidTimingWidget(
                 title: 'Asr',
-                azanController: TextEditingController(),
-                jammatController: TextEditingController(),
+                azanController: txtAsrAzanController,
+                jammatController: txtAsrJammatController,
               )),
             ],
           ),
@@ -68,18 +92,17 @@ class NamazTimingForm extends StatelessWidget {
             children: [
               Expanded(
                   child: MasjidTimingWidget(
-                title: 'Maghrib',
-                azanController: TextEditingController(),
-                jammatController: TextEditingController(),
-              )),
+                      title: 'Maghrib',
+                      azanController: txtMaghribAzanController,
+                      jammatController: txtMaghribJammatController)),
               SizedBox(
                 width: 10,
               ),
               Expanded(
                   child: MasjidTimingWidget(
-                title: 'ISha',
-                azanController: TextEditingController(),
-                jammatController: TextEditingController(),
+                title: 'Isha',
+                azanController: txtIshaAzanController,
+                jammatController: txtIshaJammatController,
               )),
             ],
           ),

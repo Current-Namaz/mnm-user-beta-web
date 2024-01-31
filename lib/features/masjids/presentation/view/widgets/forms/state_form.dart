@@ -9,7 +9,7 @@ import '../../../../../../core/values/app_styles.dart';
 import '../../../../../../core/values/constants.dart';
 import '../../../../../../core/widgets/app_text_field.dart';
 import '../../../../../../core/widgets/common_button.dart';
-import '../../../view_models/masjid_view_model_cubit.dart';
+import '../../../view_models/masjid_view_model/masjid_view_model_cubit.dart';
 
 class StateForm extends StatefulWidget {
   const StateForm({super.key, this.entity});

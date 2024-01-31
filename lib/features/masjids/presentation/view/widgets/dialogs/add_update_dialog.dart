@@ -14,23 +14,24 @@ import 'package:mnm_internal_admin/features/masjids/presentation/view/widgets/fo
 import '../../../../../../core/values/constants.dart';
 
 class AddUpdateDialog<T> extends StatelessWidget {
-  const AddUpdateDialog({super.key, this.entity,this.insertPadding});
+  const AddUpdateDialog({super.key, this.entity, this.insertPadding});
 
   final T? entity;
   final EdgeInsets? insertPadding;
 
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
+        elevation: 0,
         backgroundColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(r20),
                 bottomLeft: Radius.circular(r20))),
-        insetPadding: insertPadding ?? EdgeInsets.only(
-          left: MediaQuery.sizeOf(context).width * 0.75,
-        ),
+        insetPadding: insertPadding ??
+            EdgeInsets.only(
+              left: MediaQuery.sizeOf(context).width * 0.75,
+            ),
         child: (() {
           if (T == CountryEntity) {
             return CountryForm(entity: entity as CountryEntity?);
@@ -44,8 +45,8 @@ class AddUpdateDialog<T> extends StatelessWidget {
           if (T == AreaEntity) {
             return AreaForm(entity: entity as AreaEntity?);
           }
-          if(T == MasjidEntity)
-            return MasjidForm();
+          if (T == MasjidEntity)
+            return MasjidForm(entity: entity as MasjidEntity?);
         }()));
   }
 }

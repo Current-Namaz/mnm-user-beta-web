@@ -10,7 +10,7 @@ import 'package:mnm_internal_admin/features/home/presentation/view/widgets/home_
 import 'package:mnm_internal_admin/features/home/presentation/view_model/side_menu_drawer_view_model/side_menu_drawer_view_model_cubit.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view/masjid_main_view.dart';
 
-import '../../../../masjids/presentation/view_models/masjid_view_model_cubit.dart';
+import '../../../../masjids/presentation/view_models/masjid_view_model/masjid_view_model_cubit.dart';
 
 class HomeBody extends StatelessWidget {
   const HomeBody({super.key});

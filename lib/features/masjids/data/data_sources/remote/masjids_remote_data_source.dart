@@ -3,8 +3,10 @@ import 'package:mnm_internal_admin/features/masjids/data/models/city_model.dart'
 import 'package:mnm_internal_admin/features/masjids/data/models/country_model.dart';
 import 'package:mnm_internal_admin/features/masjids/data/models/masjid_model.dart';
 import 'package:mnm_internal_admin/features/masjids/data/models/state_model.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/usecases/create_new_masjid.dart';
 
 import '../../../../../core/common_domain/data_source_result/data_source_result.dart';
+import '../../../domain/usecases/update_masjid.dart';
 
 abstract class MasjidsRemoteDataSource {
   Future<DataSourceResult<List<CountryModel>>> getCountries();
@@ -107,4 +109,9 @@ abstract class MasjidsRemoteDataSource {
 
   Future<DataSourceResult<List<MasjidModel>>> getMasjids(
       String countryId, String stateId, String cityId,String areaId);
+
+  Future<DataSourceResult<MasjidModel>> createNewMasjid(CreateNewMasjidParams createNewMasjidParams);
+  Future<DataSourceResult<String>> deleteMasjid( String countryId, String stateId, String cityId,String areaId,String masjidId);
+
+  Future<DataSourceResult<MasjidModel>> updateMasjid(UpdateMasjidParams updateMasjidParams);
 }

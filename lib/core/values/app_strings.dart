@@ -22,7 +22,7 @@ class AppStrings {
   static const String hCountry = 'Country';
   static const String hState = 'State';
   static const String hCity = 'City';
-  static const String hArea = 'City';
+  static const String hArea = 'Area';
   static const String hStateCode = 'State code';
   static const String hSearch = 'Search';
   static const String mTValidationFailed = 'Invalid data';
@@ -58,8 +58,8 @@ class AppStrings {
   static String NamazTimings = 'Namaz Timings';
 
   static String adminDetails = 'Admin Details';
-  static String eidNamaz1 = 'Eid namaz2';
-  static String eidNamaz2 = 'Eid namaz 1';
+  static String eidNamaz1 = 'Eid namaz 1';
+  static String eidNamaz2 = 'Eid namaz 2';
   static String eidFajarTime = 'Fajr time';
   static String eidNamazTimings = 'Eid Namaz Timings';
   static String masjidDetails = 'Masjid Details';

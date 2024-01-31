@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:mnm_internal_admin/core/base_components/drag_with_mouse_scroll_behavior.dart';
 import 'package:mnm_internal_admin/core/values/app_colors.dart';
 import 'package:mnm_internal_admin/di.dart';
 import 'package:mnm_internal_admin/features/auth/presentation/view_model/auth_cubit.dart';
 import 'package:mnm_internal_admin/features/home/presentation/view_model/side_menu_drawer_view_model/side_menu_drawer_view_model_cubit.dart';
-import 'package:mnm_internal_admin/features/masjids/presentation/view_models/masjid_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view_models/madhab_view_model/madhab_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view_models/masjid_view_model/masjid_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view_models/prayer_times_view_model_cubit.dart';
 import 'config/app_routes.dart';
 import 'features/auth/presentation/view/auth_screen.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
 
 void main() {
+
+  tz.initializeTimeZones();
   Hive.initFlutter();
   initializeInstances();
   runApp(const SalesManagingApp());
@@ -24,9 +30,9 @@ class SalesManagingApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => sl<MasjidViewModelCubit>()),
-        BlocProvider(
-          create: (context) => AuthCubit(),
-        ),
+        BlocProvider(create: (context) => sl<MadhabViewModelCubit>()),
+        BlocProvider(create: (context) => sl<PrayerTimesViewModelCubit>()),
+        BlocProvider(create: (context) => AuthCubit()),
         BlocProvider(
           create: (context) => SideMenuDrawerViewModelCubit(),
         ),
@@ -39,8 +45,7 @@ class SalesManagingApp extends StatelessWidget {
         onGenerateRoute: AppRoutes.onGeneratedRoutes,
         theme: ThemeData(
           radioTheme: Theme.of(context).radioTheme.copyWith(
-            fillColor: MaterialStatePropertyAll<Color>(AppColors.lightGreen)
-          ),
+              fillColor: MaterialStatePropertyAll<Color>(AppColors.lightGreen)),
           fontFamily: 'Manrope',
           scrollbarTheme: const ScrollbarThemeData()
               .copyWith(thumbColor: MaterialStateProperty.all(AppColors.white)),

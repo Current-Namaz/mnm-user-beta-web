@@ -27,7 +27,7 @@ class CityModel extends DataMapper<CityEntity> {
     stateId = json['state_id'];
     latitude = json['latitude'];
     longitude = json['longitude'];
-    timeZone = json['timeZone'];
+    timeZone = json['timezone'];
   }
 
   Map<String, dynamic> toJson() {
@@ -38,7 +38,7 @@ class CityModel extends DataMapper<CityEntity> {
     data['state_id'] = stateId;
     data['latitude'] = latitude;
     data['longitude'] = longitude;
-    data['timeZone'] = timeZone;
+    data['timezone'] = timeZone;
     return data;
   }
 

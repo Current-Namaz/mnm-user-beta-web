@@ -3,8 +3,10 @@ import 'package:mnm_internal_admin/features/masjids/domain/entities/city.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/country.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/masjid.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/state.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_masjid.dart';
 
 import '../../../../core/common_domain/data_source_result/data_source_result.dart';
+import '../usecases/create_new_masjid.dart';
 
 abstract class MasjidsRepository {
   Future<DataSourceResult<List<CountryEntity>>> getCountries();
@@ -104,9 +106,20 @@ abstract class MasjidsRepository {
     required String longitude,
   });
 
-  Future<DataSourceResult<List<MasjidEntity>>> getMasjids(
-      {required String countryId,
-      required String stateId,
-      required String cityId,
-      required String areaId});
+  Future<DataSourceResult<List<MasjidEntity>>> getMasjids({
+    required String countryId,
+    required String stateId,
+    required String cityId,
+    required String areaId,
+  });
+
+  Future<DataSourceResult<MasjidEntity>> createNewMasjid({
+    required CreateNewMasjidParams createNewMasjidParams,
+  });
+  Future<DataSourceResult<MasjidEntity>> updateMasjid({
+    required UpdateMasjidParams updateMasjidParams,
+  });
+
+  Future<DataSourceResult<String>> deleteMasjid
+  ({required String countryId,required String stateId, required String cityId,required String areaId,required String masjidId});
 }

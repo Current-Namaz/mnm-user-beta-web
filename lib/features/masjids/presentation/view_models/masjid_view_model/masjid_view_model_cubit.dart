@@ -1,3 +1,4 @@
+import 'package:adhan_dart/adhan_dart.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,14 +11,17 @@ import 'package:mnm_internal_admin/core/utils/app_extensions/update_extension.da
 import 'package:mnm_internal_admin/core/utils/helpers/helper_functions.dart';
 import 'package:mnm_internal_admin/core/values/app_images.dart';
 import 'package:mnm_internal_admin/core/values/app_strings.dart';
+import 'package:mnm_internal_admin/core/values/enums.dart';
 import 'package:mnm_internal_admin/core/widgets/custom_toast.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/city.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/country.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/create_new_area.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/create_new_country.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/usecases/create_new_masjid.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/create_new_state.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/delete_area.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/delete_country.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/usecases/delete_masjid.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_area_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_city_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_country_list.dart';
@@ -25,38 +29,45 @@ import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_masjids_
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_state_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_area.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_country.dart';
-import '../../domain/entities/area.dart';
-import '../../domain/entities/masjid.dart';
-import '../../domain/entities/state.dart';
-import '../../domain/usecases/create_new_city.dart';
-import '../../domain/usecases/delete_city.dart';
-import '../../domain/usecases/delete_state.dart';
-import '../../domain/usecases/update_city.dart';
-import '../../domain/usecases/update_state.dart';
-import '../view/widgets/dialogs/add_update_dialog.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_masjid.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view_models/madhab_view_model/madhab_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view_models/prayer_times_view_model_cubit.dart';
+import '../../../../../di.dart';
+import '../../../domain/entities/area.dart';
+import '../../../domain/entities/masjid.dart';
+import '../../../domain/entities/state.dart';
+import '../../../domain/usecases/create_new_city.dart';
+import '../../../domain/usecases/delete_city.dart';
+import '../../../domain/usecases/delete_state.dart';
+import '../../../domain/usecases/update_city.dart';
+import '../../../domain/usecases/update_state.dart';
+import '../../view/widgets/dialogs/add_update_dialog.dart';
 
 part 'masjid_view_model_state.dart';
 
 class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
-  MasjidViewModelCubit(
-      {required this.getCountryListUseCase,
-      required this.getStateUseCase,
-      required this.getCityListUseCase,
-      required this.createNewCountryUseCase,
-      required this.updateCountryUseCase,
-      required this.getAreaListUseCase,
-      required this.deleteCountryUseCase,
-      required this.createNewStateUseCase,
-      required this.deleteStateUseCase,
-      required this.updateStateUseCase,
-      required this.createNewCityUseCase,
-      required this.deleteCityUseCase,
-      required this.updateCityUseCase,
-      required this.createNewAreaUseCase,
-      required this.deleteAreaUseCase,
-      required this.updateAreaUseCase,
-      required this.getMasjidsListUseCase})
-      : super(const MasjidViewModelInitial());
+  MasjidViewModelCubit({
+    required this.getCountryListUseCase,
+    required this.getStateUseCase,
+    required this.getCityListUseCase,
+    required this.createNewCountryUseCase,
+    required this.updateCountryUseCase,
+    required this.getAreaListUseCase,
+    required this.deleteCountryUseCase,
+    required this.createNewStateUseCase,
+    required this.deleteStateUseCase,
+    required this.updateStateUseCase,
+    required this.createNewCityUseCase,
+    required this.deleteCityUseCase,
+    required this.updateCityUseCase,
+    required this.createNewAreaUseCase,
+    required this.deleteAreaUseCase,
+    required this.updateAreaUseCase,
+    required this.getMasjidsListUseCase,
+    required this.createNewMasjidUseCase,
+    required this.updateMasjidUseCase,
+    required this.deleteMasjidUseCase,
+  }) : super(const MasjidViewModelInitial());
 
   // / form text Controllers
 
@@ -77,6 +88,9 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
   final DeleteArea deleteAreaUseCase;
   final UpdateArea updateAreaUseCase;
   final GetMasjidsList getMasjidsListUseCase;
+  final CreateNewMasjid createNewMasjidUseCase;
+  final UpdateMasjid updateMasjidUseCase;
+  final DeleteMasjid deleteMasjidUseCase;
 
   final List<CountryEntity> _countryList = [];
   final List<StateEntity> _stateList = [];
@@ -227,7 +241,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           emit(MasjidViewModelCountryListLoaded(
               countryList: _filteredList, selectedCountry: selectedCountry));
         }
-        closeDialog(context);
+        closeLoadingDialog(context);
         CustomToast.success(
                 title: AppStrings.mTSuccess,
                 description: AppStrings.mDAddedSuccessFully)
@@ -238,7 +252,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           title: AppStrings.mTError,
           description: result.error!.message,
         ).show(context);
-        closeDialog(context);
+        closeLoadingDialog(context);
         kDebugPrint(result.error!.message);
       }
     } else {
@@ -292,14 +306,14 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
             selectedCountry: selectedCountry,
           ));
         }
-        closeDialog(context);
+        closeLoadingDialog(context);
         Navigator.pop(context);
         CustomToast.success(
           title: AppStrings.mTSuccess,
           description: AppStrings.mDUpdateSuccessFully,
         ).show(context);
       } else {
-        closeDialog(context);
+        closeLoadingDialog(context);
         CustomToast.error(
           title: AppStrings.mTError,
           description: result.error!.message,
@@ -347,14 +361,14 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           selectedCountry: selectedCountry,
         ));
       }
-      closeDialog(context);
+      closeLoadingDialog(context);
       Navigator.pop(context);
       CustomToast.success(
         title: AppStrings.mTSuccess,
         description: result.data ?? AppStrings.mDeleteSuccessFully,
       ).show(context);
     } else {
-      closeDialog(context);
+      closeLoadingDialog(context);
       CustomToast.error(
         title: AppStrings.mTError,
         description: result.error!.message,
@@ -507,7 +521,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
               selectedCountry: selectedCountry!,
               selectedState: selectedState));
         }
-        closeDialog(context);
+        closeLoadingDialog(context);
         Navigator.pop(context);
         CustomToast.success(
           title: AppStrings.mTSuccess,
@@ -518,7 +532,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           title: AppStrings.mTError,
           description: result.error!.message,
         ).show(context);
-        closeDialog(context);
+        closeLoadingDialog(context);
         kDebugPrint(result.error!.message);
       }
     } else {
@@ -564,14 +578,14 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
               selectedCountry: selectedCountry!,
               selectedState: selectedState));
         }
-        closeDialog(context);
+        closeLoadingDialog(context);
         Navigator.pop(context);
         CustomToast.success(
           title: AppStrings.mTSuccess,
           description: AppStrings.mDUpdateSuccessFully,
         ).show(context);
       } else {
-        closeDialog(context);
+        closeLoadingDialog(context);
         CustomToast.error(
           title: AppStrings.mTError,
           description: result.error!.message,
@@ -617,14 +631,14 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
             selectedCountry: selectedCountry!,
             selectedState: selectedState));
       }
-      closeDialog(context);
+      closeLoadingDialog(context);
       Navigator.pop(context);
       CustomToast.success(
         title: AppStrings.mTSuccess,
         description: result.data ?? AppStrings.mDeleteSuccessFully,
       ).show(context);
     } else {
-      closeDialog(context);
+      closeLoadingDialog(context);
       CustomToast.error(
         title: AppStrings.mTError,
         description: result.error!.message,
@@ -793,7 +807,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
             selectedCountry: selectedCountry!,
           ));
         }
-        closeDialog(context);
+        closeLoadingDialog(context);
         Navigator.pop(context);
         CustomToast.success(
           title: AppStrings.mTSuccess,
@@ -804,7 +818,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           title: AppStrings.mTError,
           description: result.error!.message,
         ).show(context);
-        closeDialog(context);
+        closeLoadingDialog(context);
         kDebugPrint(result.error!.message);
       }
     } else {
@@ -857,14 +871,14 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
             selectedCountry: selectedCountry!,
           ));
         }
-        closeDialog(context);
+        closeLoadingDialog(context);
         Navigator.pop(context);
         CustomToast.success(
           title: AppStrings.mTSuccess,
           description: AppStrings.mDUpdateSuccessFully,
         ).show(context);
       } else {
-        closeDialog(context);
+        closeLoadingDialog(context);
         CustomToast.error(
           title: AppStrings.mTError,
           description: result.error!.message,
@@ -916,14 +930,14 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           selectedCountry: selectedCountry!,
         ));
       }
-      closeDialog(context);
+      closeLoadingDialog(context);
       Navigator.pop(context);
       CustomToast.success(
         title: AppStrings.mTSuccess,
         description: result.data ?? AppStrings.mDeleteSuccessFully,
       ).show(context);
     } else {
-      closeDialog(context);
+      closeLoadingDialog(context);
       CustomToast.error(
         title: AppStrings.mTError,
         description: result.error!.message,
@@ -1096,7 +1110,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
             selectedCountry: selectedCountry!,
           ));
         }
-        closeDialog(context);
+        closeLoadingDialog(context);
         Navigator.pop(context);
         CustomToast.success(
           title: AppStrings.mTSuccess,
@@ -1107,7 +1121,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           title: AppStrings.mTError,
           description: result.error!.message,
         ).show(context);
-        closeDialog(context);
+        closeLoadingDialog(context);
         kDebugPrint(result.error!.message);
       }
     } else {
@@ -1162,14 +1176,14 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
             selectedCountry: selectedCountry!,
           ));
         }
-        closeDialog(context);
+        closeLoadingDialog(context);
         Navigator.pop(context);
         CustomToast.success(
           title: AppStrings.mTSuccess,
           description: AppStrings.mDUpdateSuccessFully,
         ).show(context);
       } else {
-        closeDialog(context);
+        closeLoadingDialog(context);
         CustomToast.error(
           title: AppStrings.mTError,
           description: result.error!.message,
@@ -1223,14 +1237,14 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
           selectedCountry: selectedCountry!,
         ));
       }
-      closeDialog(context);
+      closeLoadingDialog(context);
       Navigator.pop(context);
       CustomToast.success(
         title: AppStrings.mTSuccess,
         description: result.data ?? AppStrings.mDeleteSuccessFully,
       ).show(context);
     } else {
-      closeDialog(context);
+      closeLoadingDialog(context);
       CustomToast.error(
         title: AppStrings.mTError,
         description: result.error!.message,
@@ -1267,6 +1281,8 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
 
   //=========================== Area End ===============================
 
+  /// <<<<<<<<<<<<< Masjid Module >>>>>>>>>>>>>>>
+
   Future<void> _getMasjidsData() async {
     clearCurrentDataForMasjid();
     emit(const MasjidViewModelMasjidsListLoading());
@@ -1279,7 +1295,7 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     if (result is DataSuccess) {
       _masjidList.addAll(result.data!.toList());
       emit(MasjidViewModelMasjidsListLoaded(
-        masjidList: _masjidList,
+        masjidList: List.of(_masjidList),
         selectedState: selectedState!,
         selectedCity: selectedCity!,
         selectedArea: selectedArea!,
@@ -1292,21 +1308,60 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
     }
   }
 
+  void onMasjidSearchChange(String val) {
+    print(val);
+    if (val.trim().isEmpty) {
+      emit(MasjidViewModelMasjidsListLoaded(
+          masjidList: List.of(_masjidList),
+          selectedCity: selectedCity!,
+          selectedArea: selectedArea!,
+          selectedCountry: selectedCountry!,
+          selectedState: selectedState!));
+      return;
+    }
+    final _filteredList = _masjidList
+        .where((element) =>
+            element.name.contains(val) ||
+            element.name.startsWith(val.capitalizeFirst()) ||
+            element.name == val)
+        .toList();
+    emit(MasjidViewModelMasjidsListLoaded(
+        masjidList: List.of(_filteredList),
+        selectedCity: selectedCity!,
+        selectedArea: selectedArea!,
+        selectedCountry: selectedCountry!,
+        selectedState: selectedState!));
+  }
+
   void clearCurrentDataForMasjid() {
     _masjidList.clear();
     txtMasjidSearchController.clear();
     selectedMasjid = null;
   }
 
-  Future<void> onMasjidTap(MasjidEntity areaEntity) async {
-
-  }
-
-  Future<void> onMasjidDoubleTap(MasjidEntity areaEntity, context) async {
-
+  Future<void> onMasjidTap(MasjidEntity masjidEntity, context) async {
+    sl<PrayerTimesViewModelCubit>().getPrayerTimes(
+        sl<MadhabViewModelCubit>().state,
+        Coordinates(double.parse(selectedCity!.latitude),
+            double.parse(selectedCity!.longitude)),
+        selectedCity!.timeZone);
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return AddUpdateDialog<MasjidEntity>(
+            entity: masjidEntity,
+            insertPadding: EdgeInsets.zero,
+          );
+        });
   }
 
   void onAddNewMasjidButtonTap(context) {
+    sl<PrayerTimesViewModelCubit>().getPrayerTimes(
+        sl<MadhabViewModelCubit>().state,
+        Coordinates(double.parse(selectedCity!.latitude),
+            double.parse(selectedCity!.longitude)),
+        selectedCity!.timeZone);
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -1315,6 +1370,424 @@ class MasjidViewModelCubit extends Cubit<MasjidViewModelState> {
             insertPadding: EdgeInsets.zero,
           );
         });
+  }
+
+  bool _validateCreateForm({
+    required String adminName,
+    required String adminAddress,
+    required String mobileNumber,
+    required String alternativeNumber,
+    required String contactEmail,
+    required String loginEmail,
+    required String loginPassword,
+    required String masjidName,
+    required String locationUrl,
+    required String latitude,
+    required String longitude,
+    required String fajrAzan,
+    required String fajrJammat,
+    required String dhuhrAzan,
+    required String dhuhrJammat,
+    required String jummaAzan,
+    required String jummaJammat,
+    required String asrAzan,
+    required String asrJammat,
+    required String maghribAzan,
+    required String maghribJammat,
+    required String ishaAzan,
+    required String ishaJammat,
+  }) {
+    if (adminName.isEmpty ||
+        adminAddress.isEmpty ||
+        mobileNumber.isEmpty ||
+        mobileNumber.length < 11 ||
+        alternativeNumber.isEmpty ||
+        alternativeNumber.length < 11 ||
+        contactEmail.isEmpty ||
+        loginEmail.isEmpty ||
+        loginPassword.isEmpty ||
+        double.tryParse(latitude) == null ||
+        double.tryParse(longitude) == null ||
+        masjidName.isEmpty ||
+        locationUrl.isEmpty ||
+        fajrAzan.isEmpty ||
+        fajrJammat.isEmpty ||
+        dhuhrJammat.isEmpty ||
+        dhuhrAzan.isEmpty ||
+        jummaJammat.isEmpty ||
+        jummaAzan.isEmpty ||
+        asrAzan.isEmpty ||
+        asrJammat.isEmpty ||
+        maghribAzan.isEmpty ||
+        maghribJammat.isEmpty ||
+        ishaAzan.isEmpty ||
+        ishaJammat.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
+  bool _validateUpdateForm({
+    required String masjidName,
+    required String locationUrl,
+    required String latitude,
+    required String longitude,
+    required String fajrAzan,
+    required String fajrJammat,
+    required String dhuhrAzan,
+    required String dhuhrJammat,
+    required String jummaAzan,
+    required String jummaJammat,
+    required String asrAzan,
+    required String asrJammat,
+    required String maghribAzan,
+    required String maghribJammat,
+    required String ishaAzan,
+    required String ishaJammat,
+  }) {
+    if (double.tryParse(latitude) == null ||
+        double.tryParse(longitude) == null ||
+        masjidName.isEmpty ||
+        locationUrl.isEmpty ||
+        fajrAzan.isEmpty ||
+        fajrJammat.isEmpty ||
+        dhuhrJammat.isEmpty ||
+        dhuhrAzan.isEmpty ||
+        jummaJammat.isEmpty ||
+        jummaAzan.isEmpty ||
+        asrAzan.isEmpty ||
+        asrJammat.isEmpty ||
+        maghribAzan.isEmpty ||
+        maghribJammat.isEmpty ||
+        ishaAzan.isEmpty ||
+        ishaJammat.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
+  void onCreateNewMasjid(
+      {required String adminName,
+      required String adminAddress,
+      required String mobileNumber,
+      required String alternativeNumber,
+      required String contactEmail,
+      required String loginEmail,
+      required String loginPassword,
+      required String masjidName,
+      required String locationUrl,
+      required String latitude,
+      required String longitude,
+      required MadhabEnum selectedMadhab,
+      required String fajrAzan,
+      required String fajrJammat,
+      required String dhuhrAzan,
+      required String dhuhrJammat,
+      required String jummaAzan,
+      required String jummaJammat,
+      required String asrAzan,
+      required String asrJammat,
+      required String maghribAzan,
+      required String maghribJammat,
+      required String ishaAzan,
+      required String ishaJammat,
+      required String eidNamaz1,
+      required String eidNamaz2,
+      required String eidFajrNamaz,
+      required BuildContext context}) async {
+    if (_validateCreateForm(
+        adminName: adminName,
+        adminAddress: adminAddress,
+        mobileNumber: mobileNumber,
+        alternativeNumber: alternativeNumber,
+        contactEmail: contactEmail,
+        loginEmail: loginEmail,
+        loginPassword: loginPassword,
+        masjidName: masjidName,
+        locationUrl: locationUrl,
+        latitude: latitude,
+        longitude: longitude,
+        fajrAzan: fajrAzan,
+        fajrJammat: fajrJammat,
+        dhuhrAzan: dhuhrAzan,
+        dhuhrJammat: dhuhrJammat,
+        jummaAzan: jummaAzan,
+        jummaJammat: jummaJammat,
+        asrAzan: asrAzan,
+        asrJammat: asrJammat,
+        maghribAzan: maghribAzan,
+        maghribJammat: maghribJammat,
+        ishaAzan: ishaAzan,
+        ishaJammat: ishaJammat)) {
+      showLoadingDialog(context);
+      final result = await createNewMasjidUseCase(CreateNewMasjidParams(
+        adminName: adminName,
+        adminAddress: adminAddress,
+        mobileNumber: mobileNumber,
+        alternativeNumber: alternativeNumber,
+        contactEmail: contactEmail,
+        loginEmail: loginEmail,
+        loginPassword: loginPassword,
+        masjidName: masjidName,
+        locationUrl: locationUrl,
+        latitude: double.parse(latitude),
+        longitude: double.parse(latitude),
+        countryId: selectedCountry!.id,
+        stateId: selectedState!.id,
+        cityId: selectedCity!.id,
+        areaId: selectedArea!.id,
+        selectedMadhab: selectedMadhab,
+        fajrAzan: getDateTimeWithFromTime(fajrAzan),
+        fajrJammat: getDateTimeWithFromTime(fajrJammat),
+        dhuhrAzan: getDateTimeWithFromTime(dhuhrAzan),
+        dhuhrJammat: getDateTimeWithFromTime(dhuhrJammat),
+        jummaAzan: getDateTimeWithFromTime(jummaAzan),
+        jummaJammat: getDateTimeWithFromTime(jummaJammat),
+        asrAzan: getDateTimeWithFromTime(asrAzan),
+        asrJammat: getDateTimeWithFromTime(asrJammat),
+        maghribAzan: getDateTimeWithFromTime(maghribAzan),
+        maghribJammat: getDateTimeWithFromTime(maghribJammat),
+        ishaAzan: getDateTimeWithFromTime(ishaAzan),
+        ishaJammat: getDateTimeWithFromTime(ishaJammat),
+        eidNamaz1: eidNamaz1.isEmpty ? "" : getDateTimeWithFromTime(eidNamaz1),
+        eidNamaz2: eidNamaz2.isEmpty ? "" : getDateTimeWithFromTime(eidNamaz2),
+        eidFajrNamaz:
+            eidFajrNamaz.isEmpty ? "" : getDateTimeWithFromTime(eidFajrNamaz),
+        createdDate: DateTime.now().toString(),
+        createdBy: '65ae7fc9ec8c648adc87e13d',
+        approvedDate: DateTime.now().toString(),
+        approvedBy: '65ae7fc9ec8c648adc87e13d',
+      ));
+      if (result is DataSuccess) {
+        _masjidList.add(result.data!);
+
+        if (txtMasjidSearchController.text.trim().isEmpty) {
+          emit(MasjidViewModelMasjidsListLoaded(
+            masjidList: List.of(_masjidList),
+            selectedState: selectedState!,
+            selectedCity: selectedCity!,
+            selectedArea: selectedArea!,
+            selectedCountry: selectedCountry!,
+          ));
+        } else {
+          final _filteredList = _masjidList
+              .where((element) =>
+          element.name.contains(txtMasjidSearchController.text) ||
+              element.name.startsWith(
+                  txtMasjidSearchController.text.capitalizeFirst()) ||
+              element.name == txtMasjidSearchController.text)
+              .toList();
+          emit(MasjidViewModelMasjidsListLoaded(
+            masjidList: List.of(_filteredList),
+            selectedState: selectedState!,
+            selectedCity: selectedCity!,
+            selectedArea: selectedArea!,
+            selectedCountry: selectedCountry!,
+          ));
+        }
+        closeLoadingDialog(context);
+        Navigator.pop(context);
+        CustomToast.success(
+          title: AppStrings.mTSuccess,
+          description: AppStrings.mDAddedSuccessFully,
+        ).show(context);
+      } else {
+        CustomToast.error(
+          title: AppStrings.mTError,
+          description: result.error!.message,
+        ).show(context);
+        closeLoadingDialog(context);
+        kDebugPrint(result.error!.message);
+      }
+    } else {
+      CustomToast.warning(
+        title: AppStrings.mTValidationFailed,
+        description: AppStrings.mDValidationFailed,
+      ).show(context);
+    }
+  }
+
+  void onUpdateMasjid(
+      {required String adminName,
+      required String adminAddress,
+      required String mobileNumber,
+      required String alternativeNumber,
+      required String contactEmail,
+      required String loginEmail,
+      required String loginPassword,
+      required String masjidName,
+      required String locationUrl,
+      required String latitude,
+      required String longitude,
+      required MadhabEnum selectedMadhab,
+      required String fajrAzan,
+      required String fajrJammat,
+      required String dhuhrAzan,
+      required String dhuhrJammat,
+      required String jummaAzan,
+      required String jummaJammat,
+      required String asrAzan,
+      required String asrJammat,
+      required String maghribAzan,
+      required String maghribJammat,
+      required String ishaAzan,
+      required String ishaJammat,
+      required String eidNamaz1,
+      required String eidNamaz2,
+      required String eidFajrNamaz,
+      required MasjidEntity masjidEntity,
+      required BuildContext context}) async {
+    if (_validateUpdateForm(masjidName: masjidName, locationUrl: locationUrl, latitude: latitude, longitude: longitude, fajrAzan: fajrAzan, fajrJammat: fajrJammat, dhuhrAzan: dhuhrAzan, dhuhrJammat: dhuhrJammat, jummaAzan: jummaAzan, jummaJammat: jummaJammat, asrAzan: asrAzan, asrJammat: asrJammat, maghribAzan: maghribAzan, maghribJammat: maghribJammat, ishaAzan: ishaAzan, ishaJammat: ishaJammat)) {
+      showLoadingDialog(context);
+      final result = await updateMasjidUseCase(UpdateMasjidParams(
+        masjidId: masjidEntity.sId,
+        masjidName: masjidName,
+        locationUrl: locationUrl,
+        latitude: double.parse(latitude),
+        longitude: double.parse(latitude),
+        countryId: selectedCountry!.id,
+        stateId: selectedState!.id,
+        cityId: selectedCity!.id,
+        areaId: selectedArea!.id,
+        selectedMadhab: selectedMadhab,
+        fajrAzan: getDateTimeWithFromTime(fajrAzan),
+        fajrJammat: getDateTimeWithFromTime(fajrJammat),
+        dhuhrAzan: getDateTimeWithFromTime(dhuhrAzan),
+        dhuhrJammat: getDateTimeWithFromTime(dhuhrJammat),
+        jummaAzan: getDateTimeWithFromTime(jummaAzan),
+        jummaJammat: getDateTimeWithFromTime(jummaJammat),
+        asrAzan: getDateTimeWithFromTime(asrAzan),
+        asrJammat: getDateTimeWithFromTime(asrJammat),
+        maghribAzan: getDateTimeWithFromTime(maghribAzan),
+        maghribJammat: getDateTimeWithFromTime(maghribJammat),
+        ishaAzan: getDateTimeWithFromTime(ishaAzan),
+        ishaJammat: getDateTimeWithFromTime(ishaJammat),
+        eidNamaz1: eidNamaz1.isEmpty ? "" : getDateTimeWithFromTime(eidNamaz1),
+        eidNamaz2: eidNamaz2.isEmpty ? "" : getDateTimeWithFromTime(eidNamaz2),
+        eidFajrNamaz:
+            eidFajrNamaz.isEmpty ? "" : getDateTimeWithFromTime(eidFajrNamaz),
+      ));
+      if (result is DataSuccess) {
+        final updatedList = _masjidList.update(masjidEntity, result.data!);
+        updatedList.replaceRange(0, _masjidList.length, updatedList);
+        closeLoadingDialog(context);
+        Navigator.pop(context);
+        if (txtMasjidSearchController.text.trim().isEmpty) {
+          emit(MasjidViewModelMasjidsListLoaded(
+            masjidList: List.of(_masjidList),
+            selectedState: selectedState!,
+            selectedCity: selectedCity!,
+            selectedArea: selectedArea!,
+            selectedCountry: selectedCountry!,
+          ));
+        } else {
+          final _filteredList = _masjidList
+              .where((element) =>
+                  element.name.contains(txtMasjidSearchController.text) ||
+                  element.name.startsWith(
+                      txtMasjidSearchController.text.capitalizeFirst()) ||
+                  element.name == txtMasjidSearchController.text)
+              .toList();
+
+          emit(MasjidViewModelMasjidsListLoaded(
+            masjidList: List.of(_filteredList),
+            selectedState: selectedState!,
+            selectedCity: selectedCity!,
+            selectedArea: selectedArea!,
+            selectedCountry: selectedCountry!,
+          ));
+        }
+        CustomToast.success(
+          title: AppStrings.mTSuccess,
+          description: AppStrings.mDUpdateSuccessFully,
+        ).show(context);
+      } else {
+        CustomToast.error(
+          title: AppStrings.mTError,
+          description: result.error!.message,
+        ).show(context);
+        closeLoadingDialog(context);
+        kDebugPrint(result.error!.message);
+      }
+    } else {
+      CustomToast.warning(
+        title: AppStrings.mTValidationFailed,
+        description: AppStrings.mDValidationFailed,
+      ).show(context);
+    }
+  }
+
+  void onDeleteMasjid(MasjidEntity masjidEntity, context) async {
+    showLoadingDialog(context);
+    final result = await deleteMasjidUseCase(DeleteMasjidParams(
+        countryId: selectedCountry!.id,
+        stateId: selectedState!.id,
+        cityId: selectedCity!.id,
+        areaId: selectedArea!.id,
+        id: masjidEntity.sId));
+    if (result is DataSuccess) {
+      _masjidList.remove(masjidEntity);
+      if (txtMasjidSearchController.text.trim().isEmpty) {
+        emit(MasjidViewModelMasjidsListLoaded(
+          masjidList: List.of(_masjidList),
+          selectedState: selectedState!,
+          selectedCity: selectedCity!,
+          selectedArea: selectedArea!,
+          selectedCountry: selectedCountry!,
+        ));
+      } else {
+        final _filteredList = _masjidList
+            .where((element) =>
+                element.name.contains(txtMasjidSearchController.text) ||
+                element.name.startsWith(
+                    txtMasjidSearchController.text.capitalizeFirst()) ||
+                element.name == txtMasjidSearchController.text)
+            .toList();
+
+        emit(MasjidViewModelMasjidsListLoaded(
+          masjidList: List.of(_filteredList),
+          selectedState: selectedState!,
+          selectedCity: selectedCity!,
+          selectedArea: selectedArea!,
+          selectedCountry: selectedCountry!,
+        ));
+      }
+      closeLoadingDialog(context);
+      Navigator.pop(context);
+      CustomToast.success(
+        title: AppStrings.mTSuccess,
+        description: result.data ?? AppStrings.mDeleteSuccessFully,
+      ).show(context);
+    } else {
+      closeLoadingDialog(context);
+      CustomToast.error(
+        title: AppStrings.mTError,
+        description: result.error!.message,
+      ).show(context);
+      kDebugPrint(result.error!.message);
+    }
+  }
+
+  bool validateAzanTime(
+      DateTime selectedTime, DateTime startTime, DateTime endTime, context) {
+    if (selectedTime.isAfter(endTime) || selectedTime.isBefore(startTime)) {
+      CustomToast.warning(
+              title: 'Invalid Time', description: 'Please select valid namaz')
+          .show(context);
+      return false;
+    }
+    return true;
+  }
+
+  bool validateJammatTime(
+      DateTime selectedTime, DateTime startTime, DateTime endTime, context) {
+    if (selectedTime.isAfter(endTime) || selectedTime.isBefore(startTime)) {
+      CustomToast.warning(
+              title: 'Invalid Time', description: 'Please select valid namaz')
+          .show(context);
+      return false;
+    }
+    return true;
   }
 
   @override

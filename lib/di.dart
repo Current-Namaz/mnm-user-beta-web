@@ -7,10 +7,12 @@ import 'package:mnm_internal_admin/features/masjids/domain/repository/masjids_re
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/create_new_area.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/create_new_city.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/create_new_country.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/usecases/create_new_masjid.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/create_new_state.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/delete_area.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/delete_city.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/delete_country.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/usecases/delete_masjid.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/delete_state.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_area_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_city_list.dart';
@@ -20,8 +22,11 @@ import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_state_li
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_area.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_city.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_country.dart';
+import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_masjid.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_state.dart';
-import 'package:mnm_internal_admin/features/masjids/presentation/view_models/masjid_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view_models/madhab_view_model/madhab_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view_models/masjid_view_model/masjid_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view_models/prayer_times_view_model_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -69,11 +74,18 @@ void initializeInstances() {
   sl.registerLazySingleton<UpdateArea>(
       () => UpdateArea(masjidsRepository: sl<MasjidsRepository>()));
   sl.registerLazySingleton<GetMasjidsList>(
-          () => GetMasjidsList(masjidsRepository: sl<MasjidsRepository>()));
+      () => GetMasjidsList(masjidsRepository: sl<MasjidsRepository>()));
+  sl.registerLazySingleton<CreateNewMasjid>(
+      () => CreateNewMasjid(masjidsRepository: sl<MasjidsRepository>()));
+  sl.registerLazySingleton<UpdateMasjid>(
+          () => UpdateMasjid(masjidsRepository: sl<MasjidsRepository>()));
+  sl.registerLazySingleton<DeleteMasjid>(
+          () => DeleteMasjid(masjidsRepository: sl<MasjidsRepository>()));
 
   // bloc
   sl.registerLazySingleton<MasjidViewModelCubit>(
     () => MasjidViewModelCubit(
+      createNewMasjidUseCase: sl<CreateNewMasjid>(),
       getCountryListUseCase: sl<GetCountryList>(),
       deleteCountryUseCase: sl<DeleteCountry>(),
       getStateUseCase: sl<GetStateList>(),
@@ -90,7 +102,10 @@ void initializeInstances() {
       createNewAreaUseCase: sl<CreateNewArea>(),
       updateAreaUseCase: sl<UpdateArea>(),
       deleteAreaUseCase: sl<DeleteArea>(),
-      getMasjidsListUseCase: sl<GetMasjidsList>(),
+      getMasjidsListUseCase: sl<GetMasjidsList>(), updateMasjidUseCase: sl<UpdateMasjid>(),deleteMasjidUseCase: sl<DeleteMasjid>()
     ),
   );
+  sl.registerLazySingleton<PrayerTimesViewModelCubit>(() => PrayerTimesViewModelCubit());
+
+  sl.registerLazySingleton<MadhabViewModelCubit>(() => MadhabViewModelCubit());
 }

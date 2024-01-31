@@ -5,25 +5,25 @@ import '../values/app_styles.dart';
 import '../values/constants.dart';
 
 class AppTextField extends StatelessWidget {
-  const AppTextField(
-      {super.key,
-      this.controller,
-      this.onChange,
-      this.lableText,
-      this.hintText,
-      this.height,
-      this.leftMargin,
-      this.rightMargin,
-      this.topMargin,
-      this.bottomMargin,
-      this.backgroundColor,
-      this.enabledRadius,
-      this.focusedRadius,
-        this.isReadyOnly = false,
-      this.isForPassword = false, this.hideLable = false});
+  const AppTextField({super.key,
+    this.controller,
+    this.onChange,
+    this.lableText,
+    this.hintText,
+    this.height,
+    this.leftMargin,
+    this.rightMargin,
+    this.topMargin,
+    this.bottomMargin,
+    this.backgroundColor,
+    this.enabledRadius,
+    this.focusedRadius,
+    this.isReadyOnly = false,
+    this.isForPassword = false, this.hideLable = false, this.onTap});
 
   final TextEditingController? controller;
   final ValueChanged<String>? onChange;
+  final VoidCallback? onTap;
   final String? lableText;
   final String? hintText;
   final bool hideLable;
@@ -67,6 +67,7 @@ class AppTextField extends StatelessWidget {
           ),
           child: TextField(
             // expands: true,
+            onTap: onTap,
             readOnly: isReadyOnly,
             maxLines: 1,
             obscureText: isForPassword,
@@ -90,7 +91,8 @@ class AppTextField extends StatelessWidget {
                   borderSide: const BorderSide(color: Colors.transparent)),
               focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(focusedRadius ?? r8),
-                  borderSide: const BorderSide(color: AppColors.darkGreen,width: 1.3)),
+                  borderSide: const BorderSide(
+                      color: AppColors.darkGreen, width: 1.3)),
             ),
           ),
         ),
