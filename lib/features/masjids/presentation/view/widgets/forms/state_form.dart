@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mnm_internal_admin/core/widgets/app_drop_down.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/state.dart';
 
+import '../../../../../../core/utils/helpers/helper_functions.dart';
 import '../../../../../../core/values/app_colors.dart';
 import '../../../../../../core/values/app_strings.dart';
 import '../../../../../../core/values/app_styles.dart';
@@ -119,13 +120,15 @@ class _StateFormState extends State<StateForm> {
                               height: 40,
                               topMargin: 20,
                               onTap: () {
+                                showUpdateConfirmationDialog(
+                                    context,()=>
                                 BlocProvider.of<MasjidViewModelCubit>(context)
                                     .onUpdateState(
                                         txtnameController.text.trim(),
                                         txtStateCodeController.text.trim(),
                                         txtLatitudeController.text.trim(),
                                         txtLongitudeController.text.trim(),
-                                        widget.entity!,context);
+                                        widget.entity!,context));
                               },
                               text: AppStrings.update)),
                       const SizedBox(
@@ -136,9 +139,10 @@ class _StateFormState extends State<StateForm> {
                         height: 40,
                         topMargin: 20,
                         onTap: () {
+                          showDeleteConfirmationDialog(
+                              context,()=>
                           BlocProvider.of<MasjidViewModelCubit>(context)
-                              .onDeleteState(widget.entity!,context);
-                          // .onDeleteCountry(widget.entity!);
+                              .onDeleteState(widget.entity!,context));
                         },
                         text: AppStrings.delete,
                         backgroundColor: Colors.redAccent,

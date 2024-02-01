@@ -14,8 +14,6 @@ class CustomToast extends StatefulWidget {
   CustomToast({super.key,required this.title,required this.description});
 
 
-
-
   StatusType statusType = StatusType.success;
   final String title;
   final String description;
@@ -73,29 +71,29 @@ class _CustomToastState extends State<CustomToast> with SingleTickerProviderStat
 
   @override
   void initState() {
-    void _initializeAnimation() {
-      slideController = AnimationController(
-        duration: Duration(milliseconds: 2500),
-        vsync: this,
-      );
-
-      offsetAnimation = Tween<Offset>(
-        begin: const Offset(2, 0),
-        end: const Offset(0, 0),
-      ).animate(
-        CurvedAnimation(
-          parent: slideController,
-          curve: Curves.ease,
-        ),
-      );
-
-      T? ambiguate<T>(T? value) => value;
-
-      ambiguate(WidgetsBinding.instance)?.addPostFrameCallback(
-            (_) => slideController.forward(),
-      );
+    // void _initializeAnimation() {
+    //   slideController = AnimationController(
+    //     duration: Duration(milliseconds: 2500),
+    //     vsync: this,
+    //   );
+    //
+    //   offsetAnimation = Tween<Offset>(
+    //     begin: const Offset(2, 0),
+    //     end: const Offset(0, 0),
+    //   ).animate(
+    //     CurvedAnimation(
+    //       parent: slideController,
+    //       curve: Curves.ease,
+    //     ),
+    //   );
+    //
+    //   T? ambiguate<T>(T? value) => value;
+    //
+    //   ambiguate(WidgetsBinding.instance)?.addPostFrameCallback(
+    //         (_) => slideController.forward(),
+    //   );
       super.initState();
-    }
+    // }
   }
 
   @override

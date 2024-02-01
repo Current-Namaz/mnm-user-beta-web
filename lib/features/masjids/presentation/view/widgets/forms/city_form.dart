@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/city.dart';
 
+import '../../../../../../core/utils/helpers/helper_functions.dart';
 import '../../../../../../core/values/app_colors.dart';
 import '../../../../../../core/values/app_strings.dart';
 import '../../../../../../core/values/app_styles.dart';
@@ -117,32 +118,38 @@ class _CityFormState extends State<CityForm> {
                           child: CommonButton(
                               height: 40,
                               onTap: () {
-                                BlocProvider.of<MasjidViewModelCubit>(context)
-                                    .onUpdateCity(
-                                  txtnameController.text.trim(),
-                                  txtLatitudeController.text.trim(),
-                                  txtLongitudeController.text.trim(),
-                                  txtTimeZoneController.text.trim(),
-                                  widget.entity!,
+                                showUpdateConfirmationDialog(
                                   context,
+                                  () => BlocProvider.of<MasjidViewModelCubit>(
+                                          context)
+                                      .onUpdateCity(
+                                    txtnameController.text.trim(),
+                                    txtLatitudeController.text.trim(),
+                                    txtLongitudeController.text.trim(),
+                                    txtTimeZoneController.text.trim(),
+                                    widget.entity!,
+                                    context,
+                                  ),
                                 );
                               },
                               text: AppStrings.update)),
                       const SizedBox(
                         width: 10,
-                      ),   Expanded(
+                      ),
+                      Expanded(
                           child: CommonButton(
-                            height: 40,
-                            onTap: () {
-                              BlocProvider.of<MasjidViewModelCubit>(context)
-                                  .onDeleteCity(widget.entity!, context);
-                            },
-                            text: AppStrings.delete,
-                            backgroundColor: Colors.redAccent,
-                            splashColor: Colors.red,
-                          )),
-
-
+                        height: 40,
+                        onTap: () {
+                          showDeleteConfirmationDialog(
+                              context,
+                              () =>
+                                  BlocProvider.of<MasjidViewModelCubit>(context)
+                                      .onDeleteCity(widget.entity!, context));
+                        },
+                        text: AppStrings.delete,
+                        backgroundColor: Colors.redAccent,
+                        splashColor: Colors.red,
+                      )),
                     ],
                   ),
                 if (widget.entity == null)

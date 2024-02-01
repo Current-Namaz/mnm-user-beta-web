@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/area.dart';
 
+import '../../../../../../core/utils/helpers/helper_functions.dart';
 import '../../../../../../core/values/app_colors.dart';
 import '../../../../../../core/values/app_strings.dart';
 import '../../../../../../core/values/app_styles.dart';
@@ -108,13 +109,16 @@ class _AreaFormState extends State<AreaForm> {
                           child: CommonButton(
                               height: 40,
                               onTap: () {
-                                BlocProvider.of<MasjidViewModelCubit>(context)
-                                    .onUpdateArea(
-                                        txtnameController.text.trim(),
-                                        txtLatitudeController.text.trim(),
-                                        txtLongitudeController.text.trim(),
-                                        widget.entity!,
-                                        context);
+                                showUpdateConfirmationDialog(
+                                    context,
+                                    () => BlocProvider.of<MasjidViewModelCubit>(
+                                            context)
+                                        .onUpdateArea(
+                                            txtnameController.text.trim(),
+                                            txtLatitudeController.text.trim(),
+                                            txtLongitudeController.text.trim(),
+                                            widget.entity!,
+                                            context));
                               },
                               text: AppStrings.update)),
                       const SizedBox(
@@ -124,8 +128,11 @@ class _AreaFormState extends State<AreaForm> {
                           child: CommonButton(
                         height: 40,
                         onTap: () {
-                          BlocProvider.of<MasjidViewModelCubit>(context)
-                              .onDeleteArea(widget.entity!, context);
+                          showDeleteConfirmationDialog(
+                              context,
+                              () =>
+                                  BlocProvider.of<MasjidViewModelCubit>(context)
+                                      .onDeleteArea(widget.entity!, context));
                         },
                         text: AppStrings.delete,
                         backgroundColor: Colors.redAccent,

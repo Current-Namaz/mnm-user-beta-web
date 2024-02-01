@@ -380,6 +380,8 @@ class _MasjidFormState extends State<MasjidForm> {
                                         topMargin: 20,
                                         height: 40,
                                         onTap: () {
+                                          showUpdateConfirmationDialog(
+                                              context,()=>
                                           BlocProvider.of<MasjidViewModelCubit>(
                                                   context)
                                               .onUpdateMasjid(
@@ -450,7 +452,7 @@ class _MasjidFormState extends State<MasjidForm> {
                                                 txtEidFajrController.text,
                                             context: context,
                                             masjidEntity: widget.entity!,
-                                          );
+                                          ));
                                         },
                                         text: AppStrings.update),
                                   if (widget.entity != null)
@@ -458,10 +460,12 @@ class _MasjidFormState extends State<MasjidForm> {
                                       topMargin: 10,
                                       height: 40,
                                       onTap: () {
+                                        showDeleteConfirmationDialog(
+                                            context,()=>
                                         BlocProvider.of<MasjidViewModelCubit>(
                                                 context)
                                             .onDeleteMasjid(
-                                                widget.entity!, context);
+                                                widget.entity!, context));
                                       },
                                       text: AppStrings.delete,
                                       backgroundColor: Colors.redAccent,

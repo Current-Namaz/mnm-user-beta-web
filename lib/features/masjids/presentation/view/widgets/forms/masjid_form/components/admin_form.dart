@@ -61,12 +61,12 @@ class AdminForm extends StatelessWidget {
                 CountryCodePicker(
                   onInit: (countryCode) {
                     txtCountryCodeMobileNumberController.text =
-                        countryCode?.code ?? '+91';
+                        countryCode?.dialCode ?? '+91';
                   },
                   backgroundColor: AppColors.darkGreen,
                   onChanged: (countryCode) {
                     txtCountryCodeMobileNumberController.text =
-                        countryCode?.code ?? '+91';
+                        countryCode?.dialCode ?? '+91';
                   },
                   dialogBackgroundColor: AppColors.primaryColor,
                   textStyle: AppStyles.mediumStyle,
@@ -100,12 +100,12 @@ class AdminForm extends StatelessWidget {
                 CountryCodePicker(
                   onInit: (countryCode) {
                     txtCountryCodeAlternativeNumberController.text =
-                        countryCode?.code ?? '+91';
+                        countryCode?.dialCode ?? '+91';
                   },
                   backgroundColor: AppColors.darkGreen,
                   onChanged: (countryCode) {
                     txtCountryCodeAlternativeNumberController.text =
-                        countryCode?.code ?? '+91';
+                        countryCode?.dialCode ?? '+91';
                   },
                   dialogBackgroundColor: AppColors.primaryColor,
                   textStyle: AppStyles.mediumStyle,

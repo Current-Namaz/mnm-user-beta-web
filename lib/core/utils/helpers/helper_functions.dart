@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mnm_internal_admin/core/values/app_colors.dart';
+import 'package:mnm_internal_admin/core/widgets/confirmation_dialog.dart';
 import 'package:mnm_internal_admin/features/masjids/data/models/masjid_model.dart';
 
 void kDebugPrint(data) {
@@ -64,7 +65,8 @@ void showLoadingDialog(context) {
       });
 }
 
-Future<DateTime?> showTimePickerDialog(BuildContext context,[String? lable,TimeOfDay? initialTime]) async {
+Future<DateTime?> showTimePickerDialog(BuildContext context,
+    [String? lable, TimeOfDay? initialTime]) async {
   final selectedTime = await showTimePicker(
     helpText: lable,
     context: context,
@@ -78,36 +80,36 @@ Future<DateTime?> showTimePickerDialog(BuildContext context,[String? lable,TimeO
             surface: AppColors.primaryColor,
             secondary: AppColors.lightGreen,
             onSurface: AppColors.textPrimary2Color,
-
           ),
         ),
         child: child!,
       );
     },
   );
-  if(selectedTime == null){
-    return await Future<Null>(()=> null);
+  if (selectedTime == null) {
+    return await Future<Null>(() => null);
   }
-  return DateTime.now().copyWith(hour: selectedTime.hour,minute: selectedTime.minute);
+  return DateTime.now()
+      .copyWith(hour: selectedTime.hour, minute: selectedTime.minute);
 }
 
- String get12HourTimeFromString(String time){
+String get12HourTimeFromString(String time) {
   try {
     return DateFormat('hh:mm a').format(DateTime.parse(time));
-  }catch(e){
-    return '';
-  }
- }
-
-String get12HourTimeFromDateTime(DateTime time){
-  try {
-    return DateFormat('hh:mm a').format(time);
-  }catch(e){
+  } catch (e) {
     return '';
   }
 }
 
-String getDateTimeWithFromTime(String time){
+String get12HourTimeFromDateTime(DateTime time) {
+  try {
+    return DateFormat('hh:mm a').format(time);
+  } catch (e) {
+    return '';
+  }
+}
+
+String getDateTimeWithFromTime(String time) {
   print(time);
   List<String> timeParts = time.split(' ');
   List<String> hourMinute = timeParts[0].split(':');
@@ -115,7 +117,7 @@ String getDateTimeWithFromTime(String time){
   int minutes = int.parse(hourMinute[1]);
   String amPm = timeParts[1];
   print('${hours} ${minutes} $amPm');
-  if(hours == 12 && amPm == 'AM'){
+  if (hours == 12 && amPm == 'AM') {
     hours = 00;
   }
   if (amPm == 'PM' && hours < 12) {
@@ -135,4 +137,23 @@ String getDateTimeWithFromTime(String time){
 
 void closeLoadingDialog(context) {
   Navigator.pop(context);
+}
+
+void showDeleteConfirmationDialog(context, VoidCallback onYes) {
+  showDialog(
+    barrierColor: Colors.transparent,
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => ConfirmationDialog.delete(
+            onYesTap: onYes,
+          ));
+}
+
+void showUpdateConfirmationDialog(context, VoidCallback onYes) {
+  showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => ConfirmationDialog.update(
+        onYesTap: onYes,
+      ));
 }

@@ -5,7 +5,7 @@ import '../values/app_styles.dart';
 import '../values/constants.dart';
 
 class CommonButton extends StatelessWidget {
-  const CommonButton({super.key, required this.onTap, this.lableText, required this.text, this.height, this.leftMargin, this.rightMargin, this.topMargin, this.bottomMargin, this.backgroundColor, this.radius, this.splashColor,  this.isDisabled= false});
+  const CommonButton({super.key, required this.onTap, this.lableText, required this.text, this.height, this.leftMargin, this.rightMargin, this.topMargin, this.bottomMargin, this.backgroundColor, this.radius, this.splashColor,  this.isDisabled= false, this.border});
   
   final VoidCallback onTap;
   final String? lableText;
@@ -18,6 +18,7 @@ class CommonButton extends StatelessWidget {
   final Color? backgroundColor;
   final Color? splashColor;
   final BorderRadius? radius;
+  final BoxBorder? border;
   final bool isDisabled;
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,9 @@ class CommonButton extends StatelessWidget {
             onTap: isDisabled ?  null : onTap,
             child: Container(
               height: height ?? 48,
-              decoration: const BoxDecoration(
+              decoration:  BoxDecoration(
+                  borderRadius: radius ?? BorderRadius.circular(r8),
+                border: border
               ),
               alignment: Alignment.center,
               child: Text(text,style: AppStyles.mediumStyle,),

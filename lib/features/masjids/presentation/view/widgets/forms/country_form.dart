@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mnm_internal_admin/core/utils/helpers/helper_functions.dart';
 import 'package:mnm_internal_admin/core/values/app_styles.dart';
 import 'package:mnm_internal_admin/core/widgets/app_text_field.dart';
 import 'package:mnm_internal_admin/features/masjids/data/models/country_model.dart';
@@ -132,18 +133,21 @@ class _CountryFormState extends State<CountryForm> {
                           height: 40,
                           topMargin: 20,
                           onTap: () {
-                            BlocProvider.of<MasjidViewModelCubit>(context)
-                                .onUpdateCountry(
-                              widget.entity!.id,
-                              txtnameController.text,
-                              txtIso3Controller.text,
-                              txtIso2Controller.text,
-                              widget.entity!.numOfTimezones.toString(),
-                              txtLatitudeController.text,
-                              txtLongitudeController.text,
-                              widget.entity!,
-                              context
-                            );
+                            showUpdateConfirmationDialog(
+                                context,
+                                () => BlocProvider.of<MasjidViewModelCubit>(
+                                        context)
+                                    .onUpdateCountry(
+                                        widget.entity!.id,
+                                        txtnameController.text,
+                                        txtIso3Controller.text,
+                                        txtIso2Controller.text,
+                                        widget.entity!.numOfTimezones
+                                            .toString(),
+                                        txtLatitudeController.text,
+                                        txtLongitudeController.text,
+                                        widget.entity!,
+                                        context));
                           },
                           text: AppStrings.update)),
                   const SizedBox(
@@ -154,8 +158,10 @@ class _CountryFormState extends State<CountryForm> {
                     height: 40,
                     topMargin: 20,
                     onTap: () {
-                      BlocProvider.of<MasjidViewModelCubit>(context)
-                          .onDeleteCountry(widget.entity!,context);
+                      showDeleteConfirmationDialog(
+                          context,
+                          () => BlocProvider.of<MasjidViewModelCubit>(context)
+                              .onDeleteCountry(widget.entity!, context));
                     },
                     text: AppStrings.delete,
                     backgroundColor: Colors.redAccent,
@@ -176,8 +182,7 @@ class _CountryFormState extends State<CountryForm> {
                             txtNumberOfTimezonesController.text,
                             txtLatitudeController.text,
                             txtLongitudeController.text,
-                          context
-                    );
+                            context);
                   },
                   text: AppStrings.create),
           ],

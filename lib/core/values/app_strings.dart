@@ -71,4 +71,11 @@ class AppStrings {
   static String loginEmail = 'Login Email';
   static String loginPassword = 'Login password';
   static String addImage = 'Add Image';
-  static String selectMadhab ='Select Madhab';}
+  static String selectMadhab ='Select Madhab';
+  static String areYouSure ='Are you sure?';
+  static String updateDialogDes ='You want to update data';
+  static String deleteDialogDes ='You want to delete data';
+  static String cancel ='Cancel';
+
+
+}
