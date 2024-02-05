@@ -7,7 +7,7 @@ import 'package:mnm_internal_admin/core/values/app_strings.dart';
 import 'package:mnm_internal_admin/core/values/app_styles.dart';
 import 'package:mnm_internal_admin/core/widgets/app_text_field.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view_models/masjid_view_model/masjid_view_model_cubit.dart';
-import 'package:mnm_internal_admin/features/masjids/presentation/view_models/prayer_times_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view_models/prayer_times_view_model/prayer_times_view_model_cubit.dart';
 
 import '../../../../../../../../core/values/constants.dart';
 

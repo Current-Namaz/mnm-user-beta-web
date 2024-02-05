@@ -4,7 +4,7 @@ import 'package:mnm_internal_admin/core/values/enums.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view_models/masjid_view_model/masjid_view_model_cubit.dart';
 
 import '../../../../../di.dart';
-import '../prayer_times_view_model_cubit.dart';
+import '../prayer_times_view_model/prayer_times_view_model_cubit.dart';
 
 class MadhabViewModelCubit extends Cubit<MadhabEnum> {
   MadhabViewModelCubit() : super(MadhabEnum.hanafi);

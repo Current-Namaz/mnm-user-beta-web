@@ -31,7 +31,7 @@ import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_area.
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_country.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_masjid.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view_models/madhab_view_model/madhab_view_model_cubit.dart';
-import 'package:mnm_internal_admin/features/masjids/presentation/view_models/prayer_times_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view_models/prayer_times_view_model/prayer_times_view_model_cubit.dart';
 import '../../../../../di.dart';
 import '../../../domain/entities/area.dart';
 import '../../../domain/entities/masjid.dart';

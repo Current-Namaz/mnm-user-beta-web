@@ -4,6 +4,7 @@ class AppStrings {
   static const String masjidNearMeSuperAdmin = 'Masjid near me\'s super admin';
   static const String dashboard = 'Dashboard';
   static const String masjids = 'Masjids';
+  static const String configs = 'Configs';
   static const String delete = 'Delete';
   static const String update = 'Update';
 
@@ -11,6 +12,7 @@ class AppStrings {
   static const String hEnterEmail = 'Enter your email address';
   static const String hEnterPassword = 'Enter your password';
   static const String hName = 'Name';
+  static const String hTimezone = 'timezone';
   static const String hLocationUrl = 'Location Url';
   static const String hLatitude = 'latitude';
   static const String hLongitude = 'longitude';
@@ -76,6 +78,8 @@ class AppStrings {
   static String updateDialogDes ='You want to update data';
   static String deleteDialogDes ='You want to delete data';
   static String cancel ='Cancel';
+  static String eidDate ='Eid Date';
+  static String ramadan ='Ramadan';
 
 
 }

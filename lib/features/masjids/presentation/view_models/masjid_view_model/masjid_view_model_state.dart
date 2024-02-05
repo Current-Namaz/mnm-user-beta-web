@@ -133,17 +133,6 @@ class MasjidViewModelCityListErrorState extends MasjidViewModelState {
   List<Object?> get props => [message, onTryAgain];
 }
 
-// class MasjidViewModelCityDataUpdateState extends MasjidViewModelState {
-//   final List<CityEntity> cityList;
-//   final CityEntity? selectedCity;
-//
-//   const MasjidViewModelCityDataUpdateState(
-//       {required this.cityList, required this.selectedCity});
-//
-//   @override
-//   List<Object?> get props => [selectedCity, cityList];
-// }
-
 class MasjidViewModelAreaListLoading extends MasjidViewModelState {
   const MasjidViewModelAreaListLoading();
 
@@ -242,22 +231,6 @@ class MasjidViewModelAreaMasjidsListClearState extends MasjidViewModelState {
   @override
   List<Object?> get props => [];
 }
-//
-// class MasjidViewModelStateClearState extends MasjidViewModelState {
-//   @override
-//   List<Object?> get props => [];
-// }
-//
-// class MasjidViewModelCityListClearState extends MasjidViewModelState {
-//   @override
-//   List<Object?> get props => [];
-// }
-//
-// class MasjidViewModelAreaListClearState extends MasjidViewModelState {
-//   @override
-//   List<Object?> get props => [];
-// }
-//
 class MasjidViewModelMasjidsListClearState extends MasjidViewModelState {
   @override
   List<Object?> get props => [];

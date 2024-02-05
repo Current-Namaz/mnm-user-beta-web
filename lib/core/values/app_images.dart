@@ -10,6 +10,7 @@ class AppImages{
 
   static const String dashboard= 'assets/icons/dashboard.svg';
   static const String masjid= 'assets/icons/masjid.svg';
+  static const String config= 'assets/icons/config_settings.svg';
   static const String success= 'assets/icons/success.svg';
   static const String error= 'assets/icons/error.svg';
   static const String warning= 'assets/icons/warning.svg';

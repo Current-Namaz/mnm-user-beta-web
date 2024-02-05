@@ -24,7 +24,8 @@ class HomeSideMenu extends StatelessWidget {
           height: 50,
         ),
         Expanded(
-          child: BlocBuilder<SideMenuDrawerViewModelCubit, SideMenuDrawerViewModelState>(
+          child: BlocBuilder<SideMenuDrawerViewModelCubit,
+              SideMenuDrawerViewModelState>(
             builder: (context, state) {
               return ListView(
                 children: [
@@ -32,13 +33,23 @@ class HomeSideMenu extends StatelessWidget {
                       icon: AppImages.dashboard,
                       title: AppStrings.dashboard,
                       isSelected: state.selectedIndex == 0,
-                      onTap: context.read<SideMenuDrawerViewModelCubit>().onDashBoardTap
-                  ),
+                      onTap: context
+                          .read<SideMenuDrawerViewModelCubit>()
+                          .onDashBoardTap),
                   SideMenuWidget(
                       icon: AppImages.masjid,
                       title: AppStrings.masjids,
                       isSelected: state.selectedIndex == 1,
-                      onTap: context.read<SideMenuDrawerViewModelCubit>().onMasjidsTap),
+                      onTap: context
+                          .read<SideMenuDrawerViewModelCubit>()
+                          .onMasjidsTap),
+                  SideMenuWidget(
+                      icon: AppImages.config,
+                      title: AppStrings.configs,
+                      isSelected: state.selectedIndex == 2,
+                      onTap: context
+                          .read<SideMenuDrawerViewModelCubit>()
+                          .onConfigTap),
                 ],
               );
             },

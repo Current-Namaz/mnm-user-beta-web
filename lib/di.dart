@@ -1,5 +1,15 @@
 import 'package:get_it/get_it.dart';
 import 'package:mnm_internal_admin/core/common_domain/usecase/base_usecase.dart';
+import 'package:mnm_internal_admin/features/city_config/data/data_sources/remote/masjid_config_remote_data_source.dart';
+import 'package:mnm_internal_admin/features/city_config/data/data_sources/remote/masjid_config_remote_data_source_imp.dart';
+import 'package:mnm_internal_admin/features/city_config/data/repository/masjid_config_repository_imp.dart';
+import 'package:mnm_internal_admin/features/city_config/domain/repository/city_config_repository.dart';
+import 'package:mnm_internal_admin/features/city_config/domain/usecases/create_config.dart';
+import 'package:mnm_internal_admin/features/city_config/domain/usecases/delete_config.dart';
+import 'package:mnm_internal_admin/features/city_config/domain/usecases/get_city_config.dart';
+import 'package:mnm_internal_admin/features/city_config/domain/usecases/get_city_time_zone.dart';
+import 'package:mnm_internal_admin/features/city_config/domain/usecases/update_config.dart';
+import 'package:mnm_internal_admin/features/city_config/presentation/view_models/city_config_view_model_cubit.dart';
 import 'package:mnm_internal_admin/features/masjids/data/data_sources/remote/masjids_remote_data_source.dart';
 import 'package:mnm_internal_admin/features/masjids/data/data_sources/remote/masjids_remote_data_source_imp.dart';
 import 'package:mnm_internal_admin/features/masjids/data/repository/masjids_repository_imp.dart';
@@ -26,7 +36,7 @@ import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_masji
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/update_state.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view_models/madhab_view_model/madhab_view_model_cubit.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view_models/masjid_view_model/masjid_view_model_cubit.dart';
-import 'package:mnm_internal_admin/features/masjids/presentation/view_models/prayer_times_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view_models/prayer_times_view_model/prayer_times_view_model_cubit.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -35,10 +45,14 @@ void initializeInstances() {
   //==================== data source =====================
   sl.registerLazySingleton<MasjidsRemoteDataSource>(
       () => MasjidsRemoteDataSourceImp());
+  sl.registerLazySingleton<CityConfigRemoteDataSource>(
+      () => CityConfigRemoteDataSourceImp());
 
   //==================== repository =====================
   sl.registerLazySingleton<MasjidsRepository>(() => MasjidsRepositoryImp(
       masjidsRemoteDataSource: sl<MasjidsRemoteDataSource>()));
+  sl.registerLazySingleton<CityConfigRepository>(() => CityConfigRepositoryImp(
+      cityConfigRemoteDataSource: sl<CityConfigRemoteDataSource>()));
 
   // useCases
   sl.registerLazySingleton<GetCountryList>(
@@ -78,34 +92,56 @@ void initializeInstances() {
   sl.registerLazySingleton<CreateNewMasjid>(
       () => CreateNewMasjid(masjidsRepository: sl<MasjidsRepository>()));
   sl.registerLazySingleton<UpdateMasjid>(
-          () => UpdateMasjid(masjidsRepository: sl<MasjidsRepository>()));
+      () => UpdateMasjid(masjidsRepository: sl<MasjidsRepository>()));
   sl.registerLazySingleton<DeleteMasjid>(
-          () => DeleteMasjid(masjidsRepository: sl<MasjidsRepository>()));
+      () => DeleteMasjid(masjidsRepository: sl<MasjidsRepository>()));
+  sl.registerLazySingleton<GetCityConfigUseCase>(() =>
+      GetCityConfigUseCase(cityConfigRepository: sl<CityConfigRepository>()));
+  sl.registerLazySingleton<UpdateConfigUseCase>(() =>
+      UpdateConfigUseCase(cityConfigRepository: sl<CityConfigRepository>()));
+  sl.registerLazySingleton<CreateConfigUseCase>(() =>
+      CreateConfigUseCase(cityConfigRepository: sl<CityConfigRepository>()));
+  sl.registerLazySingleton<GetCityTimeZoneUseCase>(() =>
+      GetCityTimeZoneUseCase(cityConfigRepository: sl<CityConfigRepository>()));
+  sl.registerLazySingleton<DeleteConfigUseCase>(() =>
+      DeleteConfigUseCase(cityConfigRepository: sl<CityConfigRepository>()));
 
   // bloc
   sl.registerLazySingleton<MasjidViewModelCubit>(
     () => MasjidViewModelCubit(
-      createNewMasjidUseCase: sl<CreateNewMasjid>(),
-      getCountryListUseCase: sl<GetCountryList>(),
-      deleteCountryUseCase: sl<DeleteCountry>(),
-      getStateUseCase: sl<GetStateList>(),
-      getCityListUseCase: sl<GetCityList>(),
-      getAreaListUseCase: sl<GetAreaList>(),
-      createNewCountryUseCase: sl<CreateNewCountry>(),
-      updateCountryUseCase: sl<UpdateCountry>(),
-      createNewStateUseCase: sl<CreateNewState>(),
-      deleteStateUseCase: sl<DeleteState>(),
-      updateStateUseCase: sl<UpdateState>(),
-      createNewCityUseCase: sl<CreateNewCity>(),
-      updateCityUseCase: sl<UpdateCity>(),
-      deleteCityUseCase: sl<DeleteCity>(),
-      createNewAreaUseCase: sl<CreateNewArea>(),
-      updateAreaUseCase: sl<UpdateArea>(),
-      deleteAreaUseCase: sl<DeleteArea>(),
-      getMasjidsListUseCase: sl<GetMasjidsList>(), updateMasjidUseCase: sl<UpdateMasjid>(),deleteMasjidUseCase: sl<DeleteMasjid>()
-    ),
+        createNewMasjidUseCase: sl<CreateNewMasjid>(),
+        getCountryListUseCase: sl<GetCountryList>(),
+        deleteCountryUseCase: sl<DeleteCountry>(),
+        getStateUseCase: sl<GetStateList>(),
+        getCityListUseCase: sl<GetCityList>(),
+        getAreaListUseCase: sl<GetAreaList>(),
+        createNewCountryUseCase: sl<CreateNewCountry>(),
+        updateCountryUseCase: sl<UpdateCountry>(),
+        createNewStateUseCase: sl<CreateNewState>(),
+        deleteStateUseCase: sl<DeleteState>(),
+        updateStateUseCase: sl<UpdateState>(),
+        createNewCityUseCase: sl<CreateNewCity>(),
+        updateCityUseCase: sl<UpdateCity>(),
+        deleteCityUseCase: sl<DeleteCity>(),
+        createNewAreaUseCase: sl<CreateNewArea>(),
+        updateAreaUseCase: sl<UpdateArea>(),
+        deleteAreaUseCase: sl<DeleteArea>(),
+        getMasjidsListUseCase: sl<GetMasjidsList>(),
+        updateMasjidUseCase: sl<UpdateMasjid>(),
+        deleteMasjidUseCase: sl<DeleteMasjid>()),
   );
-  sl.registerLazySingleton<PrayerTimesViewModelCubit>(() => PrayerTimesViewModelCubit());
+  sl.registerLazySingleton<PrayerTimesViewModelCubit>(
+      () => PrayerTimesViewModelCubit());
 
   sl.registerLazySingleton<MadhabViewModelCubit>(() => MadhabViewModelCubit());
+  sl.registerLazySingleton<CityConfigViewModelCubit>(() =>
+      CityConfigViewModelCubit(
+          getCityConfigUseCase: sl<GetCityConfigUseCase>(),
+          getCountryListUseCase: sl<GetCountryList>(),
+          getStateListUseCase: sl<GetStateList>(),
+          getCityListUseCase: sl<GetCityList>(),
+          updateConfigUseCase: sl<UpdateConfigUseCase>(),
+          createConfigUseCase: sl<CreateConfigUseCase>(),
+          getCityTimeZoneUseCase: sl<GetCityTimeZoneUseCase>(),
+          deleteConfigUseCase: sl<DeleteConfigUseCase>()));
 }

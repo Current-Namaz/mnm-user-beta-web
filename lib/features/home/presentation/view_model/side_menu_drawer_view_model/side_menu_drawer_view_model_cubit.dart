@@ -19,4 +19,9 @@ class SideMenuDrawerViewModelCubit extends Cubit<SideMenuDrawerViewModelState> {
     sl<MasjidViewModelCubit>().getCountryData();
     emit(const SideMenuDrawerViewModelInitial(selectedIndex: 1,appBarTitle: AppStrings.masjids));
   }
+
+  void onConfigTap() {
+    // sl<MasjidViewModelCubit>().getCountryData();
+    emit(const SideMenuDrawerViewModelInitial(selectedIndex: 2,appBarTitle: AppStrings.configs));
+  }
 }

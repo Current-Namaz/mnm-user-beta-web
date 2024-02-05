@@ -31,6 +31,7 @@ class ApiHandler {
     required void Function(Response response) onSuccess,
     required void Function(Response response) onError,
   }) async {
+    kDebugPrint('<<<<<<<<<<<<<< Request url : - $baseUrl$endPoint${params ?? ''} headers => ${dio.options.headers}');
     Response response = Response(requestOptions: RequestOptions());
     try {
       switch (type) {
@@ -57,8 +58,12 @@ class ApiHandler {
         onError(response);
       }
     } on DioException catch (e) {
+      kDebugPrint('<<<<<<<<<<<<<< Request url : - $baseUrl$endPoint${params ?? ''} error => ${e.response?.statusCode}');
       networkErrorLog(response, response.realUri.path);
-      onError(e.response!);
+      if(e.response != null) {
+        response = e.response!;
+      }
+      onError(response);
     } on IOException catch (e) {
       networkClientSideError(response, response.realUri.path, e);
       onError(Response(

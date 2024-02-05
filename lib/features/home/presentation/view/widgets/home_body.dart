@@ -10,6 +10,7 @@ import 'package:mnm_internal_admin/features/home/presentation/view/widgets/home_
 import 'package:mnm_internal_admin/features/home/presentation/view_model/side_menu_drawer_view_model/side_menu_drawer_view_model_cubit.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view/masjid_main_view.dart';
 
+import '../../../../city_config/presentation/view/masjid_config_view.dart';
 import '../../../../masjids/presentation/view_models/masjid_view_model/masjid_view_model_cubit.dart';
 
 class HomeBody extends StatelessWidget {
@@ -45,16 +46,16 @@ class HomeBody extends StatelessWidget {
                         child: HomeContentView(
                       child: (() {
                         if (state.appBarTitle == AppStrings.dashboard) {
-                          return GestureDetector(
-                            onTap: (){
-
-                              context.read<MasjidViewModelCubit>().onAddNewMasjidButtonTap(context);
-                            },
-                            child: const Text('DashBoard coming soon',
-                                style: AppStyles.title),
+                          return Center(
+                            child: const Text(
+                              'DashBoard coming soon',
+                              style: AppStyles.title,
+                            ),
                           );
                         } else if (state.appBarTitle == AppStrings.masjids) {
                           return const MasjidMainView();
+                        }else if(state.appBarTitle == AppStrings.configs){
+                          return MasjidConfigView();
                         }
                         return const SizedBox();
                       }()),

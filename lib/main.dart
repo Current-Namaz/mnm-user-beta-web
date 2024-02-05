@@ -6,10 +6,11 @@ import 'package:mnm_internal_admin/core/base_components/drag_with_mouse_scroll_b
 import 'package:mnm_internal_admin/core/values/app_colors.dart';
 import 'package:mnm_internal_admin/di.dart';
 import 'package:mnm_internal_admin/features/auth/presentation/view_model/auth_cubit.dart';
+import 'package:mnm_internal_admin/features/city_config/presentation/view_models/city_config_view_model_cubit.dart';
 import 'package:mnm_internal_admin/features/home/presentation/view_model/side_menu_drawer_view_model/side_menu_drawer_view_model_cubit.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view_models/madhab_view_model/madhab_view_model_cubit.dart';
 import 'package:mnm_internal_admin/features/masjids/presentation/view_models/masjid_view_model/masjid_view_model_cubit.dart';
-import 'package:mnm_internal_admin/features/masjids/presentation/view_models/prayer_times_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/masjids/presentation/view_models/prayer_times_view_model/prayer_times_view_model_cubit.dart';
 import 'config/app_routes.dart';
 import 'features/auth/presentation/view/auth_screen.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -32,6 +33,7 @@ class SalesManagingApp extends StatelessWidget {
         BlocProvider(create: (context) => sl<MasjidViewModelCubit>()),
         BlocProvider(create: (context) => sl<MadhabViewModelCubit>()),
         BlocProvider(create: (context) => sl<PrayerTimesViewModelCubit>()),
+        BlocProvider(create: (context) => sl<CityConfigViewModelCubit>()),
         BlocProvider(create: (context) => AuthCubit()),
         BlocProvider(
           create: (context) => SideMenuDrawerViewModelCubit(),

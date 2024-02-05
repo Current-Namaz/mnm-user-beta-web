@@ -18,7 +18,7 @@ class HomeContentView extends StatelessWidget {
           // height: 100,
           // alignment: Alignment.center,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(r20),
+            borderRadius: BorderRadius.only(topRight: Radius.circular(r20),topLeft: Radius.circular(r20)),
             color: AppColors.secondaryColor,
           ),
           margin: const EdgeInsets.only(top: 20,left: 20,right: 20),
