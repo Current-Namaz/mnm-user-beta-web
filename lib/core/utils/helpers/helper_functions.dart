@@ -93,6 +93,34 @@ Future<DateTime?> showTimePickerDialog(BuildContext context,
       .copyWith(hour: selectedTime.hour, minute: selectedTime.minute);
 }
 
+Future<DateTime?> showDatePickerDialog(BuildContext context,
+    [String? lable]) async {
+  final selectedTime = await showDatePicker(
+    helpText: lable,
+    context: context,
+    firstDate: DateTime.now(),
+    // initialTime: initialTime ?? TimeOfDay.now(),
+    builder: (BuildContext context, Widget? child) {
+      return Theme(
+        data: ThemeData.dark().copyWith(
+          colorScheme: ColorScheme.dark(
+            primary: AppColors.lightGreen,
+            onPrimary: AppColors.textPrimaryColor,
+            surface: AppColors.primaryColor,
+            secondary: AppColors.lightGreen,
+            onSurface: AppColors.textPrimary2Color,
+          ),
+        ),
+        child: child!,
+      );
+    }, lastDate: DateTime.now().add(Duration(days: 360)),
+  );
+  if (selectedTime == null) {
+    return await Future<Null>(() => null);
+  }
+  return selectedTime;
+}
+
 String get12HourTimeFromString(String time) {
   try {
     return DateFormat('hh:mm a').format(DateTime.parse(time));

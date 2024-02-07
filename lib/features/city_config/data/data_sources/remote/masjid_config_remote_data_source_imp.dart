@@ -54,7 +54,8 @@ class CityConfigRemoteDataSourceImp implements CityConfigRemoteDataSource {
         "masjid_location": cityConfigEntity.masjidLocation,
         "namaz_time": cityConfigEntity.namazTime,
         "ramadan": cityConfigEntity.ramadan,
-        "eid_on": cityConfigEntity.eidOn,
+        "eid_on":
+            cityConfigEntity.eidOn == 'empty' ? null : cityConfigEntity.eidOn,
         "islamic_date": cityConfigEntity.islamicDate,
         "time_zone": cityConfigEntity.timeZone,
         "show_madhab": cityConfigEntity.showMadhab,
@@ -144,7 +145,7 @@ class CityConfigRemoteDataSourceImp implements CityConfigRemoteDataSource {
         "namaz_time": cityConfigEntity.namazTime,
         "ramadan": cityConfigEntity.ramadan,
         "eid_on":
-            cityConfigEntity.eidOn.isEmpty ? null : cityConfigEntity.eidOn,
+            cityConfigEntity.eidOn == 'empty' ? null : cityConfigEntity.eidOn,
         "islamic_date": cityConfigEntity.islamicDate,
         "time_zone": cityConfigEntity.timeZone,
         "show_madhab": cityConfigEntity.showMadhab,

@@ -5,6 +5,8 @@ import 'package:mnm_internal_admin/features/masjids/domain/entities/city.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/country.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/state.dart';
 
+import '../../../../../core/values/app_strings.dart';
+import '../../../../../core/widgets/app_text_field.dart';
 import '../../view_models/city_config_view_model_cubit.dart';
 import 'location_selection_drop_down.dart';
 
@@ -36,13 +38,31 @@ class _ConfigHeaderViewState extends State<ConfigHeaderView> {
           builder: (context, state) {
             print(state);
             if (state is CityConfigViewModelCountryListLoaded) {
-              return LocationSelectionDropDown<CountryEntity>(
-                itemList: state.countryList,
-                hintText: 'Select Country',
-                selectedValue: state.selectedCountry,
-                onItemTap: (val) {
-                  context.read<CityConfigViewModelCubit>().onCountryTap(val);
-                },
+              return Column(
+                children: [
+                  LocationSelectionDropDown<CountryEntity>(
+                    searchWidget: AppTextField(
+                      topMargin: 5,
+                      controller: context
+                          .read<CityConfigViewModelCubit>()
+                          .txtCountrySearchController,
+                      hideLable: true,
+                      onChange: context
+                          .read<CityConfigViewModelCubit>()
+                          .onCountrySearchChange,
+                      hintText: AppStrings.hSearch,
+                      height: 40,
+                    ),
+                    itemList: state.countryList,
+                    hintText: 'Select Country',
+                    selectedValue: state.selectedCountry,
+                    onItemTap: (val) {
+                      context
+                          .read<CityConfigViewModelCubit>()
+                          .onCountryTap(val);
+                    },
+                  ),
+                ],
               );
             }
 
@@ -66,6 +86,18 @@ class _ConfigHeaderViewState extends State<ConfigHeaderView> {
                     builder: (context, state) {
                       if (state is CityConfigViewModelStateListLoaded) {
                         return LocationSelectionDropDown<StateEntity>(
+                          searchWidget: AppTextField(
+                            topMargin: 5,
+                            controller: context
+                                .read<CityConfigViewModelCubit>()
+                                .txtStateSearchController,
+                            hideLable: true,
+                            onChange: context
+                                .read<CityConfigViewModelCubit>()
+                                .onStateSearchChange,
+                            hintText: AppStrings.hSearch,
+                            height: 40,
+                          ),
                           hintText: 'Select State',
                           selectedValue: state.selectedState,
                           onItemTap: (val) {
@@ -89,12 +121,24 @@ class _ConfigHeaderViewState extends State<ConfigHeaderView> {
                     buildWhen: (oldState, newState) =>
                         newState is CityConfigViewModelCityListLoaded ||
                         newState is CityConfigViewModelCityListLoading ||
-                            newState is CityConfigViewModelCityListClearState||
+                        newState is CityConfigViewModelCityListClearState ||
                         newState is CityConfigViewModelCityListErrorState,
                     builder: (context, state) {
                       if (state is CityConfigViewModelCityListLoaded) {
                         return LocationSelectionDropDown<CityEntity>(
                           hintText: 'Select City',
+                          searchWidget: AppTextField(
+                            topMargin: 5,
+                            controller: context
+                                .read<CityConfigViewModelCubit>()
+                                .txtCitySearchController,
+                            hideLable: true,
+                            onChange: context
+                                .read<CityConfigViewModelCubit>()
+                                .onCitySearchChange,
+                            hintText: AppStrings.hSearch,
+                            height: 40,
+                          ),
                           selectedValue: state.selectedCity,
                           itemList: state.cityList,
                           onItemTap: (val) {
@@ -112,9 +156,14 @@ class _ConfigHeaderViewState extends State<ConfigHeaderView> {
                     })),
         SizedBox(width: 10),
         Expanded(
-          child: CommonButton(height: 40, onTap: () {
-            context.read<CityConfigViewModelCubit>().onGetConfigTap(context);
-          }, text: 'Get config'),
+          child: CommonButton(
+              height: 40,
+              onTap: () {
+                context
+                    .read<CityConfigViewModelCubit>()
+                    .onGetConfigTap(context);
+              },
+              text: 'Get config'),
         ),
         Spacer(),
       ],

@@ -14,12 +14,13 @@ class LocationSelectionDropDown<T> extends StatefulWidget {
       this.selectedValue,
       required this.itemList,
       required this.hintText,
-      required this.onItemTap,
+      required this.onItemTap,  this.searchWidget,
   });
 
   final T? selectedValue;
   final String? hintText;
   final List<T> itemList;
+  final Widget? searchWidget;
   final ValueChanged<T> onItemTap;
 
   @override
@@ -87,7 +88,7 @@ class _LocationSelectionDropDownState<T>
               alignment: AlignmentDirectional.topStart,
               child: Container(
                 margin: EdgeInsets.only(top: 10),
-                padding: EdgeInsets.symmetric(vertical: 5),
+                padding: EdgeInsets.symmetric(vertical: 5,horizontal: 6),
                 width: _buttonWidth,
                 constraints: BoxConstraints(
                   maxWidth: _buttonWidth,
@@ -96,22 +97,26 @@ class _LocationSelectionDropDownState<T>
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(r8),
                     color: AppColors.darkBlackColor),
-                child: ListView.builder(
-                  itemCount: widget.itemList.length,
-                    itemBuilder: (context,index){
-                      return Padding(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 2),
-                        child: MasjidLocationItemView<T>(
-                            isSelected: false,
-                            entity:  widget.itemList[index],
-                            onTap: () {
-                              widget.onItemTap( widget.itemList[index]);
-                              _tooltipController.hide();
-                            },
-                            onDoubleTap: () {}),
-                      );
-                    },
+                child: Column(
+                  children: [
+                    if(widget.searchWidget != null )widget.searchWidget!,
+                    Expanded(
+                      child: ListView.builder(
+
+                        itemCount: widget.itemList.length,
+                          itemBuilder: (context,index){
+                            return MasjidLocationItemView<T>(
+                                isSelected: false,
+                                entity:  widget.itemList[index],
+                                onTap: () {
+                                  widget.onItemTap( widget.itemList[index]);
+                                  _tooltipController.hide();
+                                },
+                                onDoubleTap: () {});
+                          },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

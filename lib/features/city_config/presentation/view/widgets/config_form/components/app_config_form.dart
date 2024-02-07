@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mnm_internal_admin/core/values/app_colors.dart';
 import 'package:mnm_internal_admin/core/values/app_strings.dart';
 import 'package:mnm_internal_admin/core/values/app_styles.dart';
 import 'package:mnm_internal_admin/core/widgets/app_text_field.dart';
 import 'package:mnm_internal_admin/features/city_config/domain/entities/city_config.dart';
 
+import '../../../../../../../core/utils/helpers/helper_functions.dart';
 import '../../../../../../../core/values/constants.dart';
 import '../../switch_with_lable.dart';
 import '../../value_change_widget.dart';
@@ -20,13 +22,19 @@ class AppConfigForm extends StatefulWidget {
 
 class _AppConfigFormState extends State<AppConfigForm> {
   late final TextEditingController txtTimeZoneController;
+  late final TextEditingController txtEidController;
 
   @override
   void initState() {
     txtTimeZoneController = TextEditingController();
+    txtEidController = TextEditingController();
     txtTimeZoneController.text = widget.cityConfigEntity.timeZone;
+    if (widget.cityConfigEntity.eidOn != 'empty') {
+      txtEidController.text = DateFormat('d-MM-yyyy').format(
+          DateTime.parse(widget.cityConfigEntity.eidOn));
+      }
     super.initState();
-  }
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -69,9 +77,34 @@ class _AppConfigFormState extends State<AppConfigForm> {
               onChange: (v) {
                 widget.cityConfigEntity.ramadan = v;
               }),
-          AppTextField(
-            hintText: AppStrings.eidDate,
-            isReadyOnly: true,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: AppTextField(
+                  onTap: () async {
+                    final result = await showDatePickerDialog(context);
+                    if (result != null) {
+                      widget.cityConfigEntity.eidOn = result.toString();
+                      txtEidController.text = DateFormat('d-MM-yyyy').format(result);
+                    }
+                  },
+                  controller: txtEidController,
+                  hintText: AppStrings.eidDate,
+                  isReadyOnly: true,
+                ),
+              ),
+              SizedBox(width: 5,),
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: GestureDetector(
+                    onTap: (){
+                      txtEidController.clear();
+                      widget.cityConfigEntity.eidOn = 'empty';
+                    },
+                    child: Icon(Icons.delete,color: AppColors.textPrimary2Color,)),
+              )
+            ],
           ),
           ValueChangeWidget(
             title: 'Islamic Date Settings',
