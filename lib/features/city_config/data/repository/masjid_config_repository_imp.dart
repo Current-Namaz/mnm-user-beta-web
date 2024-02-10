@@ -61,7 +61,10 @@ class CityConfigRepositoryImp implements CityConfigRepository {
   }
 
   @override
-  Future<DataSourceResult<String>> getCityTimeZone({required String countryId, required String stateId, required String cityId}) async {
+  Future<DataSourceResult<String>> getCityTimeZone(
+      {required String countryId,
+      required String stateId,
+      required String cityId}) async {
     try {
       final result = await cityConfigRemoteDataSource.getCityTimeZone(
           countryId: countryId, stateId: stateId, cityId: cityId);
@@ -76,10 +79,46 @@ class CityConfigRepositoryImp implements CityConfigRepository {
   }
 
   @override
-  Future<DataSourceResult<String>> deleteConfig({required String countryId, required String stateId, required String cityId, required String id}) async{
+  Future<DataSourceResult<String>> deleteConfig(
+      {required String countryId,
+      required String stateId,
+      required String cityId,
+      required String id}) async {
     try {
       final result = await cityConfigRemoteDataSource.deleteConfig(
-          countryId: countryId, stateId: stateId, cityId: cityId,id: id);
+          countryId: countryId, stateId: stateId, cityId: cityId, id: id);
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!);
+      } else {
+        return DataFailed(result.error!);
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<String>> updateConfigByCountry(
+      {required CityConfigEntity cityConfigEntity}) async {
+    try {
+      final result = await cityConfigRemoteDataSource.updateConfigByCountry(
+          cityConfigEntity: cityConfigEntity);
+      if (result is DataSuccess && result.data != null) {
+        return DataSuccess(result.data!);
+      } else {
+        return DataFailed(result.error!);
+      }
+    } catch (e) {
+      return DataFailed(DataSourceError());
+    }
+  }
+
+  @override
+  Future<DataSourceResult<String>> updateConfigByState(
+      {required CityConfigEntity cityConfigEntity}) async {
+    try {
+      final result = await cityConfigRemoteDataSource.updateConfigByState(
+          cityConfigEntity: cityConfigEntity);
       if (result is DataSuccess && result.data != null) {
         return DataSuccess(result.data!);
       } else {

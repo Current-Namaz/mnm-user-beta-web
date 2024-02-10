@@ -7,7 +7,7 @@ import 'package:mnm_internal_admin/features/masjids/domain/entities/state.dart';
 
 import '../../../../../core/values/app_strings.dart';
 import '../../../../../core/widgets/app_text_field.dart';
-import '../../view_models/city_config_view_model_cubit.dart';
+import '../../view_models/city_config_view_model/city_config_view_model_cubit.dart';
 import 'location_selection_drop_down.dart';
 
 class ConfigHeaderView extends StatefulWidget {
@@ -21,7 +21,7 @@ class _ConfigHeaderViewState extends State<ConfigHeaderView> {
   @override
   void initState() {
     super.initState();
-    context.read<CityConfigViewModelCubit>().getCountryData();
+    context.read<CityConfigViewModelCubit>().getCountryData(context);
   }
 
   @override
@@ -59,7 +59,7 @@ class _ConfigHeaderViewState extends State<ConfigHeaderView> {
                     onItemTap: (val) {
                       context
                           .read<CityConfigViewModelCubit>()
-                          .onCountryTap(val);
+                          .onCountryTap(val,context);
                     },
                   ),
                 ],
@@ -103,7 +103,7 @@ class _ConfigHeaderViewState extends State<ConfigHeaderView> {
                           onItemTap: (val) {
                             context
                                 .read<CityConfigViewModelCubit>()
-                                .onStateTap(val);
+                                .onStateTap(val,context);
                           },
                           itemList: state.stateList,
                         );

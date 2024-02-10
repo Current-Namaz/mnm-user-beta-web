@@ -11,15 +11,16 @@ import 'package:mnm_internal_admin/features/city_config/domain/usecases/delete_c
 import 'package:mnm_internal_admin/features/city_config/domain/usecases/get_city_config.dart';
 import 'package:mnm_internal_admin/features/city_config/domain/usecases/get_city_time_zone.dart';
 import 'package:mnm_internal_admin/features/city_config/domain/usecases/update_config.dart';
+import 'package:mnm_internal_admin/features/city_config/domain/usecases/update_config_by_country.dart';
+import 'package:mnm_internal_admin/features/city_config/domain/usecases/update_config_by_state.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/city.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/entities/state.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_country_list.dart';
 import 'package:mnm_internal_admin/features/masjids/domain/usecases/get_state_list.dart';
-
-import '../../../../core/common_domain/data_source_result/data_source_result.dart';
-import '../../../../core/common_domain/usecase/base_usecase.dart';
-import '../../../masjids/domain/entities/country.dart';
-import '../../../masjids/domain/usecases/get_city_list.dart';
+import '../../../../../core/common_domain/data_source_result/data_source_result.dart';
+import '../../../../../core/common_domain/usecase/base_usecase.dart';
+import '../../../../masjids/domain/entities/country.dart';
+import '../../../../masjids/domain/usecases/get_city_list.dart';
 
 part 'city_config_view_model_state.dart';
 
@@ -30,10 +31,14 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
   final GetCityConfigUseCase getCityConfigUseCase;
   final CreateConfigUseCase createConfigUseCase;
   final UpdateConfigUseCase updateConfigUseCase;
+  final UpdateConfigByCountryUseCase updateConfigByCountryUseCase;
+  final UpdateConfigByStateUseCase updateConfigByStateUseCase;
   final GetCityTimeZoneUseCase getCityTimeZoneUseCase;
   final DeleteConfigUseCase deleteConfigUseCase;
 
   CityConfigViewModelCubit({
+    required this.updateConfigByCountryUseCase,
+    required this.updateConfigByStateUseCase,
     required this.deleteConfigUseCase,
     required this.getCountryListUseCase,
     required this.getStateListUseCase,
@@ -83,11 +88,10 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
       sId: '');
 
   final TextEditingController txtCountrySearchController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController txtStateSearchController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController txtCitySearchController = TextEditingController();
-
 
   late final List calculationMethodList = [
     'Muslim World League',
@@ -106,40 +110,49 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
 
   /// <<<<<<<<<<<<< Country Module >>>>>>>>>>>>>>>
 
-  Future<void> getCountryData() async {
+  Future<void> getCountryData(context) async {
     clearCurrentDataForCountry();
     emit(const CityConfigViewModelCountryListLoading());
+    final currentDialog = CustomToast.warning(
+        title: 'Please wait', description: 'Fetching Country data....');
+    await Future.delayed(
+        Duration.zero, () => currentDialog.showAndCloseManually(context));
     final result = await getCountryListUseCase(NoParams());
     if (result is DataSuccess) {
       _countryList.addAll(result.data!.toList());
       emit(CityConfigViewModelCountryListLoaded(
-          countryList: _countryList, selectedCountry: selectedCountry));
+        countryList: _countryList,
+        selectedCountry: selectedCountry,
+      ));
+      currentDialog.closeCurrentToast();
     } else {
+      currentDialog.closeCurrentToast();
+      CustomToast.error(
+              title: AppStrings.mTError, description: result.error!.message)
+          .show(context);
       emit(
           CityConfigViewModelCountryErrorState(message: result.error!.message));
     }
   }
 
-  Future<void> onCountryTap(CountryEntity countryEntity) async {
+  Future<void> onCountryTap(CountryEntity countryEntity, context) async {
     selectedCountry = countryEntity;
-    if (txtCountrySearchController.text
-        .trim()
-        .isEmpty) {
+    if (txtCountrySearchController.text.trim().isEmpty) {
       emit(CityConfigViewModelCountryListLoaded(
           countryList: _countryList, selectedCountry: selectedCountry));
     } else {
       final _filteredList = _countryList
           .where((element) =>
-      element.name.contains(txtCountrySearchController.text) ||
-          element.name.startsWith(
-              txtCountrySearchController.text.capitalizeFirst()) ||
-          element.name == txtCountrySearchController.text)
+              element.name.contains(txtCountrySearchController.text) ||
+              element.name.startsWith(
+                  txtCountrySearchController.text.capitalizeFirst()) ||
+              element.name == txtCountrySearchController.text)
           .toList();
 
       emit(CityConfigViewModelCountryListLoaded(
           countryList: _filteredList, selectedCountry: selectedCountry));
     }
-    _getStateData();
+    _getStateData(context);
   }
 
   void clearCurrentDataForCountry() {
@@ -152,9 +165,7 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
   }
 
   void onCountrySearchChange(String val) {
-    if (val
-        .trim()
-        .isEmpty) {
+    if (val.trim().isEmpty) {
       emit(CityConfigViewModelCountryListLoaded(
           countryList: List.of(_countryList),
           selectedCountry: selectedCountry));
@@ -162,9 +173,9 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
     }
     final _filteredList = _countryList
         .where((element) =>
-    element.name.contains(val) ||
-        element.name.startsWith(val.capitalizeFirst()) ||
-        element.name == val)
+            element.name.contains(val) ||
+            element.name.startsWith(val.capitalizeFirst()) ||
+            element.name == val)
         .toList();
 
     emit(CityConfigViewModelCountryListLoaded(
@@ -177,29 +188,35 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
 
   /// <<<<<<<<<<<<< State Module >>>>>>>>>>>>>>>
 
-  Future<void> _getStateData() async {
+  Future<void> _getStateData(context) async {
     clearCurrentDataForState();
+    final currentDialog = CustomToast.warning(
+        title: 'Please wait', description: 'Fetching State data....');
+    currentDialog.showAndCloseManually(context);
     emit(
         CityConfigViewModelStateListLoading(selectedCountry: selectedCountry!));
     final result =
-    await getStateListUseCase(StateParams(countryId: selectedCountry!.id));
+        await getStateListUseCase(StateParams(countryId: selectedCountry!.id));
     if (result is DataSuccess) {
       _stateList.addAll(result.data!);
       emit(CityConfigViewModelStateListLoaded(
           stateList: List.of(_stateList),
           selectedCountry: selectedCountry!,
           selectedState: selectedState));
+      currentDialog.closeCurrentToast();
     } else {
+      currentDialog.closeCurrentToast();
+      CustomToast.error(
+              title: AppStrings.mTError, description: result.error!.message)
+          .show(context);
       emit(CityConfigViewModelStateListErrorState(
           message: result.error!.message));
     }
   }
 
-  Future<void> onStateTap(StateEntity stateEntity) async {
+  Future<void> onStateTap(StateEntity stateEntity, context) async {
     selectedState = stateEntity;
-    if (txtStateSearchController.text
-        .trim()
-        .isEmpty) {
+    if (txtStateSearchController.text.trim().isEmpty) {
       emit(CityConfigViewModelStateListLoaded(
           stateList: List.of(_stateList),
           selectedCountry: selectedCountry!,
@@ -207,10 +224,10 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
     } else {
       final _filteredList = _stateList
           .where((element) =>
-      element.name.contains(txtStateSearchController.text) ||
-          element.name.startsWith(
-              txtStateSearchController.text.capitalizeFirst()) ||
-          element.name == txtStateSearchController.text)
+              element.name.contains(txtStateSearchController.text) ||
+              element.name.startsWith(
+                  txtStateSearchController.text.capitalizeFirst()) ||
+              element.name == txtStateSearchController.text)
           .toList();
 
       emit(CityConfigViewModelStateListLoaded(
@@ -218,7 +235,7 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
           selectedCountry: selectedCountry!,
           selectedState: selectedState));
     }
-    _getCityData();
+    _getCityData(context);
   }
 
   void clearCurrentDataForState() {
@@ -228,13 +245,12 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
     txtStateSearchController.clear();
     selectedCity = null;
     selectedState = null;
+    emit(CityConfigViewModelCurrentConfigClearState());
   }
 
   void onStateSearchChange(String val) {
     print(val);
-    if (val
-        .trim()
-        .isEmpty) {
+    if (val.trim().isEmpty) {
       emit(CityConfigViewModelStateListLoaded(
           stateList: List.of(_stateList),
           selectedCountry: selectedCountry!,
@@ -242,9 +258,9 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
     } else {
       final _filteredList = _stateList
           .where((element) =>
-      element.name.contains(val) ||
-          element.name.startsWith(val.capitalizeFirst()) ||
-          element.name == val)
+              element.name.contains(val) ||
+              element.name.startsWith(val.capitalizeFirst()) ||
+              element.name == val)
           .toList();
       if (state is CityConfigViewModelStateListLoaded) {
         emit(CityConfigViewModelStateListLoaded(
@@ -259,9 +275,12 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
 
   /// <<<<<<<<<<<<< City Module >>>>>>>>>>>>>>>
 
-  Future<void> _getCityData() async {
+  Future<void> _getCityData(context) async {
     clearCurrentDataForCity();
     emit(CityConfigViewModelCityListLoading(selectedState: selectedState!));
+    final currentDialog = CustomToast.warning(
+        title: 'Please wait', description: 'Fetching City Data....');
+    currentDialog.showAndCloseManually(context);
     final result = await getCityListUseCase(
         CityParams(countryId: selectedCountry!.id, stateId: selectedState!.id));
     if (result is DataSuccess) {
@@ -272,7 +291,12 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
         selectedCity: selectedCity,
         selectedCountry: selectedCountry!,
       ));
+      currentDialog.closeCurrentToast();
     } else {
+      currentDialog.closeCurrentToast();
+      CustomToast.error(
+              title: AppStrings.mTError, description: result.error!.message)
+          .show(context);
       emit(CityConfigViewModelCityListErrorState(
           message: result.error!.message));
     }
@@ -280,9 +304,7 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
 
   Future<void> onCityTap(CityEntity cityEntity) async {
     selectedCity = cityEntity;
-    if (txtCitySearchController.text
-        .trim()
-        .isEmpty) {
+    if (txtCitySearchController.text.trim().isEmpty) {
       emit(CityConfigViewModelCityListLoaded(
         cityList: List.of(_cityList),
         selectedState: selectedState!,
@@ -292,10 +314,10 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
     } else {
       final _filteredList = _cityList
           .where((element) =>
-      element.name.contains(txtCitySearchController.text) ||
-          element.name
-              .startsWith(txtCitySearchController.text.capitalizeFirst()) ||
-          element.name == txtCitySearchController.text)
+              element.name.contains(txtCitySearchController.text) ||
+              element.name
+                  .startsWith(txtCitySearchController.text.capitalizeFirst()) ||
+              element.name == txtCitySearchController.text)
           .toList();
 
       emit(CityConfigViewModelCityListLoaded(
@@ -311,13 +333,12 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
     _cityList.clear();
     txtCitySearchController.clear();
     selectedCity = null;
+    emit(CityConfigViewModelCurrentConfigClearState());
   }
 
   void onCitySearchChange(String val) {
     if (selectedState != null) {
-      if (val
-          .trim()
-          .isEmpty) {
+      if (val.trim().isEmpty) {
         emit(CityConfigViewModelCityListLoaded(
             cityList: List.of(_cityList),
             selectedCity: selectedCity,
@@ -327,9 +348,9 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
       }
       final _filteredList = _cityList
           .where((element) =>
-      element.name.contains(val) ||
-          element.name.startsWith(val.capitalizeFirst()) ||
-          element.name == val)
+              element.name.contains(val) ||
+              element.name.startsWith(val.capitalizeFirst()) ||
+              element.name == val)
           .toList();
       emit(CityConfigViewModelCityListLoaded(
           cityList: List.of(_filteredList),
@@ -360,12 +381,15 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
       final timeZone = await _getCityTimeZone();
       if (timeZone == null) {
         emit(CityConfigViewModelErrorState(
-            errorMessage: 'Some thing went wrong', onTryAgain: () {}));
+            errorMessage: 'Some thing went wrong',
+            onTryAgain: () {
+              getCityConfig(context);
+            }));
         closeLoadingDialog(context);
       }
       CustomToast.error(
-          title: 'Config not found',
-          description: 'Create new config for ${selectedCity!.name}')
+              title: 'Config not found',
+              description: 'Create new config for ${selectedCity!.name}')
           .show(context);
       currentConfig.countryId = selectedCountry!.id;
       currentConfig.stateId = selectedState!.id;
@@ -375,9 +399,14 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
           cityConfigEntity: currentConfig));
       closeLoadingDialog(context);
     } else {
+      emit(CityConfigViewModelErrorState(
+          errorMessage: 'Some thing went wrong',
+          onTryAgain: () {
+            getCityConfig(context);
+          }));
       CustomToast.error(
-          title: 'Error${(result.error!.statusCode)}',
-          description: result.error!.message)
+              title: 'Error${(result.error!.statusCode)}',
+              description: result.error!.message)
           .show(context);
       closeLoadingDialog(context);
     }
@@ -404,38 +433,85 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
       emit(CityConfigViewModelConfigAvailableState(
           cityConfigEntity: currentConfig));
       CustomToast.success(
-          title: AppStrings.mTSuccess,
-          description: AppStrings.mDAddedSuccessFully).show(context);
+              title: AppStrings.mTSuccess,
+              description: AppStrings.mDAddedSuccessFully)
+          .show(context);
     } else {
       CustomToast.error(
-          title: AppStrings.mTError, description: result.error!.message)
+              title: AppStrings.mTError, description: result.error!.message)
           .show(context);
     }
     closeLoadingDialog(context);
   }
 
-  void updateConfig(context) async {
+  void updateConfig(context, CityConfigEntity cityConfigEntity) async {
     showLoadingDialog(context);
-    print(currentConfig);
-    final result = await updateConfigUseCase(currentConfig);
+    final result = await updateConfigUseCase(cityConfigEntity);
     if (result is DataSuccess) {
       currentConfig = result.data!;
+      final CityConfigEntity = currentConfig;
       emit(CityConfigViewModelConfigAvailableState(
-          cityConfigEntity: currentConfig));
+          cityConfigEntity: CityConfigEntity));
+      kDebugPrint('Current Config After Update -> $currentConfig');
       CustomToast.success(
-          title: AppStrings.mTSuccess,
-          description: AppStrings.mDUpdateSuccessFully).show(context);
+              title: AppStrings.mTSuccess,
+              description: AppStrings.mDUpdateSuccessFully)
+          .show(context);
     } else {
       CustomToast.error(
-          title: AppStrings.mTError, description: result.error!.message)
+              title: AppStrings.mTError, description: result.error!.message)
           .show(context);
     }
     closeLoadingDialog(context);
+  }
+
+  void updateConfigByCountry(context, CityConfigEntity cityConfigEntity) async {
+    showUpdateConfirmationDialog(context, () async {
+      showLoadingDialog(context);
+      print(currentConfig);
+      final result = await updateConfigByCountryUseCase(cityConfigEntity);
+      if (result is DataSuccess) {
+        currentConfig = cityConfigEntity;
+        emit(CityConfigViewModelConfigAvailableState(
+            cityConfigEntity: currentConfig));
+        kDebugPrint('Current Config After Update -> $currentConfig');
+        CustomToast.success(
+                title: AppStrings.mTSuccess,
+                description: result.data!)
+            .show(context);
+      } else {
+        CustomToast.error(
+                title: AppStrings.mTError, description: result.error!.message)
+            .show(context);
+      }
+      closeLoadingDialog(context);
+    });
+  }
+
+  void updateConfigByState(context, CityConfigEntity cityConfigEntity) async {
+    showUpdateConfirmationDialog(context, () async {
+      showLoadingDialog(context);
+      final result = await updateConfigByStateUseCase(cityConfigEntity);
+      if (result is DataSuccess) {
+        currentConfig = cityConfigEntity;
+        emit(CityConfigViewModelConfigAvailableState(
+            cityConfigEntity: currentConfig));
+        kDebugPrint('Current Config After Update -> $currentConfig');
+        CustomToast.success(
+                title: AppStrings.mTSuccess,
+                description: result.data!)
+            .show(context);
+      } else {
+        CustomToast.error(
+                title: AppStrings.mTError, description: result.error!.message)
+            .show(context);
+      }
+      closeLoadingDialog(context);
+    });
   }
 
   void deleteConfig(context) async {
-    showDeleteConfirmationDialog(context, ()
-    async{
+    showDeleteConfirmationDialog(context, () async {
       showLoadingDialog(context);
       final result = await deleteConfigUseCase(DeleteConfigUseCaseParams(
           countryId: selectedCountry!.id,
@@ -444,9 +520,9 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
           id: currentConfig.sId));
       if (result is DataSuccess) {
         CustomToast.success(
-            title: AppStrings.mTSuccess,
-            description: result.data ?? AppStrings.mDeleteSuccessFully).show(
-            context);
+                title: AppStrings.mTSuccess,
+                description: result.data ?? AppStrings.mDeleteSuccessFully)
+            .show(context);
         final timeZone = await _getCityTimeZone();
         if (timeZone == null) {
           emit(CityConfigViewModelErrorState(
@@ -508,7 +584,7 @@ class CityConfigViewModelCubit extends Cubit<CityConfigViewModelState> {
         selectedCity == null ||
         selectedState == null) {
       CustomToast.warning(
-          title: 'Select Location', description: 'Please select location')
+              title: 'Select Location', description: 'Please select location')
           .show(context);
     } else {
       _setInitialValueForConfig();

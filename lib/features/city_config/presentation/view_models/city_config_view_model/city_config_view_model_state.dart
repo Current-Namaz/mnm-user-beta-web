@@ -110,14 +110,11 @@ class CityConfigViewModelCityListErrorState extends CityConfigViewModelState {
 }
 
 class CityConfigViewModelCityListClearState extends CityConfigViewModelState {
-
-
   @override
   List<Object?> get props => [];
 }
 
 class CityConfigViewModelCreateNewConfigState extends CityConfigViewModelState {
-
   final CityConfigEntity cityConfigEntity;
 
   CityConfigViewModelCreateNewConfigState({required this.cityConfigEntity});
@@ -127,24 +124,29 @@ class CityConfigViewModelCreateNewConfigState extends CityConfigViewModelState {
 }
 
 class CityConfigViewModelConfigAvailableState extends CityConfigViewModelState {
-
   final CityConfigEntity cityConfigEntity;
 
-  CityConfigViewModelConfigAvailableState({required this.cityConfigEntity,});
+  CityConfigViewModelConfigAvailableState({
+    required this.cityConfigEntity,
+  });
+
   @override
   List<Object?> get props => [cityConfigEntity];
 }
 
 class CityConfigViewModelErrorState extends CityConfigViewModelState {
-
-
   final String errorMessage;
   final VoidCallback onTryAgain;
 
-  CityConfigViewModelErrorState({required this.errorMessage,required this.onTryAgain});
+  CityConfigViewModelErrorState(
+      {required this.errorMessage, required this.onTryAgain});
+
   @override
-  List<Object?> get props => [errorMessage,onTryAgain];
+  List<Object?> get props => [errorMessage, onTryAgain];
 }
 
-
-
+class CityConfigViewModelCurrentConfigClearState
+    extends CityConfigViewModelState {
+  @override
+  List<Object?> get props => [];
+}

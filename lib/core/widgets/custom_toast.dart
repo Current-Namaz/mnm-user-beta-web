@@ -23,10 +23,14 @@ class CustomToast extends StatefulWidget {
   void show(BuildContext context) {
     overlayEntry = _overlayEntryBuilder();
     Overlay.maybeOf(context)?.insert(overlayEntry!);
-    Future.delayed(const Duration(seconds: 3)).then((value) => closeOverlay());
+    Future.delayed(const Duration(seconds: 3)).then((value) => closeCurrentToast());
   }
 
-  void closeOverlay() {
+  void showAndCloseManually(BuildContext context) {
+    overlayEntry = _overlayEntryBuilder();
+    Overlay.maybeOf(context)?.insert(overlayEntry!);
+  }
+  void closeCurrentToast() {
     overlayEntry?.remove();
     overlayEntry = null;
   }

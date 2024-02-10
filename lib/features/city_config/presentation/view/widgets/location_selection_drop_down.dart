@@ -81,45 +81,53 @@ class _LocationSelectionDropDownState<T>
               ),
             ),
           );
-          return CompositedTransformFollower(
-            link: _link,
-            targetAnchor: Alignment.bottomLeft,
-            child: Align(
-              alignment: AlignmentDirectional.topStart,
-              child: Container(
-                margin: EdgeInsets.only(top: 10),
-                padding: EdgeInsets.symmetric(vertical: 5,horizontal: 6),
-                width: _buttonWidth,
-                constraints: BoxConstraints(
-                  maxWidth: _buttonWidth,
-                  maxHeight: 350,
-                ),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(r8),
-                    color: AppColors.darkBlackColor),
-                child: Column(
-                  children: [
-                    if(widget.searchWidget != null )widget.searchWidget!,
-                    Expanded(
-                      child: ListView.builder(
-
-                        itemCount: widget.itemList.length,
-                          itemBuilder: (context,index){
-                            return MasjidLocationItemView<T>(
-                                isSelected: false,
-                                entity:  widget.itemList[index],
-                                onTap: () {
-                                  widget.onItemTap( widget.itemList[index]);
-                                  _tooltipController.hide();
-                                },
-                                onDoubleTap: () {});
-                          },
-                      ),
+          return Stack(
+            children: [
+              ModalBarrier(
+                onDismiss: () {
+                  _tooltipController.toggle();
+                },
+              ),
+              CompositedTransformFollower(
+                link: _link,
+                targetAnchor: Alignment.bottomLeft,
+                child: Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: Container(
+                    margin: EdgeInsets.only(top: 10),
+                    padding: EdgeInsets.symmetric(vertical: 5,horizontal: 6),
+                    width: _buttonWidth,
+                    constraints: BoxConstraints(
+                      maxWidth: _buttonWidth,
+                      maxHeight: 350,
                     ),
-                  ],
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(r8),
+                        color: AppColors.darkBlackColor),
+                    child: Column(
+                      children: [
+                        if(widget.searchWidget != null )widget.searchWidget!,
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: widget.itemList.length,
+                              itemBuilder: (context,index){
+                                return MasjidLocationItemView<T>(
+                                    isSelected: false,
+                                    entity:  widget.itemList[index],
+                                    onTap: () {
+                                      widget.onItemTap( widget.itemList[index]);
+                                      _tooltipController.hide();
+                                    },
+                                    onDoubleTap: () {});
+                              },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           );
         },
         child: GestureDetector(

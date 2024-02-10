@@ -9,5 +9,7 @@ abstract class CityConfigRemoteDataSource{
   Future<DataSourceResult<String>> getCityTimeZone({required String countryId,required String stateId,required String cityId});
   Future<DataSourceResult<CityConfigModel>> createNewConfig({required CityConfigEntity cityConfigEntity});
   Future<DataSourceResult<CityConfigModel>> updateConfig({required CityConfigEntity cityConfigEntity});
+  Future<DataSourceResult<String>> updateConfigByCountry({required CityConfigEntity cityConfigEntity});
+  Future<DataSourceResult<String>> updateConfigByState({required CityConfigEntity cityConfigEntity});
   Future<DataSourceResult<String>> deleteConfig({required String countryId,required String stateId,required String cityId,required String id});
 }

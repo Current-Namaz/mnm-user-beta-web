@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mnm_internal_admin/core/utils/helpers/helper_functions.dart';
 import 'package:mnm_internal_admin/core/values/enums.dart';
 import 'package:mnm_internal_admin/features/city_config/presentation/view/widgets/value_change_slider_widget.dart';
-import 'package:mnm_internal_admin/features/city_config/presentation/view_models/city_config_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/city_config/presentation/view_models/city_config_view_model/city_config_view_model_cubit.dart';
 
 import '../../../../../../../core/values/app_colors.dart';
 import '../../../../../../../core/values/app_strings.dart';
@@ -60,42 +60,45 @@ class _NamazTimingConfigurationFormState
             padding: const EdgeInsets.only(bottom: 12),
             child: Row(
               children: [
-                Expanded(
-                  child: DropdownMenuTheme(
-                    data: DropdownMenuTheme.of(context).copyWith(
-                        inputDecorationTheme: InputDecorationTheme(
-                          alignLabelWithHint: true,
-                          fillColor: AppColors.primaryColor.withOpacity(0.05),
-                          suffixIconColor: AppColors.primaryColor,
-                          filled: true,
-                          contentPadding: EdgeInsets.all(5),
-                          // constraints: BoxConstraints(
-                          //     minHeight: size.height(50),
-                          //     maxHeight: size.height(50)),
-                          disabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: AppColors.lightGreen),
-                              borderRadius: BorderRadius.circular(8)),
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: AppColors.lightGreen),
-                              borderRadius: BorderRadius.circular(8)),
-                        ),
-                        menuStyle: MenuStyle(
-                          padding: const MaterialStatePropertyAll<EdgeInsets>(
-                              EdgeInsets.only(top: 5)),
-                          backgroundColor: MaterialStatePropertyAll<Color>(
-                              AppColors.darkBlackColor),
-                          shape: MaterialStatePropertyAll<OutlinedBorder>(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(r6))),
-                          fixedSize: MaterialStatePropertyAll<Size>(
-                              Size(250, double.infinity)),
-                        )),
+                DropdownMenuTheme(
+                  data: DropdownMenuTheme.of(context).copyWith(
+                      inputDecorationTheme: InputDecorationTheme(
+                        // alignLabelWithHint: true,
+                        fillColor: AppColors.primaryColor.withOpacity(0.05),
+                        suffixIconColor: AppColors.primaryColor,
+                        filled: true,
+                        contentPadding: EdgeInsets.all(12),
+                        // constraints: BoxConstraints(
+                        //     minHeight: size.height(50),
+                        //     maxHeight: size.height(50)),
+                        disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColors.lightGreen),
+                            borderRadius: BorderRadius.circular(8)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: AppColors.lightGreen),
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                      menuStyle: MenuStyle(
+                        padding: const MaterialStatePropertyAll<EdgeInsets>(
+                            EdgeInsets.only(top: 5)),
+                        backgroundColor: MaterialStatePropertyAll<Color>(
+                            AppColors.secondaryColor),
+                        shape: MaterialStatePropertyAll<OutlinedBorder>(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(r6))),
+                        minimumSize: MaterialStatePropertyAll<Size>(
+                            Size.fromWidth(double.infinity)),
+                      )),
+                  child: Expanded(
                     child: DropdownMenu(
+                      // expandedInsets: ,
+                      expandedInsets: EdgeInsets.zero,
                       controller: calculationController,
                       enabled: true,
                       requestFocusOnTap: false,
                       trailingIcon: Icon(
                         Icons.arrow_drop_down,
+                        color: AppColors.white,
                         size: 25,
                       ),
                       // width: double.infinity,
@@ -113,11 +116,11 @@ class _NamazTimingConfigurationFormState
                               style: ButtonStyle(
                                 padding:
                                     const MaterialStatePropertyAll<EdgeInsets>(
-                                        EdgeInsets.all(5)),
+                                        EdgeInsets.all(12)),
                                 foregroundColor: MaterialStatePropertyAll<Color>(
-                                    AppColors.primaryColor),
+                                    AppColors.white),
                                 textStyle: MaterialStatePropertyAll<TextStyle>(
-                                  AppStyles.mediumStyle,
+                                  AppStyles.mediumStyle.copyWith(color: AppColors.textPrimaryColor),
                                 ),
                               ),
                             ),
@@ -128,46 +131,48 @@ class _NamazTimingConfigurationFormState
                   ),
                 ),
                 SizedBox(width: 12),
-                Expanded(
-                  child:   DropdownMenuTheme(
-                    data: DropdownMenuTheme.of(context).copyWith(
-                        inputDecorationTheme: InputDecorationTheme(
-                          alignLabelWithHint: true,
-                          fillColor:
-                          AppColors.primaryColor.withOpacity(0.05),
-                          suffixIconColor: AppColors.primaryColor,
-                          filled: true,
-                          contentPadding: EdgeInsets.all(5),
-                          // constraints: BoxConstraints(
-                          //     minHeight: size.height(50),
-                          //     maxHeight: size.height(50)),
-                          disabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: AppColors.lightGreen),
-                              borderRadius: BorderRadius.circular(8)),
-                          enabledBorder: OutlineInputBorder(
-                              borderSide:
-                              BorderSide(color: AppColors.lightGreen),
-                              borderRadius: BorderRadius.circular(8)),
-                        ),
-                        menuStyle: MenuStyle(
-                          padding:
-                          const MaterialStatePropertyAll<EdgeInsets>(
-                              EdgeInsets.only(top: 5)),
-                          backgroundColor: MaterialStatePropertyAll<Color>(
-                              AppColors.darkBlackColor),
-                          shape: MaterialStatePropertyAll<OutlinedBorder>(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(r6))),
-                          fixedSize: MaterialStatePropertyAll<Size>(
-                              Size(250,double.infinity)),
-                        )),
+                DropdownMenuTheme(
+                  data: DropdownMenuTheme.of(context).copyWith(
+                      inputDecorationTheme: InputDecorationTheme(
+                        // alignLabelWithHint: true,
+                        fillColor:
+                        AppColors.primaryColor.withOpacity(0.05),
+                        suffixIconColor: AppColors.primaryColor,
+                        filled: true,
+                        contentPadding: EdgeInsets.all(12),
+                        // constraints: BoxConstraints.tight(
+                        //     Size(400,double.infinity)
+
+                        disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColors.lightGreen),
+                            borderRadius: BorderRadius.circular(8)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide:
+                            BorderSide(color: AppColors.lightGreen),
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                      menuStyle: MenuStyle(
+                        padding:
+                        const MaterialStatePropertyAll<EdgeInsets>(
+                            EdgeInsets.only(top: 5)),
+                        backgroundColor: MaterialStatePropertyAll<Color>(
+                            AppColors.secondaryColor),
+                        shape: MaterialStatePropertyAll<OutlinedBorder>(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(r6))),
+                        // fixedSize: MaterialStatePropertyAll<Size>(
+                        //     Size(400,double.infinity)),
+                      )),
+                  child: Expanded(
                     child: DropdownMenu(
+                      expandedInsets: EdgeInsets.zero,
                       controller: madhabController,
                       enabled: true,
                       requestFocusOnTap: false,
                       trailingIcon: Icon(
                         Icons.arrow_drop_down,
+                        color: AppColors.white,
                         size: 25,
                       ),
                       // width: double.infinity,
@@ -176,10 +181,48 @@ class _NamazTimingConfigurationFormState
                         widget.cityConfigEntity.namazTimeOffset.defaultMadhab = val!.name;
                       },
                       dropdownMenuEntries: [
-                        DropdownMenuEntry(value: MadhabEnum.hanafi, label: 'Hanafi'),
-                        DropdownMenuEntry(value: MadhabEnum.shafi, label: 'Shafi'),
-                        DropdownMenuEntry(value: MadhabEnum.maliki, label: 'Maliki'),
-                        DropdownMenuEntry(value: MadhabEnum.hanbali, label: 'Hanbli'),
+
+                        DropdownMenuEntry(value: MadhabEnum.hanafi, label: 'Hanafi',
+                          style: ButtonStyle(
+                            padding:
+                            const MaterialStatePropertyAll<EdgeInsets>(
+                                EdgeInsets.all(12)),
+                            foregroundColor: MaterialStatePropertyAll<Color>(
+                                AppColors.white),
+                            textStyle: MaterialStatePropertyAll<TextStyle>(
+                              AppStyles.mediumStyle.copyWith(color: AppColors.textPrimaryColor),
+                            ),
+                          ),),
+                        DropdownMenuEntry(value: MadhabEnum.shafi, label: 'Shafi', style: ButtonStyle(
+                          padding:
+                          const MaterialStatePropertyAll<EdgeInsets>(
+                              EdgeInsets.all(12)),
+                          foregroundColor: MaterialStatePropertyAll<Color>(
+                              AppColors.white),
+                          textStyle: MaterialStatePropertyAll<TextStyle>(
+                            AppStyles.mediumStyle.copyWith(color: AppColors.textPrimaryColor),
+                          ),
+                        ),),
+                        DropdownMenuEntry(value: MadhabEnum.maliki, label: 'Maliki', style: ButtonStyle(
+                          padding:
+                          const MaterialStatePropertyAll<EdgeInsets>(
+                              EdgeInsets.all(12)),
+                          foregroundColor: MaterialStatePropertyAll<Color>(
+                              AppColors.white),
+                          textStyle: MaterialStatePropertyAll<TextStyle>(
+                            AppStyles.mediumStyle.copyWith(color: AppColors.textPrimaryColor),
+                          ),
+                        ),),
+                        DropdownMenuEntry(value: MadhabEnum.hanbali, label: 'Hanbli', style: ButtonStyle(
+                          padding:
+                          const MaterialStatePropertyAll<EdgeInsets>(
+                              EdgeInsets.all(12)),
+                          foregroundColor: MaterialStatePropertyAll<Color>(
+                              AppColors.white),
+                          textStyle: MaterialStatePropertyAll<TextStyle>(
+                            AppStyles.mediumStyle.copyWith(color: AppColors.textPrimaryColor),
+                          ),
+                        ),),
                       ],
                       textStyle: AppStyles.mediumStyle,
                     ),

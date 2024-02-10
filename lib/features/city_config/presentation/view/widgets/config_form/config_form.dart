@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mnm_internal_admin/core/utils/helpers/helper_functions.dart';
 import 'package:mnm_internal_admin/core/values/app_colors.dart';
+import 'package:mnm_internal_admin/core/values/app_strings.dart';
 import 'package:mnm_internal_admin/core/values/app_styles.dart';
 import 'package:mnm_internal_admin/core/widgets/common_button.dart';
 import 'package:mnm_internal_admin/core/widgets/confirmation_dialog.dart';
 import 'package:mnm_internal_admin/core/widgets/custom_switch.dart';
-import 'package:mnm_internal_admin/features/city_config/presentation/view_models/city_config_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/city_config/presentation/view_models/city_config_view_model/city_config_view_model_cubit.dart';
 
 import 'components/app_config_form.dart';
 import 'components/namaz_timing_configuration_form.dart';
@@ -27,6 +28,7 @@ class ConfigForm extends StatelessWidget {
               buildWhen: (oldState, newState) =>
                   newState is CityConfigViewModelConfigAvailableState ||
                   newState is CityConfigViewModelCreateNewConfigState ||
+                  newState is CityConfigViewModelCurrentConfigClearState ||
                   newState is CityConfigViewModelErrorState,
               builder: (context, state) {
                 if (state is CityConfigViewModelCreateNewConfigState) {
@@ -113,12 +115,13 @@ class ConfigForm extends StatelessWidget {
                                 SizedBox(
                                   width: 160,
                                   child: CommonButton(
+                                      key: UniqueKey(),
                                       onTap: () {
                                         showUpdateConfirmationDialog(context,
                                             () {
                                           context
                                               .read<CityConfigViewModelCubit>()
-                                              .updateConfig(context);
+                                              .updateConfig(context,state.cityConfigEntity);
                                         });
                                       },
                                       text: 'Update'),
@@ -128,18 +131,42 @@ class ConfigForm extends StatelessWidget {
                                 ),
                                 SizedBox(
                                     width: 160,
+                                    key: UniqueKey(),
                                     child: CommonButton(
                                         backgroundColor: AppColors.errorRed,
                                         onTap: () {
-                                            context
-                                                .read<CityConfigViewModelCubit>()
-                                                .deleteConfig(context);
+                                          context
+                                              .read<CityConfigViewModelCubit>()
+                                              .deleteConfig(context);
                                         },
                                         text: 'Delete'))
                               ],
                             ),
                           ],
                         ),
+                      ],
+                    ),
+                  );
+                }
+                if (state is CityConfigViewModelErrorState) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          state.errorMessage,
+                          style: AppStyles.mediumStyle,
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Container(
+                          width: 150,
+                          child: CommonButton(
+                              height: 35,
+                              onTap: state.onTryAgain,
+                              text: AppStrings.tryAgain),
+                        )
                       ],
                     ),
                   );

@@ -30,6 +30,8 @@ class ApiUrls{
   static String newConfig = "/newConfig";
   static String deleteConfig(String countryId,String stateId,String cityId,String id) => "/deleteConfig/$countryId/$stateId/$cityId/$id";
   static String updateConfig(String countryId,String stateId,String cityId,String id) => "/updateConfig/$countryId/$stateId/$cityId/$id";
+  static String updateConfigByState(String countryId,String stateId) => "/updateConfigByState/$countryId/$stateId";
+  static String updateConfigByCountry(String countryId) => "/updateConfigByCountry/$countryId";
 
 
 

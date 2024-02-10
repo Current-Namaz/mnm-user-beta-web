@@ -214,4 +214,85 @@ class CityConfigRemoteDataSourceImp implements CityConfigRemoteDataSource {
     );
     return dataSourceResult;
   }
+
+  @override
+  Future<DataSourceResult<String>> updateConfigByCountry(
+      {required CityConfigEntity cityConfigEntity}) async {
+    DataSourceResult<String> dataSourceResult = DataFailed(DataSourceError());
+    await ApiHandler.sendRequest(
+      endPoint: ApiUrls.updateConfigByCountry(cityConfigEntity.countryId),
+      type: RequestType.put,
+      useFormData: false,
+      body: {
+        "current_namaz": cityConfigEntity.currentNamaz,
+        "masjid_location": cityConfigEntity.masjidLocation,
+        "namaz_time": cityConfigEntity.namazTime,
+        "ramadan": cityConfigEntity.ramadan,
+        "eid_on":
+            cityConfigEntity.eidOn == 'empty' ? null : cityConfigEntity.eidOn,
+        "islamic_date": cityConfigEntity.islamicDate,
+        "time_zone": cityConfigEntity.timeZone,
+        "show_madhab": cityConfigEntity.showMadhab,
+        "dashboard": {
+          "events": cityConfigEntity.dashboard.events,
+          "eid_timetable": cityConfigEntity.dashboard.eidTimetable
+        }
+      },
+      onSuccess: (response) {
+        try {
+          final configData = CityConfigModel.fromJson(response.data);
+          dataSourceResult = DataSuccess(response.data['detail']);
+        } catch (e) {
+          dataSourceResult = DataFailed(DataSourceError());
+        }
+      },
+      onError: (error) {
+        dataSourceResult = DataFailed(DataSourceError(
+          message: error.statusMessage,
+          statusCode: error.statusCode,
+        ));
+      },
+    );
+    return dataSourceResult;
+  }
+
+  @override
+  Future<DataSourceResult<String>> updateConfigByState(
+      {required CityConfigEntity cityConfigEntity}) async {
+    DataSourceResult<String> dataSourceResult = DataFailed(DataSourceError());
+    await ApiHandler.sendRequest(
+      endPoint: ApiUrls.updateConfigByState(cityConfigEntity.countryId,cityConfigEntity.stateId),
+      type: RequestType.put,
+      useFormData: false,
+      body: {
+        "current_namaz": cityConfigEntity.currentNamaz,
+        "masjid_location": cityConfigEntity.masjidLocation,
+        "namaz_time": cityConfigEntity.namazTime,
+        "ramadan": cityConfigEntity.ramadan,
+        "eid_on":
+        cityConfigEntity.eidOn == 'empty' ? null : cityConfigEntity.eidOn,
+        "islamic_date": cityConfigEntity.islamicDate,
+        "time_zone": cityConfigEntity.timeZone,
+        "show_madhab": cityConfigEntity.showMadhab,
+        "dashboard": {
+          "events": cityConfigEntity.dashboard.events,
+          "eid_timetable": cityConfigEntity.dashboard.eidTimetable
+        }
+      },
+      onSuccess: (response) {
+        try {
+          dataSourceResult = DataSuccess(response.data['detail']);
+        } catch (e) {
+          dataSourceResult = DataFailed(DataSourceError());
+        }
+      },
+      onError: (error) {
+        dataSourceResult = DataFailed(DataSourceError(
+          message: error.statusMessage,
+          statusCode: error.statusCode,
+        ));
+      },
+    );
+    return dataSourceResult;
+  }
 }

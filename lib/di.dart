@@ -9,7 +9,9 @@ import 'package:mnm_internal_admin/features/city_config/domain/usecases/delete_c
 import 'package:mnm_internal_admin/features/city_config/domain/usecases/get_city_config.dart';
 import 'package:mnm_internal_admin/features/city_config/domain/usecases/get_city_time_zone.dart';
 import 'package:mnm_internal_admin/features/city_config/domain/usecases/update_config.dart';
-import 'package:mnm_internal_admin/features/city_config/presentation/view_models/city_config_view_model_cubit.dart';
+import 'package:mnm_internal_admin/features/city_config/domain/usecases/update_config_by_country.dart';
+import 'package:mnm_internal_admin/features/city_config/domain/usecases/update_config_by_state.dart';
+import 'package:mnm_internal_admin/features/city_config/presentation/view_models/city_config_view_model/city_config_view_model_cubit.dart';
 import 'package:mnm_internal_admin/features/masjids/data/data_sources/remote/masjids_remote_data_source.dart';
 import 'package:mnm_internal_admin/features/masjids/data/data_sources/remote/masjids_remote_data_source_imp.dart';
 import 'package:mnm_internal_admin/features/masjids/data/repository/masjids_repository_imp.dart';
@@ -105,6 +107,10 @@ void initializeInstances() {
       GetCityTimeZoneUseCase(cityConfigRepository: sl<CityConfigRepository>()));
   sl.registerLazySingleton<DeleteConfigUseCase>(() =>
       DeleteConfigUseCase(cityConfigRepository: sl<CityConfigRepository>()));
+  sl.registerLazySingleton<UpdateConfigByCountryUseCase>(() =>
+      UpdateConfigByCountryUseCase(cityConfigRepository: sl<CityConfigRepository>()));
+  sl.registerLazySingleton<UpdateConfigByStateUseCase>(() =>
+      UpdateConfigByStateUseCase(cityConfigRepository: sl<CityConfigRepository>()));
 
   // bloc
   sl.registerLazySingleton<MasjidViewModelCubit>(
@@ -143,5 +149,5 @@ void initializeInstances() {
           updateConfigUseCase: sl<UpdateConfigUseCase>(),
           createConfigUseCase: sl<CreateConfigUseCase>(),
           getCityTimeZoneUseCase: sl<GetCityTimeZoneUseCase>(),
-          deleteConfigUseCase: sl<DeleteConfigUseCase>()));
+          deleteConfigUseCase: sl<DeleteConfigUseCase>(), updateConfigByCountryUseCase: sl<UpdateConfigByCountryUseCase>(), updateConfigByStateUseCase: sl<UpdateConfigByStateUseCase>()));
 }

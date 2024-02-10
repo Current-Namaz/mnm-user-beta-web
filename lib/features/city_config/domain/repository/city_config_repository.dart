@@ -22,4 +22,11 @@ abstract class CityConfigRepository {
       {required String countryId,
         required String stateId,
         required String cityId,required String id});
+
+  Future<DataSourceResult<String>> updateConfigByCountry(
+      {required CityConfigEntity cityConfigEntity});
+
+  Future<DataSourceResult<String>> updateConfigByState(
+      {required CityConfigEntity cityConfigEntity});
+
 }

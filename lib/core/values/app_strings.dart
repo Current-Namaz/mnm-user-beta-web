@@ -80,6 +80,7 @@ class AppStrings {
   static String cancel ='Cancel';
   static String eidDate ='Eid Date';
   static String ramadan ='Ramadan';
+  static String tryAgain ='Try again';
 
 
 }

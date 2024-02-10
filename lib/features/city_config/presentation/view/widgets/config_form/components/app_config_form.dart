@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:mnm_internal_admin/core/values/app_colors.dart';
 import 'package:mnm_internal_admin/core/values/app_strings.dart';
 import 'package:mnm_internal_admin/core/values/app_styles.dart';
 import 'package:mnm_internal_admin/core/widgets/app_text_field.dart';
+import 'package:mnm_internal_admin/core/widgets/common_button.dart';
 import 'package:mnm_internal_admin/features/city_config/domain/entities/city_config.dart';
+import 'package:mnm_internal_admin/features/city_config/presentation/view_models/city_config_view_model/city_config_view_model_cubit.dart';
 
 import '../../../../../../../core/utils/helpers/helper_functions.dart';
 import '../../../../../../../core/values/constants.dart';
@@ -30,11 +33,11 @@ class _AppConfigFormState extends State<AppConfigForm> {
     txtEidController = TextEditingController();
     txtTimeZoneController.text = widget.cityConfigEntity.timeZone;
     if (widget.cityConfigEntity.eidOn != 'empty') {
-      txtEidController.text = DateFormat('d-MM-yyyy').format(
-          DateTime.parse(widget.cityConfigEntity.eidOn));
-      }
-    super.initState();
+      txtEidController.text = DateFormat('d-MM-yyyy')
+          .format(DateTime.parse(widget.cityConfigEntity.eidOn));
     }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +89,8 @@ class _AppConfigFormState extends State<AppConfigForm> {
                     final result = await showDatePickerDialog(context);
                     if (result != null) {
                       widget.cityConfigEntity.eidOn = result.toString();
-                      txtEidController.text = DateFormat('d-MM-yyyy').format(result);
+                      txtEidController.text =
+                          DateFormat('d-MM-yyyy').format(result);
                     }
                   },
                   controller: txtEidController,
@@ -94,15 +98,20 @@ class _AppConfigFormState extends State<AppConfigForm> {
                   isReadyOnly: true,
                 ),
               ),
-              SizedBox(width: 5,),
+              SizedBox(
+                width: 5,
+              ),
               Padding(
                 padding: const EdgeInsets.only(top: 12),
                 child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       txtEidController.clear();
                       widget.cityConfigEntity.eidOn = 'empty';
                     },
-                    child: Icon(Icons.delete,color: AppColors.textPrimary2Color,)),
+                    child: Icon(
+                      Icons.delete,
+                      color: AppColors.textPrimary2Color,
+                    )),
               )
             ],
           ),
@@ -143,6 +152,29 @@ class _AppConfigFormState extends State<AppConfigForm> {
               onChange: (val) {
                 widget.cityConfigEntity.dashboard.eidTimetable = val;
               }),
+          BlocBuilder<CityConfigViewModelCubit, CityConfigViewModelState>(
+              builder: (context, state) {
+            if (state is CityConfigViewModelConfigAvailableState) {
+              return Column(
+                children: [
+                  CommonButton(
+                      onTap: () {
+                        context.read<CityConfigViewModelCubit>().updateConfigByCountry(context, widget.cityConfigEntity);
+                      },
+                      text:
+                          'Apply to ${context.read<CityConfigViewModelCubit>().selectedCountry!.name}'),
+                  CommonButton(
+                      topMargin: 8,
+                      onTap: () {
+                        context.read<CityConfigViewModelCubit>().updateConfigByState(context, widget.cityConfigEntity);
+                      },
+                      text:
+                          'Apply to ${context.read<CityConfigViewModelCubit>().selectedState!.name}')
+                ],
+              );
+            }
+            return SizedBox.shrink();
+          })
         ],
       ),
     );
