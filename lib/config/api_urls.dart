@@ -1,7 +1,7 @@
 class ApiUrls{
 
 
-  static const String baseUrl = "adminapi.masjidcompass.com";
+  static const String baseUrl = "https://adminapi.masjidcompass.com";
 
   /// location endpoints
 
